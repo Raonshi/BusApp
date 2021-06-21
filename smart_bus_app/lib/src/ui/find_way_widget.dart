@@ -1,46 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:smart_bus_app/src/provider/departure_provider.dart';
+import 'package:smart_bus_app/src/ui/depature_widget.dart';
+import 'package:smart_bus_app/src/ui/destination_widget.dart';
+
+import 'depature_widget.dart';
 
 
 class FindWayWidget extends StatelessWidget {
-
-  TextEditingController textController;
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Container(
         child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Row(
-                children: [
-                  Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: TextField(
-                          controller: textController,
-                          style: TextStyle(fontSize: 30),
-                        ),
-                      ),
-                  ),
-                  ElevatedButton(
-                      onPressed: (){
+          mainAxisAlignment: MainAxisAlignment.center,
+          children:[
 
-                      },
-                      style: ElevatedButton.styleFrom(primary: Colors.orange),
-                      child: Padding(
-                        padding: const EdgeInsets.all(3.0),
-                        child: Text('검색', style: TextStyle(fontSize: 30),),
-                      ))
-                ],
-              ),
-            ),
+            //출발지 버튼
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: ElevatedButton(
                 onPressed: (){
-
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DepartureWidget()
+                      )
+                  );
                 },
                 style: ElevatedButton.styleFrom(primary: Colors.green),
                 child: Padding(
@@ -49,15 +36,24 @@ class FindWayWidget extends StatelessWidget {
                 ),
               ),
             ),
+
+            //점선
             Padding(
               padding: EdgeInsets.symmetric(vertical: 10.0),
               child: Image.asset("images/line_circle.png", color: Colors.greenAccent,),
             ),
+
+            //도착지 버튼
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: ElevatedButton(
                 onPressed: (){
-
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DestinationWidget()
+                      )
+                  );
                 },
                 style: ElevatedButton.styleFrom(primary: Colors.redAccent),
                 child: Padding(

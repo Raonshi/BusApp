@@ -41,9 +41,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           bottom: TabBar(
             controller: tabController,
             tabs: [
-              Tab(text: '경로찾기',),
-              Tab(text: '최근기록',),
-              Tab(text: '즐겨찾기',),
+              Tab(text: '경로찾기', icon: Icon(Icons.directions_bus),),
+              Tab(text: '최근기록', icon: Icon(Icons.list_alt_rounded)),
+              Tab(text: '즐겨찾기', icon: Icon(Icons.star)),
             ],
           ),
         ),
