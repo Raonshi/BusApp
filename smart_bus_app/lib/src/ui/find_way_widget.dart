@@ -17,94 +17,13 @@ class FindWayWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => FindWayProvider())
+        ChangeNotifierProvider(create: (_) => FindWayProvider(departure, destination))
       ],
       child: Center(
         child: Body()
       ),
     );
-        /*child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children:[
-            //출발지 버튼
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: ElevatedButton(
-                onPressed: (){
-                  getDeparture(context);
-                },
-                style: ElevatedButton.styleFrom(primary: Colors.green),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 30.0),
-                  child: Text("출발", style: TextStyle(fontSize: 50,),),
-                ),
-              ),
-            ),
-
-            //점선
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 10.0),
-              child: Image.asset("images/line_circle.png", color: Colors.greenAccent,),
-            ),
-
-            //도착지 버튼
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: ElevatedButton(
-                onPressed: (){
-                  getDestination(context);
-                },
-                style: ElevatedButton.styleFrom
-                (primary: Colors.redAccent),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 30.0),
-                  child: Text("도착", style: TextStyle(fontSize: 50,),),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );*/
   }
-/*
-  String getDeparture(BuildContext context) async {
-    departure = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => DepartureWidget()
-        )
-    );
-
-    //알림 출력
-    ScaffoldMessenger.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text('출발지 설정 : $departure')));
-
-    return departure;
-  }
-
-  void getDestination(BuildContext context) async {
-    destination = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => DestinationWidget()
-        )
-    );
-
-    //알림 출력
-    ScaffoldMessenger.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text('도착지 설정 : $destination')));
-
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => SelectionWidget(departure, destination)
-        )
-    );
-  }
-  */
 }
 
 class Body extends StatefulWidget {
@@ -188,7 +107,7 @@ class _BodyState extends State<Body> {
         )
     );
 
-    provider.setDestination(destination);
+    //provider.setDestination(destination);
 
     //알림 출력
     ScaffoldMessenger.of(context)
