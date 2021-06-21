@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_bus_app/src/provider/destination_provider.dart';
+import 'package:smart_bus_app/src/ui/search_item.dart';
 
 class DestinationWidget extends StatelessWidget {
 
@@ -23,6 +24,8 @@ class SearchDestination extends StatefulWidget {
 class _SearchDestinationState extends State<SearchDestination> {
 
   TextEditingController textController = TextEditingController();
+  List<SearchItem> destinationList = [];
+
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +44,11 @@ class _SearchDestinationState extends State<SearchDestination> {
                     padding: const EdgeInsets.all(8.0),
                     child: TextField(
                       controller: textController,
+                      onSubmitted: (String str){
+                        provider.setDeparture(str);
+                        provider.filtering();
+                        destinationList = provider.destinationList;
+                      },
                     ),
                   )
               ),
@@ -50,13 +58,24 @@ class _SearchDestinationState extends State<SearchDestination> {
                 child: ElevatedButton(
                   onPressed: () {
                     provider.setDeparture(textController.text);
+                    provider.filtering();
+                    destinationList = provider.destinationList;
                   },
                   child: Text('검색'),
                 ),
               ),
             ],
           ),
-          Text(provider.destination),
+          //Text(provider.destination),
+          Expanded(
+            child: ListView.builder(
+              itemBuilder: (context, index){
+                return destinationList[index];
+              },
+              itemCount: destinationList.length,
+              reverse: false,
+            ),
+          ),
         ],
       ),
     );

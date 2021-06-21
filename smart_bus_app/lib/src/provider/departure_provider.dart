@@ -20,14 +20,14 @@ class DepartureProvider with ChangeNotifier{
   void filtering(){
     //테스트용 데이터
     List<SearchItem> tmpList = [
-      SearchItem('aaa'),
-      SearchItem('aab'),
-      SearchItem('aba'),
-      SearchItem('abb'),
-      SearchItem('baa'),
-      SearchItem('bab'),
-      SearchItem('bba'),
-      SearchItem('bbb'),
+      SearchItem('aaa', TYPE.DEPARTURE),
+      SearchItem('aab', TYPE.DEPARTURE),
+      SearchItem('aba', TYPE.DEPARTURE),
+      SearchItem('abb', TYPE.DEPARTURE),
+      SearchItem('baa', TYPE.DEPARTURE),
+      SearchItem('bab', TYPE.DEPARTURE),
+      SearchItem('bba', TYPE.DEPARTURE),
+      SearchItem('bbb', TYPE.DEPARTURE),
     ];
 
     //리스트 초기화

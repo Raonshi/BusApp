@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class Wayitem extends StatelessWidget {
-  const Wayitem({Key key}) : super(key: key);
+
+  String departure;
+  String destination;
+
+  Wayitem(String departure, String destination, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
