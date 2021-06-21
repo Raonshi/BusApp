@@ -32,6 +32,8 @@ class _SearchDepartureState extends State<SearchDeparture> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<DepartureProvider>(context);
+
+    print('call');
     return Scaffold(
       appBar: AppBar(
         title: Text('출발지 검색', style: TextStyle(fontSize: 30),),
@@ -47,7 +49,8 @@ class _SearchDepartureState extends State<SearchDeparture> {
                       controller: textController,
                       onSubmitted: (String str){
                         provider.setDeparture(str);
-                        departureList = provider.filtering();
+                        provider.filtering();
+                        departureList = provider.departureList;
                       },
                     ),
                   )
@@ -58,7 +61,8 @@ class _SearchDepartureState extends State<SearchDeparture> {
                 child: ElevatedButton(
                   onPressed: () {
                     provider.setDeparture(textController.text);
-                    departureList = provider.filtering();
+                    provider.filtering();
+                    departureList = provider.departureList;
                   },
                   child: Text('검색'),
                 ),
