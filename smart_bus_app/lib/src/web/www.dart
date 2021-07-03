@@ -65,10 +65,13 @@ class WWW{
       final xml = utf8.decode(response.bodyBytes);
       Logger().d("XML : $xml");
       xml2json.parse(xml);
+      final json = xml2json.toParker();
+      Logger().d("JSON : ${json[0]}");
 
-      final json = xml2json.toParkerWithAttrs(array: ['body']);
+      Map map = jsonDecode(json);
 
-      Logger().d("JSON : $json");
+      Logger().d("MAP KEYS : ${map.keys}");
+      Logger().d("MAP VALUES : ${map.values}");
 
       return Future.delayed(Duration(seconds: 1), () => json);
     }
