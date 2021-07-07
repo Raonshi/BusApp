@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:smart_bus_app/src/ui/search_item.dart';
+import 'package:smart_bus_app/src/web/web_server.dart';
 
 class DepartureProvider with ChangeNotifier{
   String _departure = '';
@@ -17,25 +18,15 @@ class DepartureProvider with ChangeNotifier{
 
 
 
-  void filtering(){
-    //테스트용 데이터
-    List<SearchItem> tmpList = [
-      SearchItem('aaa', TYPE.DEPARTURE),
-      SearchItem('aab', TYPE.DEPARTURE),
-      SearchItem('aba', TYPE.DEPARTURE),
-      SearchItem('abb', TYPE.DEPARTURE),
-      SearchItem('baa', TYPE.DEPARTURE),
-      SearchItem('bab', TYPE.DEPARTURE),
-      SearchItem('bba', TYPE.DEPARTURE),
-      SearchItem('bbb', TYPE.DEPARTURE),
-    ];
+  void filtering() async {
+    List<SearchItem> routeList = await WebServer().getRouteNo("청주", _departure);
 
     //리스트 초기화
     _departureList = [];
 
     //테스트용 리스트 탐색
-    for(SearchItem item in tmpList){
-      if(item.cityName.contains(_departure)){
+    for(SearchItem item in routeList){
+      if(item.no.contains(_departure)){
         _departureList.add(item);
       }
     }

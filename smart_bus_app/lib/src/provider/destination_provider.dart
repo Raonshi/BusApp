@@ -14,27 +14,12 @@ class DestinationProvider with ChangeNotifier{
   get destinationList => _destinationList;
 
   void filtering(){
-    //테스트용 데이터
-    List<SearchItem> tmpList = [
-      SearchItem('aaa', TYPE.DESTINATION),
-      SearchItem('aab', TYPE.DESTINATION),
-      SearchItem('aba', TYPE.DESTINATION),
-      SearchItem('abb', TYPE.DESTINATION),
-      SearchItem('baa', TYPE.DESTINATION),
-      SearchItem('bab', TYPE.DESTINATION),
-      SearchItem('bba', TYPE.DESTINATION),
-      SearchItem('bbb', TYPE.DESTINATION),
-    ];
+
 
     //리스트 초기화
     _destinationList = [];
 
-    //테스트용 리스트 탐색
-    for(SearchItem item in tmpList){
-      if(item.cityName.contains(_destination)){
-        _destinationList.add(item);
-      }
-    }
+
     notifyListeners();
   }
 
