@@ -14,22 +14,15 @@ class DepartureProvider with ChangeNotifier{
   }
 
 
-  get departureList => _departureList;
+  List<SearchItem> get departureList => _departureList;
 
-
-
+  ///출발지 선택 화면 검색어 필터링
   void filtering() async {
-    List<SearchItem> routeList = await WebServer().getRouteNo("청주", _departure);
+    await WebServer().searchKeyword(_departure);
 
     //리스트 초기화
     _departureList = [];
 
-    //테스트용 리스트 탐색
-    for(SearchItem item in routeList){
-      if(item.no.contains(_departure)){
-        _departureList.add(item);
-      }
-    }
     notifyListeners();
   }
 

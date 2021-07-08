@@ -1,13 +1,19 @@
 import 'package:logger/logger.dart';
-import 'package:smart_bus_app/src/data/bus_node_information/route_info_item.dart';
 import 'package:smart_bus_app/src/data/city_item.dart';
 import 'package:smart_bus_app/src/data/bus_node_information/route_station_item.dart';
-import 'package:smart_bus_app/src/ui/search_item.dart';
-import 'www.dart';
+import 'package:smart_bus_app/src/provider/departure_provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+enum SearchType{
+  BUS_NUMBER,
+  STATION_NAME
+}
 
 class WebServer {
-  List<String> nodeList;
-  List<String> routeList;
+  final String ip = "127.0.0.1";
+  final String port = "8080";
+  final cityName = "청주";
 
   static final WebServer _instance = WebServer.init();
 
@@ -17,54 +23,88 @@ class WebServer {
 
   WebServer.init(){
     Logger().d("WebServer has created!!!");
-
-    //모든 정거장과 버스 번호 목록을 가져온다.
   }
 
-  Future<dynamic> testing() async {
-    final city = await WWW().testing("청주");
-    //Logger().d("XML : ${xml.toXmlString(pretty: true, indent: '\t')}");
+  /// 도시 지원 여부를 확인하고 지원되는 도시일 경우 City객체를 반환한다.
+  Future<bool> citySupport(String cityName) async {
+    final address = ip + ":" + port;
+    final service = "/getCity";
+    final params = {
+      "cityName" : cityName,
+    };
+    Uri uri = Uri.http(address, service, params);
+    dynamic jsonString = await request(uri);
+    return jsonString != null;
   }
 
-  ///서버로부터 도시 정보를 수신받는다.
-  Future<CityItem> citySupport(String cityName) async {
-    List<CityItem> cities = await WWW().getCityCodeList(0);
 
-    for(int i = 0; i < cities.length; i++){
-      if(cities.elementAt(i).cityName.contains(cityName)){
-        return cities.elementAt(i);
-      }
+  /// 검색창에 입력한 검색어를 통해 노선과 정류장을 찾는다.
+  void searchKeyword(String keyword, SearchType type) {
+    if(citySupport(cityName) == false){
+      return;
+    }
+
+    switch(type){
+      case SearchType.BUS_NUMBER:
+        searchBusNum(keyword);
+        break;
+      case SearchType.STATION_NAME:
+        searchStation(keyword);
+        break;
     }
   }
 
 
-  ///버스 번호를 검색하면 해당하는 내용을 SearchItem객체에 담는다.
-  Future<List<SearchItem>> getRouteNo(String cityName, String routeNo) async {
-    List<SearchItem> itemList = List();
-
-    CityItem city = await citySupport(cityName);
-
-
-    if(city != null){
-      Logger().d("${city.cityName} || ${city.cityCode}");
-
-      RouteInfoItem route = await WWW().getRouteInfo(city.cityCode, routeNo);
-      SearchItem(route.id, route.no, route.startTime, route.endTime, route.startNode, route.endNode);
-    }
+  /// 버스 정류장을 검색한다.
+  void searchStation(String station) async {
+    final address = ip + ":" + port;
+    final service = "/searchStation";
+    final params = {
+      "cityName" : cityName,
+      "station" : station
+    };
+    Uri uri = Uri.http(address, service, params);
+    dynamic jsonString = await request(uri);
   }
 
 
-  ///버스노선별 경유 정류장 목록을 수신받는다.
-  void getNodeList(String cityName, String routeId) async {
-    CityItem city = await citySupport(cityName);
+  /// 버스 노선 번호를 검색한다.
+  void searchBusNum(String busNum) async {
+    final address = ip + ":" + port;
+    final service = "/searchBus";
+    final params = {
+      "cityName" : cityName,
+      "busNum" : busNum
+    };
+    Uri uri = Uri.http(address, service, params);
+    dynamic jsonString = await request(uri);
+  }
 
-    if(city != null){
-      print("OK");
-      List<RouteStationItem> stations = await WWW().getRouteAccToThrghSttnList(10, 1, city.cityCode, routeId);
+
+  /// 출발지와 도착지 사이의 경로를 요청한다.
+
+
+  /// 즐겨찾기에 등록한다.
+
+
+  /// 즐겨찾기에서 삭제한다.
+
+  
+  /// 최근기록에 등록한다.
+
+
+  /// 서버에 메시지를 요청한 뒤 응답을 반환한다.
+  Future<dynamic> request(Uri uri) async {
+
+    http.Response response = await http.get(uri);
+
+    if(response.statusCode == 200) {
+      final document = utf8.decode(response.bodyBytes);
+      final jsonString = jsonDecode(document);
+      return Future.delayed(Duration(milliseconds: 100), () => jsonString);
     }
     else{
-      print("NOT OK");
+      Logger().d("Fail : ${response.statusCode}");
     }
   }
-
 }

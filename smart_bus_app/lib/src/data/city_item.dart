@@ -1,10 +1,13 @@
-
-class CityItem{
-  String _cityCode;
+class City{
+  int _cityCode;
   String _cityName;
 
-  String get cityCode => _cityCode;
+  int get cityCode => _cityCode;
   String get cityName => _cityName;
 
-  CityItem(this._cityCode, this._cityName);
+  City(this._cityCode, this._cityName);
+
+  factory City.fromJson(dynamic json){
+    return City(json['citycode'], json['cityname']);
+  }
 }

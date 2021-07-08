@@ -11,31 +11,23 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 
-class City{
-  int _cityCode;
-  String _cityName;
-
-  int get cityCode => _cityCode;
-  String get cityName => _cityName;
-
-  City(this._cityCode, this._cityName);
-
-  factory City.fromJson(dynamic json){
-    return City(json['citycode'], json['cityname']);
-  }
-}
-
 class WWW{
+  ///서버에 메시지를 요청한 뒤 응답을 반환한다.
+  Future<dynamic> request(Uri uri) async {
 
-  Future<City> testing(String cityName) async {
+    http.Response response = await http.get(uri);
 
-    final jsonString = '{"citycode": 25, "cityname": "대전광역시/계룡시"}';
-    City city = City.fromJson(jsonDecode(jsonString));
-
-    print(city.cityCode);
-
+    if(response.statusCode == 200) {
+      final document = utf8.decode(response.bodyBytes);
+      final jsonString = jsonDecode(document);
+      return Future.delayed(Duration(milliseconds: 100), () => jsonString);
+    }
+    else{
+      Logger().d("Fail : ${response.statusCode}");
+    }
   }
-
+  /*
+   더이상 사용하지 않음
 
 //#region 공통 API
   ///도시코드목록조회
@@ -239,6 +231,8 @@ class WWW{
 //#endregion
 
 
+
+
   ///[uri]를 통해 요청한 공공데이터를 반환한다.
   Future<XmlDocument> _getData(Uri uri) async {
     http.Response response = await http.get(uri);
@@ -253,4 +247,6 @@ class WWW{
       return XmlDocument.parse("Failed");
     }
   }
+
+   */
 }
