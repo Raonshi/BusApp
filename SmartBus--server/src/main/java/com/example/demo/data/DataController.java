@@ -1,10 +1,13 @@
 package com.example.demo.data;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class DataController {
-    private static DataController instance = null;
 
+    /**
+     * 싱글톤
+     */
+    private static DataController instance = null;
     public static DataController Singleton(){
         if(instance == null){
             instance = new DataController();
@@ -12,6 +15,11 @@ public class DataController {
         return instance;
     }
 
-    public HashMap<String, String> cityTable = new HashMap<>();
-
+    /**
+     * <p>국토교통부-버스노선정보 API를 통해 얻은 데이터를 저장하는 ArrayList</p>
+     */
+    public ArrayList<City> cityList = new ArrayList<>();
+    public ArrayList<RouteInfo> routeInfoList = new ArrayList<>();
+    public ArrayList<RouteNum> routeNumList = new ArrayList<>();
+    public ArrayList<AccessStation> accessStationList = new ArrayList<>();
 }
