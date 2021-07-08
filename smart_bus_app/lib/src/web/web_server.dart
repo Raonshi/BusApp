@@ -21,6 +21,11 @@ class WebServer {
     //모든 정거장과 버스 번호 목록을 가져온다.
   }
 
+  Future<dynamic> testing() async {
+    final city = await WWW().testing("청주");
+    //Logger().d("XML : ${xml.toXmlString(pretty: true, indent: '\t')}");
+  }
+
   ///서버로부터 도시 정보를 수신받는다.
   Future<CityItem> citySupport(String cityName) async {
     List<CityItem> cities = await WWW().getCityCodeList(0);

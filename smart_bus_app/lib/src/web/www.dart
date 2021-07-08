@@ -10,7 +10,32 @@ import 'package:xml/xml.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
+
+class City{
+  int _cityCode;
+  String _cityName;
+
+  int get cityCode => _cityCode;
+  String get cityName => _cityName;
+
+  City(this._cityCode, this._cityName);
+
+  factory City.fromJson(dynamic json){
+    return City(json['citycode'], json['cityname']);
+  }
+}
+
 class WWW{
+
+  Future<City> testing(String cityName) async {
+
+    final jsonString = '{"citycode": 25, "cityname": "대전광역시/계룡시"}';
+    City city = City.fromJson(jsonDecode(jsonString));
+
+    print(city.cityCode);
+
+  }
+
 
 //#region 공통 API
   ///도시코드목록조회
@@ -90,7 +115,7 @@ class WWW{
     Uri uri = Uri.http(address, serviceName, params);
     var xml = await _getData(uri);
 
-    Logger().d("XML : ${xml.toXmlString(pretty: true, indent: '\t')}");
+    //Logger().d("XML : ${xml.toXmlString(pretty: true, indent: '\t')}");
     List<RouteNoItem> list = List();
 
     final items = xml.findAllElements('item');

@@ -4,7 +4,8 @@ import 'package:smart_bus_app/src/web/web_server.dart';
 
 void main(){
   //앱 실행 시 모든 데이터를 불러와야한다.
-  WebServer().getRouteNo("청주", "862");
+  //WebServer().getRouteNo("청주", "862");
+  WebServer().testing();
   runApp(MyApp());
 }
 
