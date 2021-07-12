@@ -14,8 +14,6 @@ class DestinationProvider with ChangeNotifier{
   get destinationList => _destinationList;
 
   void filtering(){
-
-
     //리스트 초기화
     _destinationList = [];
 

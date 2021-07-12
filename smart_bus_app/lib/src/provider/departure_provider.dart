@@ -18,7 +18,7 @@ class DepartureProvider with ChangeNotifier{
 
   ///출발지 선택 화면 검색어 필터링
   void filtering() async {
-    await WebServer().searchKeyword(_departure);
+    //await WebServer().searchKeyword(_departure);
 
     //리스트 초기화
     _departureList = [];
