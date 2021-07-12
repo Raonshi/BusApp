@@ -2,10 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:smart_bus_app/src/ui/home_page.dart';
 import 'package:smart_bus_app/src/web/web_server.dart';
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+void main() {
+
+
+=======
+>>>>>>> 78e544f7c8f77fe05947c062621dc252ac11f4e3
 void main(){
   //앱 실행 시 모든 데이터를 불러와야한다.
   //WebServer().getRouteNo("청주", "862");
   WebServer().testing();
+<<<<<<< HEAD
+=======
+>>>>>>> b15eccf323b68e6d4464957950d60a0ca817181d
+>>>>>>> 78e544f7c8f77fe05947c062621dc252ac11f4e3
   runApp(MyApp());
 }
 
