@@ -2,11 +2,13 @@ package com.example.demo.api_controller;
 
 import com.example.demo.Function;
 import com.example.demo.data.*;
+import com.example.demo.api_controller.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -15,7 +17,8 @@ import java.io.IOException;
 
 public class Receiver extends Thread{
     private Function _function;
-
+    RouteInfo rouif;
+    
     public Receiver(Function function){
         _function = function;
     }
@@ -24,14 +27,14 @@ public class Receiver extends Thread{
     public void run() {
         super.run();
         System.out.println("==========Receiver Thread Generated!!==========");
-
+        
         switch(_function){
             case ROUTE_CITY_LIST:
                 getCityList();
                 break;
             case ROUTE_INFO:
                 //테스트 값
-                getRouteInfoItem("25", "DJB30300052");
+                //getRouteInfoItem(rouif);
                 break;
             case ROUTE_NUMBER_LIST:
                 getRouteAcctoThrghSttnList(10, 1, "25", "DJB30300052");
@@ -84,8 +87,10 @@ public class Receiver extends Thread{
 
                     City item = new City(getValue("citycode", element), getValue("cityname", element));
                     DataController.Singleton().cityList.add(item);
+                    //System.out.println(item.get_cityName());
                 }
             }
+            
         }
         catch (ParserConfigurationException | IOException | SAXException e){
             e.getMessage();
@@ -99,12 +104,14 @@ public class Receiver extends Thread{
      * @param cityCode 각 도시별로 부여된 고유한 아이디 값
      * @param routeId 각 노선별로 부여된 고유한 아이디 값
      */
-    void getRouteInfoItem(String cityCode, String routeId){
+    public void getRouteInfoItem(RouteInfo rouif){
         String endPoint = "http://openapi.tago.go.kr/openapi/service";
         String service = "BusRouteInfoInqireService/getRouteInfoIem";
         String serviceKey = "jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D&";
-
-        String url = endPoint + "/" + service + "?serviceKey=" + serviceKey;
+        String cityCode = rouif.get_in_cityCode();
+        String routeId = rouif.get_in_routeId();
+        
+        String url = endPoint + "/" + service + "?serviceKey=" + serviceKey + "&cityCode=" + cityCode + "&routeId=" + routeId;
 
         try{
             NodeList list = getData(url);
