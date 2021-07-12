@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:smart_bus_app/src/serialization/city.dart';
 import 'package:smart_bus_app/src/ui/home_page.dart';
-import 'package:smart_bus_app/src/web/web_server.dart';
+import 'package:smart_bus_app/src/web_server.dart';
 
-void main(){
+
+void main() async{
+
+  bool isCity = await WebServer().getCityInfo("뉴욕");
+  print(isCity);
   runApp(MyApp());
 }
 
