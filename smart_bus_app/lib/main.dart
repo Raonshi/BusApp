@@ -6,6 +6,8 @@ import 'package:smart_bus_app/src/web_server.dart';
 
 void main() async{
 
+  //이거슨 테스트용 주석입니당.
+
   bool isCity = await WebServer().getCityInfo("뉴욕");
   print(isCity);
   runApp(MyApp());
