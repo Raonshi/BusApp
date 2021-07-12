@@ -17,7 +17,7 @@ public class SmartBusApplication {
 
 
 	@RequestMapping(method = RequestMethod.GET, path = "/list")
-	String list(@RequestParam String cityName) throws InterruptedException {
+	City list(@RequestParam String cityName) throws InterruptedException {
 		Receiver receiver = new Receiver(Function.ROUTE_CITY_LIST);
 		receiver.start();
 
@@ -30,15 +30,15 @@ public class SmartBusApplication {
 		for(int i = 0; i < DataController.Singleton().cityList.size(); i++) {
 			if(DataController.Singleton().cityList.get(i).get_cityName().contains(cityName)){
 				System.out.println("Success");
-				return DataController.Singleton().cityList.get(i).get_cityName();
+				return DataController.Singleton().cityList.get(i);
 			}
 			
 		}
-		return "Failed";
+		return null;
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, path = "/test")
-	String test(@RequestParam String cityCode, @RequestParam String routeId) throws InterruptedException {
+	@RequestMapping(method = RequestMethod.GET, path = "/route")
+	RouteInfo route(@RequestParam String cityCode, @RequestParam String routeId) throws InterruptedException {
 		RouteInfo rouif = new RouteInfo();
 		rouif.set_in_cityCode(cityCode);
 		rouif.set_in_routeId(routeId);
@@ -49,7 +49,7 @@ public class SmartBusApplication {
 		
 		for(int i = 0; i < DataController.Singleton().routeInfoList.size(); i++) {
 			if(DataController.Singleton().routeInfoList.get(i).get_routeId().contains(routeId)){
-				String t_data = "노선 ID : " + DataController.Singleton().routeInfoList.get(i).get_routeId() + 
+				String r_data = "노선 ID : " + DataController.Singleton().routeInfoList.get(i).get_routeId() +
 						" 노선 번호  : " + DataController.Singleton().routeInfoList.get(i).get_routeNum() +
 						" 노선 유형  : " + DataController.Singleton().routeInfoList.get(i).get_routeType() +
 						" 종점  : " + DataController.Singleton().routeInfoList.get(i).get_endNode() +
@@ -59,11 +59,12 @@ public class SmartBusApplication {
 						" 배차(평일) : " + DataController.Singleton().routeInfoList.get(i).get_interval() +
 						" 배차(토요일) : " + DataController.Singleton().routeInfoList.get(i).get_intervalSat() +
 						" 배차(일요일) : " + DataController.Singleton().routeInfoList.get(i).get_IntervalSun();
-				return t_data;
+				System.out.println(r_data);
+				return DataController.Singleton().routeInfoList.get(i);
 			}
 		}
 			
-		return "Failed";
+		return null;
 	}
 	
 		
