@@ -1,13 +1,14 @@
 package com.example.demo.api_controller;
 
 import com.example.demo.Function;
+import com.example.demo.SmartBusApplication;
 import com.example.demo.data.*;
-import com.example.demo.api_controller.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import org.json.simple.*;
 
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,8 +18,8 @@ import java.io.IOException;
 
 public class Receiver extends Thread{
     private Function _function;
-    RouteInfo rouif;
-    
+    SmartBusApplication sba;
+
     public Receiver(Function function){
         _function = function;
     }
@@ -34,7 +35,7 @@ public class Receiver extends Thread{
                 break;
             case ROUTE_INFO:
                 //테스트 값
-                //getRouteInfoItem(rouif);
+                getRouteInfoItem(sba.cityCode, sba.routeId);
                 break;
             case ROUTE_NUMBER_LIST:
                 getRouteAcctoThrghSttnList(10, 1, "25", "DJB30300052");
@@ -84,9 +85,12 @@ public class Receiver extends Thread{
                 Node node = list.item(i);
                 if(node.getNodeType() == Node.ELEMENT_NODE){
                     Element element = (Element) node;
+                    JSONObject json = new JSONObject();
+                    json.put("cityCode", getValue("citycode", element));
+                    json.put("cityName", getValue("cityname", element));
 
-                    City item = new City(getValue("citycode", element), getValue("cityname", element));
-                    DataController.Singleton().cityList.add(item);
+                    //City item = new City(getValue("citycode", element), getValue("cityname", element));
+                    DataController.Singleton().cityList.add(json);
                     //System.out.println(item.get_cityName());
                 }
             }
@@ -104,13 +108,11 @@ public class Receiver extends Thread{
      * @param cityCode 각 도시별로 부여된 고유한 아이디 값
      * @param routeId 각 노선별로 부여된 고유한 아이디 값
      */
-    public void getRouteInfoItem(RouteInfo rouif){
+    public void getRouteInfoItem(String cityCode, String routeId){
         String endPoint = "http://openapi.tago.go.kr/openapi/service";
         String service = "BusRouteInfoInqireService/getRouteInfoIem";
         String serviceKey = "jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D&";
-        String cityCode = rouif.get_in_cityCode();
-        String routeId = rouif.get_in_routeId();
-        
+
         String url = endPoint + "/" + service + "?serviceKey=" + serviceKey + "&cityCode=" + cityCode + "&routeId=" + routeId;
 
         try{
@@ -119,20 +121,19 @@ public class Receiver extends Thread{
                 Node node = list.item(i);
                 if(node.getNodeType() == Node.ELEMENT_NODE){
                     Element element = (Element) node;
+                    JSONObject json = new JSONObject();
+                    json.put("routeId", getValue("routeid", element));
+                    json.put("routeno", getValue("routeno", element));
+                    json.put("routetp", getValue("routetp", element));
+                    json.put("startnodenm", getValue("startnodenm", element));
+                    json.put("endnodenm", getValue("endnodenm", element));
+                    json.put("startvehicletime", getValue("startvehicletime", element));
+                    json.put("endvehicletime", getValue("endvehicletime", element));
+                    json.put("intervaltime", getValue("intervaltime", element));
+                    json.put("intervalsattime", getValue("intervalsattime", element));
+                    json.put("intervalsuntime", getValue("intervalsuntime", element));
 
-                    RouteInfo item = new RouteInfo(
-                            getValue("routeid", element),
-                            getValue("routeno", element),
-                            getValue("routetp", element),
-                            getValue("startnodenm", element),
-                            getValue("endnodenm", element),
-                            getValue("startvehicletime", element),
-                            getValue("endvehicletime", element),
-                            getValue("intervaltime", element),
-                            getValue("intervalsattime", element),
-                            getValue("intervalsuntime", element)
-                            );
-                    DataController.Singleton().routeInfoList.add(item);
+                    DataController.Singleton().routeInfoList.add(json);
                 }
             }
         }

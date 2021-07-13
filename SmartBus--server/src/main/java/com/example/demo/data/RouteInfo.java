@@ -1,8 +1,6 @@
 package com.example.demo.data;
 
 public class RouteInfo {
-	private String in_routeId, in_cityCode;
-	
     private String _routeId, _routeNum, _routeType;
     private String _startNode, _endNode;
     private String _startTime, _endTime;
@@ -27,24 +25,6 @@ public class RouteInfo {
         this._intervalSat = intervalSat;
         this._intervalSun = intervalSun;
     }
-    
-    public void set_in_cityCode(String in_cityCode) {
-    	this.in_cityCode = in_cityCode;
-    }
-    
-    public void set_in_routeId(String in_routeId) {
-    	this.in_routeId = in_routeId;
-    }
-    
-    public String get_in_cityCode() {
-    	return in_cityCode;
-    }
-    
-    public String get_in_routeId() {
-    	return in_routeId;
-    }
-    
-    
 
     public String get_routeId() {
         return _routeId;
