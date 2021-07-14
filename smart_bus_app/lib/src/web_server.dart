@@ -19,7 +19,7 @@ class WebServer{
 
   final endpoint = "127.0.0.1:8080";
 
-  ///테스트 코드
+  ///테스트 코드 -> 이 코드를 기반으로 데이터 처리
   void test(String cityName) async {
     final service = "list";
     final params = {
@@ -27,7 +27,7 @@ class WebServer{
     };
 
     Uri uri = Uri.http(endpoint, service, params);
-    String result = await WWW().request(uri);
+    dynamic result = await WWW().request(uri);
 
     Logger().d(result);
   }
@@ -56,6 +56,7 @@ class WebServer{
       return false;
     }
   }
+  ///
 }
 
 
