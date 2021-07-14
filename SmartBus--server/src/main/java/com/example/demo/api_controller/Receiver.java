@@ -37,7 +37,7 @@ public class Receiver extends Thread{
                 getRouteInfoItem(sba.cityCode, sba.routeId);
                 break;
             case ROUTE_NUMBER_LIST:
-                getCityList();
+                //getCityList();
 
                 getRouteNoList(sba.cityCode, sba.routeNo);
 
@@ -160,7 +160,7 @@ public class Receiver extends Thread{
         String service = "BusRouteInfoInqireService/getRouteNoList";
         String serviceKey = "jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D&";
 
-        String url = endPoint + "/" + service + "?serviceKey=" + serviceKey + "&cityCode=" + cityCode + "&routeNum=" + routeNum;
+        String url = endPoint + "/" + service + "?serviceKey=" + serviceKey + "&cityCode=" + cityCode + "&routeNo=" + routeNum;
 
         try{
             NodeList list = getData(url);

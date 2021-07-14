@@ -66,9 +66,13 @@ public class SmartBusApplication {
 		return null;
 	}
 
-	public static String getCityCode(String cityName) {
-
+	public static String getCityCode(String cityName) throws InterruptedException {
 		JSONArray list = DataController.Singleton().cityList;
+
+		Receiver receiver = new Receiver(Function.ROUTE_CITY_LIST);
+		receiver.start();
+
+		Thread.sleep(500);
 
 		for(int i = 0; i < list.size(); i++) {
 			JSONObject json = (JSONObject) list.get(i);
