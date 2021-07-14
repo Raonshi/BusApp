@@ -20,6 +20,11 @@ public class SmartBusApplication {
 	public static String cityCode;
 	public static String routeId;
 
+	public static String routeNo;
+
+	public static String nodeNm;
+	public static String nodeNo;
+
 	@RequestMapping(method = RequestMethod.GET, path = "/list")
 	JSONObject list(@RequestParam String cityName) throws InterruptedException {
 		Receiver receiver = new Receiver(Function.ROUTE_CITY_LIST);
@@ -28,6 +33,7 @@ public class SmartBusApplication {
 		Thread.sleep(500);
 
 		JSONArray list = DataController.Singleton().cityList;
+
 		for(int i = 0; i < list.size(); i++) {
 			JSONObject json = (JSONObject) list.get(i);
 			if(json.get("cityName").toString().contains(cityName)){
@@ -47,8 +53,9 @@ public class SmartBusApplication {
 		receiver.start();
 
 		Thread.sleep(500);
-		
+
 		JSONArray route = DataController.Singleton().routeInfoList;
+
 		for(int i = 0; i < route.size(); i++) {
 			JSONObject json = (JSONObject) route.get(i);
 			if(json.get("routeId").toString().contains(routeId)) {
@@ -58,6 +65,46 @@ public class SmartBusApplication {
 		}
 		return null;
 	}
+
+	public static String getCityCode(String cityName) {
+
+		JSONArray list = DataController.Singleton().cityList;
+
+		for(int i = 0; i < list.size(); i++) {
+			JSONObject json = (JSONObject) list.get(i);
+			if(json.get("cityName").toString().contains(cityName)){
+				System.out.println("Success");
+				return json.get("cityCode").toString();
+			}
+		}
+		return "failed";
+	}
+
+
+	@RequestMapping(method = RequestMethod.GET, path = "/getBusList")
+	JSONObject test(@RequestParam String cityName, @RequestParam String routeNo) throws InterruptedException {
+
+		this.cityCode = getCityCode(cityName);
+		this.routeNo = routeNo;
+
+		Receiver receiver = new Receiver(Function.ROUTE_NUMBER_LIST);
+		receiver.start();
+
+		Thread.sleep(2000);
+
+		JSONArray routeList = DataController.Singleton().routeNumList;
+
+		for(int i = 0; i < routeList.size(); i++) {
+			JSONObject json = (JSONObject) routeList.get(i);
+
+			if(json.get("routeno").toString().contains(routeNo)){
+				System.out.println("Success");
+				return json;
+			}
+		}
+		return null;
+	}
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(SmartBusApplication.class, args);

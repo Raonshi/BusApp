@@ -22,9 +22,14 @@ public class DataController {
      */
     //public ArrayList<City> cityList = new ArrayList<>();
     //public ArrayList<RouteInfo> routeInfoList = new ArrayList<>();
-    public ArrayList<RouteNum> routeNumList = new ArrayList<>();
-    public ArrayList<AccessStation> accessStationList = new ArrayList<>();
+    //public ArrayList<RouteNum> routeNumList = new ArrayList<>();
+    //public ArrayList<AccessStation> accessStationList = new ArrayList<>();
+
     public JSONArray cityList = new JSONArray();
     public JSONArray routeInfoList = new JSONArray();
+    public JSONArray stationNumList = new JSONArray();
+    public JSONArray accessStationList = new JSONArray();
+    public JSONArray routeNumList = new JSONArray();
+
 
 }

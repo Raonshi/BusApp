@@ -34,16 +34,22 @@ public class Receiver extends Thread{
                 getCityList();
                 break;
             case ROUTE_INFO:
-                //테스트 값
                 getRouteInfoItem(sba.cityCode, sba.routeId);
                 break;
             case ROUTE_NUMBER_LIST:
-                getRouteAcctoThrghSttnList(10, 1, "25", "DJB30300052");
+                getCityList();
+
+                getRouteNoList(sba.cityCode, sba.routeNo);
+
+                System.out.println("cityCode = " + sba.cityCode + " routeNo = " +  sba.routeNo);
                 break;
             case ROUTE_THROUGH_STATION_LIST:
-
+                getRouteAcctoThrghSttnList(10, 1, "25", "DJB30300052");
                 break;
-            case LOCATION_CITY_LIST:
+            case STATION_NUMBER_LIST:
+                getStationNumList(sba.cityCode, sba.nodeNm, sba.nodeNo);
+                break;
+            /*case LOCATION_CITY_LIST:
 
                 break;
             case LOCATION_BUS_LIST:
@@ -60,7 +66,7 @@ public class Receiver extends Thread{
                 break;
             case ARRIVE_SPECIFY_STATION_ACCESS_BUS_LIST:
 
-                break;
+                break;*/
         }
     }
 
@@ -90,8 +96,8 @@ public class Receiver extends Thread{
                     json.put("cityName", getValue("cityname", element));
 
                     //City item = new City(getValue("citycode", element), getValue("cityname", element));
-                    DataController.Singleton().cityList.add(json);
                     //System.out.println(item.get_cityName());
+                    DataController.Singleton().cityList.add(json);
                 }
             }
             
@@ -108,7 +114,7 @@ public class Receiver extends Thread{
      * @param cityCode 각 도시별로 부여된 고유한 아이디 값
      * @param routeId 각 노선별로 부여된 고유한 아이디 값
      */
-    public void getRouteInfoItem(String cityCode, String routeId){
+    void getRouteInfoItem(String cityCode, String routeId){
         String endPoint = "http://openapi.tago.go.kr/openapi/service";
         String service = "BusRouteInfoInqireService/getRouteInfoIem";
         String serviceKey = "jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D&";
@@ -143,6 +149,44 @@ public class Receiver extends Thread{
     }
 
     /**
+     * <p>노선 번호 목록 조회</p>
+     * <p>버스 노선번호의 목록을 조회한 뒤 {@link RouteNum}에 저장한다.</p>
+     * <p>{@link RouteNum}객체는 {@link DataController}클래스의 routeNumList에 저장된다.</p>
+     * @param cityCode 각 도시별로 부여된 고유한 아이디 값
+     * @param routeNum 버스를 식별할 수 있는 노선 번호(예 : 502, 10-1, 811-2)
+     */
+    void getRouteNoList(String cityCode, String routeNum){
+        String endPoint = "http://openapi.tago.go.kr/openapi/service";
+        String service = "BusRouteInfoInqireService/getRouteNoList";
+        String serviceKey = "jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D&";
+
+        String url = endPoint + "/" + service + "?serviceKey=" + serviceKey + "&cityCode=" + cityCode + "&routeNum=" + routeNum;
+
+        try{
+            NodeList list = getData(url);
+            for(int i = 0; i < list.getLength(); i++){
+                Node node = list.item(i);
+                if(node.getNodeType() == Node.ELEMENT_NODE){
+                    Element element = (Element) node;
+                    JSONObject json = new JSONObject();
+                    json.put("routeid", getValue("routeid", element));
+                    json.put("routeno", getValue("routeno", element));
+                    json.put("routetp", getValue("routetp", element));
+                    json.put("startnodenm", getValue("startnodenm", element));
+                    json.put("endnodenm", getValue("endnodenm", element));
+                    json.put("startvehicletime", getValue("startvehicletime", element));
+                    json.put("endvehicletime", getValue("endvehicletime", element));
+
+                    DataController.Singleton().routeNumList.add(json);
+                }
+            }
+        }
+        catch (ParserConfigurationException | IOException | SAXException e){
+            e.getMessage();
+        }
+    }
+
+    /**
      * <p>노선별 경유 정류소 목록 조회</p>
      * <p>노선별로 경유하는 정류장의 목록을 조회한 뒤 {@link AccessStation}객체에 저장한다.</p>
      * <p>{@link AccessStation}객체는 {@link DataController}클래스의 accessStationList에 저장된다.</p>
@@ -165,18 +209,16 @@ public class Receiver extends Thread{
                 Node node = list.item(i);
                 if(node.getNodeType() == Node.ELEMENT_NODE){
                     Element element = (Element) node;
+                    JSONObject json = new JSONObject();
+                    json.put("routeId", getValue("routeid", element));
+                    json.put("nodeid", getValue("nodeid", element));
+                    json.put("nodenm", getValue("nodenm", element));
+                    json.put("nodeno", getValue("nodeno", element));
+                    json.put("gpslong", getValue("gpslong", element));
+                    json.put("gpslati", getValue("gpslati", element));
+                    json.put("updowncd", getValue("updowncd", element));
 
-                    AccessStation item = new AccessStation(
-                            getValue("routeid", element),
-                            getValue("nodeid", element),
-                            getValue("nodenm", element),
-                            getValue("nodeord", element),
-                            getValue("nodeno", element),
-                            getValue("gpslong", element),
-                            getValue("gpslati", element),
-                            getValue("updowncd", element)
-                    );
-                    DataController.Singleton().accessStationList.add(item);
+                    DataController.Singleton().accessStationList.add(json);
                 }
             }
         }
@@ -185,19 +227,24 @@ public class Receiver extends Thread{
         }
     }
 
+
+
     /**
-     * <p>노선 번호 목록 조회</p>
-     * <p>버스 노선번호의 목록을 조회한 뒤 {@link RouteNum}에 저장한다.</p>
-     * <p>{@link RouteNum}객체는 {@link DataController}클래스의 routeNumList에 저장된다.</p>
+     * <p>정류소 번호 목록 조회</p>
+     * <p>노선별로 경유하는 정류장의 목록을 조회한 뒤 {@link StationNumList}객체에 저장한다.</p>
+     * <p>{@link StationNumList}객체는 {@link DataController}클래스의 accessStationList에 저장된다.</p>
      * @param cityCode 각 도시별로 부여된 고유한 아이디 값
-     * @param routeNum 버스를 식별할 수 있는 노선 번호(예 : 502, 10-1, 811-2)
+     * @param nodeNm 정류소 이름
+     * @param nodeNo 정류소 고유 식별 번호
      */
-    void getRouteNoList(String cityCode, String routeNum){
+    void getStationNumList(String cityCode, String nodeNm, String nodeNo) {
         String endPoint = "http://openapi.tago.go.kr/openapi/service";
-        String service = "BusRouteInfoInqireService/getRouteNoList";
+        String service = "BusSttnInfoInqireService/getSttnNoList";
         String serviceKey = "jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D&";
 
-        String url = endPoint + "/" + service + "?serviceKey=" + serviceKey;
+
+        String url = endPoint + "/" + service + "?serviceKey=" + serviceKey +
+                "&cityCode=" + cityCode + "&nodeNm=" + nodeNm + "&nodeNo=" + nodeNo;
 
         try{
             NodeList list = getData(url);
@@ -205,17 +252,16 @@ public class Receiver extends Thread{
                 Node node = list.item(i);
                 if(node.getNodeType() == Node.ELEMENT_NODE){
                     Element element = (Element) node;
+                    JSONObject json = new JSONObject();
 
-                    RouteNum item = new RouteNum(
-                            getValue("routeid", element),
-                            getValue("routeno", element),
-                            getValue("routetp", element),
-                            getValue("startnodenm", element),
-                            getValue("endnodenm", element),
-                            getValue("startvehicletime", element),
-                            getValue("endvehicletime", element)
-                    );
-                    DataController.Singleton().routeNumList.add(item);
+                    json.put("gpslati", getValue("gpslati", element));
+                    json.put("gpslong", getValue("gpslong", element));
+                    json.put("nodeId", getValue("nodeid", element));
+                    json.put("nodeNm", getValue("nodenm", element));
+                    json.put("nodeNo", getValue("nodeno", element));
+
+                    DataController.Singleton().stationNumList.add(json);
+
                 }
             }
         }
