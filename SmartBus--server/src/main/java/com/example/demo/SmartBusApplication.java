@@ -10,8 +10,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.util.RouteMatcher;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @SpringBootApplication
@@ -25,27 +25,31 @@ public class SmartBusApplication {
 	public static String nodeNm;
 	public static String nodeNo;
 
+
 	@RequestMapping(method = RequestMethod.GET, path = "/list")
-	JSONObject list(@RequestParam String cityName) throws InterruptedException {
+	JSONArray list(@RequestParam String cityName) throws InterruptedException {
+
 		Receiver receiver = new Receiver(Function.ROUTE_CITY_LIST);
 		receiver.start();
 
 		Thread.sleep(500);
 
+
 		JSONArray list = DataController.Singleton().cityList;
+		JSONArray result = new JSONArray();
 
 		for(int i = 0; i < list.size(); i++) {
 			JSONObject json = (JSONObject) list.get(i);
-			if(json.get("cityName").toString().contains(cityName)){
-				System.out.println("Success");
-				return json;
+			if(json.get("cityName").toString().contains(cityName)) {
+				result.add(json);
 			}
 		}
-		return null;
+
+		return result;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, path = "/route")
-	JSONObject route(@RequestParam String cityCode, @RequestParam String routeId) throws InterruptedException {
+	JSONArray route(@RequestParam String cityCode, @RequestParam String routeId) throws InterruptedException {
 		this.cityCode = cityCode;
 		this.routeId = routeId;
 
@@ -55,15 +59,16 @@ public class SmartBusApplication {
 		Thread.sleep(500);
 
 		JSONArray route = DataController.Singleton().routeInfoList;
+		JSONArray result = new JSONArray();
 
 		for(int i = 0; i < route.size(); i++) {
 			JSONObject json = (JSONObject) route.get(i);
 			if(json.get("routeId").toString().contains(routeId)) {
-				System.out.println("Success");
-				return json;
+				result.add(json);
+
 			}
 		}
-		return null;
+		return result;
 	}
 
 	public static String getCityCode(String cityName) throws InterruptedException {
@@ -86,7 +91,7 @@ public class SmartBusApplication {
 
 
 	@RequestMapping(method = RequestMethod.GET, path = "/getBusList")
-	JSONObject test(@RequestParam String cityName, @RequestParam String routeNo) throws InterruptedException {
+	JSONArray test(@RequestParam String cityName, @RequestParam String routeNo) throws InterruptedException {
 
 		this.cityCode = getCityCode(cityName);
 		this.routeNo = routeNo;
@@ -94,19 +99,20 @@ public class SmartBusApplication {
 		Receiver receiver = new Receiver(Function.ROUTE_NUMBER_LIST);
 		receiver.start();
 
-		Thread.sleep(2000);
+		Thread.sleep(1000);
+
 
 		JSONArray routeList = DataController.Singleton().routeNumList;
 
 		for(int i = 0; i < routeList.size(); i++) {
 			JSONObject json = (JSONObject) routeList.get(i);
 
-			if(json.get("routeno").toString().contains(routeNo)){
-				System.out.println("Success");
-				return json;
+			if (!json.get("routeno").toString().contains(routeNo)) {
+				routeList.remove(i);
+
 			}
 		}
-		return null;
+		return routeList;
 	}
 
 

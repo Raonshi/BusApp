@@ -40,8 +40,6 @@ public class Receiver extends Thread{
                 //getCityList();
 
                 getRouteNoList(sba.cityCode, sba.routeNo);
-
-                System.out.println("cityCode = " + sba.cityCode + " routeNo = " +  sba.routeNo);
                 break;
             case ROUTE_THROUGH_STATION_LIST:
                 getRouteAcctoThrghSttnList(10, 1, "25", "DJB30300052");
@@ -86,6 +84,7 @@ public class Receiver extends Thread{
 
         try{
             NodeList list = getData(url);
+            DataController.Singleton().cityList.clear();
 
             for(int i = 0; i < list.getLength(); i++){
                 Node node = list.item(i);
@@ -123,6 +122,7 @@ public class Receiver extends Thread{
 
         try{
             NodeList list = getData(url);
+            DataController.Singleton().routeInfoList.clear();
             for(int i = 0; i < list.getLength(); i++){
                 Node node = list.item(i);
                 if(node.getNodeType() == Node.ELEMENT_NODE){
@@ -164,6 +164,7 @@ public class Receiver extends Thread{
 
         try{
             NodeList list = getData(url);
+            DataController.Singleton().routeNumList.clear();
             for(int i = 0; i < list.getLength(); i++){
                 Node node = list.item(i);
                 if(node.getNodeType() == Node.ELEMENT_NODE){
@@ -297,7 +298,7 @@ public class Receiver extends Thread{
         Node node = (Node)list.item(0);
 
         if(node == null){
-            return null;
+            return "미지원";
         }
         return node.getNodeValue();
     }
