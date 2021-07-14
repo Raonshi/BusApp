@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:smart_bus_app/src/serialization/city.dart';
 
+import 'data/data.dart';
+
 
 class WebServer{
   //#region Singleton Pattern
@@ -31,6 +33,29 @@ class WebServer{
 
     Logger().d(result);
   }
+
+  ///지정된 도시의 버스 노선정보를 모두 불러온다.
+  Future<List> getBusList(String busNum) async{
+    final service = "getBusList";
+    final params = {
+      "cityName" : "청주",
+      "routeNum" : busNum
+    };
+
+    Uri uri = Uri.http(endpoint, service, params);
+    dynamic jsonString = await WWW().request(uri);
+
+    var jsonArray = jsonDecode(jsonString) as List;
+    List list = jsonArray.map((e) => Bus.fromJson(e)).toList();
+
+    return list;
+  }
+
+
+  Future<List> getStationList(String station) async {
+
+  }
+
 
   /// 도시 정보를 불러온다.
   ///
