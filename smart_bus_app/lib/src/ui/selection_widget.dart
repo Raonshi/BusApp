@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_bus_app/src/provider/find_way_provider.dart';
+import 'package:smart_bus_app/src/provider/search_provider.dart';
 
 class SelectionWidget extends StatelessWidget {
-  String departure;
-  String destination;
+  FindWayProvider provider;
 
-  SelectionWidget(this.departure, this.destination, {Key key}) : super(key: key);
+  SelectionWidget(this.provider, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('$departure → $destination'),
+        title: Text('${provider.departure} → ${provider.destination}'),
       ),
       body: MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (_) => FindWayProvider(departure, destination)),
+          ChangeNotifierProvider(create: (_) => FindWayProvider(provider.departure, provider.destination)),
         ],
         child: Body(),
       ),

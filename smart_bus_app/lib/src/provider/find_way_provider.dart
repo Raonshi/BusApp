@@ -5,11 +5,9 @@ class FindWayProvider with ChangeNotifier{
   String _departure;
   get departure => _departure;
 
-
   ///도착지 정류장 정보
   String _destination;
   get destination => _destination;
-
 
   FindWayProvider(this._departure, this._destination);
 

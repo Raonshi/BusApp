@@ -3,21 +3,53 @@
 ///
 /// 작성자 : 홍순원
 
-
 class Bus{
-  String _routeNum;
-  String _routeId;
+  String _routeType, _routeId, _routeNum;
+  String _startTime, _endTime;
+  String _startStation, _endStation;
 
+  String get routeType => _routeType;
   String get routeNum => _routeNum;
   String get routeId => _routeId;
+  String get startTime => _startTime;
+  String get endTime => _endTime;
+  String get startStation => _startStation;
+  String get endStation => _endStation;
 
-  Bus(this._routeNum, this._routeId);
+  Bus(this._routeType, this._routeId, this._routeNum, this._startTime, this._endTime, this._startStation, this._endStation);
 
   factory Bus.fromJson(dynamic json){
-    return Bus(json['routeNum'] as String, json['routeNum'] as String);
+    return Bus(
+      json['routetp'] as String,
+      json['routeid'] as String,
+      json['routeno'] as String,
+      json['startvehicletime'] as String,
+      json['endvehicletime'] as String,
+      json['startnodenm'] as String,
+      json['endnodenm'] as String
+    );
   }
 }
 
 class Station{
+  String _nodeName, _nodeId, _nodeNum;
+  String _xPos, _yPos;
 
+  String get nodeName => _nodeName;
+  String get nodeId => _nodeId;
+  String get nodeNum => _nodeNum;
+  String get xPos => _xPos;
+  String get yPos => _yPos;
+
+  Station(this._nodeName, this._nodeId, this._nodeNum, this._xPos, this._yPos);
+
+  factory Station.fromJson(dynamic json){
+    return Station(
+      json['nodenm'] as String,
+      json['nodeid'] as String,
+      json['nodeno'] as String,
+      json['gpslong'] as String,
+      json['gpslati'] as String
+    );
+  }
 }

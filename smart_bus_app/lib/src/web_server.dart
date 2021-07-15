@@ -6,7 +6,7 @@ import 'package:smart_bus_app/src/serialization/city.dart';
 import 'data/data.dart';
 
 
-class WebServer{
+class WebServer {
   //#region Singleton Pattern
   static WebServer _instance = WebServer.init();
 
@@ -17,33 +17,22 @@ class WebServer{
   WebServer.init(){
     Logger().d("WebServerCreated!");
   }
+
   //#endregion
 
+  ///접속 주소
   final endpoint = "127.0.0.1:8080";
 
-  ///테스트 코드 -> 이 코드를 기반으로 데이터 처리
-  void test(String cityName) async {
-    final service = "list";
-    final params = {
-      "cityName" : cityName
-    };
-
-    Uri uri = Uri.http(endpoint, service, params);
-    dynamic result = await WWW().request(uri);
-
-    Logger().d(result);
-  }
-
-  ///지정된 도시의 버스 노선정보를 모두 불러온다.
-  Future<List> getBusList(String busNum) async{
+  ///지정된 도시의 버스 노선 정보 중 [busNum]이 포함되는 모든 버스번호를 불러온다.
+  Future<List> getBusList(String busNum) async {
     final service = "getBusList";
     final params = {
-      "cityName" : "청주",
-      "routeNum" : busNum
+      "cityName": "청주",
+      "routeNo": busNum
     };
 
     Uri uri = Uri.http(endpoint, service, params);
-    dynamic jsonString = await WWW().request(uri);
+    dynamic jsonString = await request(uri);
 
     var jsonArray = jsonDecode(jsonString) as List;
     List list = jsonArray.map((e) => Bus.fromJson(e)).toList();
@@ -51,41 +40,25 @@ class WebServer{
     return list;
   }
 
-
+  ///지정된 도시의 버스정류장 정보 중 [station]이 포함되는 모든 정류장을 불러온다.
   Future<List> getStationList(String station) async {
-
-  }
-
-
-  /// 도시 정보를 불러온다.
-  ///
-  /// [cityName]을 통해 도시이름을 전달받아 해당 도시가 지원될 경우,
-  /// true를 반환한다.
-  Future<bool> getCityInfo(String cityName) async {
-    final service = "list";
+    final service = "getStationList";
     final params = {
-      "cityName" : cityName
+      "cityName": "청주",
+      "routeNo": station
     };
 
     Uri uri = Uri.http(endpoint, service, params);
-    dynamic response = await WWW().request(uri);
+    dynamic jsonString = await request(uri);
 
-    print(response);
+    var jsonArray = jsonDecode(jsonString) as List;
+    List list = jsonArray.map((e) => Station.fromJson(e)).toList();
 
-    try{
-      City city = City.fromJson(jsonDecode(response));
-      return true;
-    }
-    catch(e){
-      Logger().d(e.toString());
-      return false;
-    }
+    return list;
   }
-  ///
-}
 
 
-class WWW{
+  /// [uri]로 전달 받은 주소를 통해 데이터를 받아온다.
   Future<String> request(Uri uri) async {
     http.Response response = await http.get(uri);
 
@@ -97,5 +70,4 @@ class WWW{
       Logger().d("Failed : ${response.statusCode}");
     }
   }
-
 }
