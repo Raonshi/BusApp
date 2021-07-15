@@ -107,16 +107,13 @@ public class SmartBusApplication {
 		for(int i = 0; i < routeList.size(); i++) {
 			JSONObject json = (JSONObject) routeList.get(i);
 
-<<<<<<< HEAD
 			if (!json.get("routeno").toString().contains(routeNo)) {
 				routeList.remove(i);
-
-=======
+			}
 			if(!json.get("routeno").toString().contains(routeNo)){
 				//System.out.println("Success");
 				//return json;
 				routeList.remove(i);
->>>>>>> 81f402d40309746c80cc7dd6b9dacee3303b4e5d
 			}
 		}
 		return routeList;
