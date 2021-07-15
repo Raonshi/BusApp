@@ -40,17 +40,15 @@ public class Receiver extends Thread {
                 break;
             case ROUTE_NUMBER_LIST:
                 //getCityList();
-
                 getRouteNoList(sba.cityCode, sba.routeNo);
                 break;
-            case ROUTE_THROUGH_STATION_LIST:
-                getRouteAcctoThrghSttnList(10, 1, "25", "DJB30300052");
-                break;
             case STATION_NUMBER_LIST:
-                System.out.println(sba.cityCode + sba.nodeNm);
                 getStationNumList(sba.cityCode, sba.nodeNm);
                 break;
-            /*case LOCATION_CITY_LIST:
+            /*case ROUTE_THROUGH_STATION_LIST:
+                getRouteAcctoThrghSttnList(10, 1, "25", "DJB30300052");
+                break;
+            case LOCATION_CITY_LIST:
 
                 break;
             case LOCATION_BUS_LIST:
@@ -79,14 +77,13 @@ public class Receiver extends Thread {
      * <p>{@link City}객체는 {@link DataController}클래스의 cityList에 저장된다.</p>
      */
     void getCityList(){
-        String endPoint = "http://openapi.tago.go.kr/openapi/service";
-        String service = "BusRouteInfoInqireService/getCtyCodeList";
-        String serviceKey = "jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D&";
-
-        String url = endPoint + "/" + service + "?serviceKey=" + serviceKey;
 
         try{
+            StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusRouteInfoInqireService/getCtyCodeList");
+            urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
+            String url = urlBuilder.toString();
             NodeList list = getData(url);
+
             DataController.Singleton().cityList.clear();
 
             for(int i = 0; i < list.getLength(); i++){
@@ -117,14 +114,16 @@ public class Receiver extends Thread {
      * @param routeId 각 노선별로 부여된 고유한 아이디 값
      */
     void getRouteInfoItem(String cityCode, String routeId){
-        String endPoint = "http://openapi.tago.go.kr/openapi/service";
-        String service = "BusRouteInfoInqireService/getRouteInfoIem";
-        String serviceKey = "jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D&";
-
-        String url = endPoint + "/" + service + "?serviceKey=" + serviceKey + "&cityCode=" + cityCode + "&routeId=" + routeId;
 
         try{
+
+            StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusRouteInfoInqireService/getRouteInfoIem");
+            urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
+            urlBuilder.append("&" + URLEncoder.encode("cityCode","UTF-8") + "=" + cityCode);
+            urlBuilder.append("&" + URLEncoder.encode("routeId","UTF-8") + "=" + routeId);
+            String url = urlBuilder.toString();
             NodeList list = getData(url);
+
             DataController.Singleton().routeInfoList.clear();
 
             for(int i = 0; i < list.getLength(); i++){
@@ -160,14 +159,15 @@ public class Receiver extends Thread {
      * @param routeNum 버스를 식별할 수 있는 노선 번호(예 : 502, 10-1, 811-2)
      */
     void getRouteNoList(String cityCode, String routeNum){
-        String endPoint = "http://openapi.tago.go.kr/openapi/service";
-        String service = "BusRouteInfoInqireService/getRouteNoList";
-        String serviceKey = "jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D&";
-
-        String url = endPoint + "/" + service + "?serviceKey=" + serviceKey + "&cityCode=" + cityCode + "&routeNo=" + routeNum;
 
         try{
+            StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusRouteInfoInqireService/getRouteNoList");
+            urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
+            urlBuilder.append("&" + URLEncoder.encode("cityCode","UTF-8") + "=" + cityCode);
+            urlBuilder.append("&" + URLEncoder.encode("routeNum","UTF-8") + "=" + routeNum);
+            String url = urlBuilder.toString();
             NodeList list = getData(url);
+
             DataController.Singleton().routeNumList.clear();
 
             for(int i = 0; i < list.getLength(); i++){
@@ -193,48 +193,6 @@ public class Receiver extends Thread {
         }
     }
 
-    /**
-     * <p>노선별 경유 정류소 목록 조회</p>
-     * <p>노선별로 경유하는 정류장의 목록을 조회한 뒤 {@link AccessStation}객체에 저장한다.</p>
-     * <p>{@link AccessStation}객체는 {@link DataController}클래스의 accessStationList에 저장된다.</p>
-     * @param numOfRows 한 페이지에 출력할 데이터 개수
-     * @param pageNo 출력할 페이지 번호
-     * @param cityCode 각 도시별로 부여된 고유한 아이디 값
-     * @param routeId 각 노선별로 부여된 고유한 아이디 값
-     */
-    void getRouteAcctoThrghSttnList(int numOfRows, int pageNo, String cityCode, String routeId){
-        String endPoint = "http://openapi.tago.go.kr/openapi/service";
-        String service = "BusRouteInfoInqireService/getRouteAcctoThrghSttnList";
-        String serviceKey = "jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D&";
-        String params = numOfRows + "&" + pageNo + "&" + cityCode + "&" + routeId;
-
-        String url = endPoint + "/" + service + "?serviceKey=" + serviceKey + "?" + params;
-
-        try{
-            NodeList list = getData(url);
-            for(int i = 0; i < list.getLength(); i++){
-                Node node = list.item(i);
-                if(node.getNodeType() == Node.ELEMENT_NODE){
-                    Element element = (Element) node;
-                    JSONObject json = new JSONObject();
-                    json.put("routeId", getValue("routeid", element));
-                    json.put("nodeid", getValue("nodeid", element));
-                    json.put("nodenm", getValue("nodenm", element));
-                    json.put("nodeno", getValue("nodeno", element));
-                    json.put("gpslong", getValue("gpslong", element));
-                    json.put("gpslati", getValue("gpslati", element));
-                    json.put("updowncd", getValue("updowncd", element));
-
-                    DataController.Singleton().accessStationList.add(json);
-                }
-            }
-        }
-        catch (ParserConfigurationException | IOException | SAXException e){
-            e.getMessage();
-        }
-    }
-
-
 
     /**
      * <p>정류소 번호 목록 조회</p>
@@ -248,8 +206,8 @@ public class Receiver extends Thread {
         try{
             StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusSttnInfoInqireService/getSttnNoList");
             urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
-            urlBuilder.append("&" + URLEncoder.encode("cityCode","UTF-8") + "=" + URLEncoder.encode(cityCode, "UTF-8"));
-            urlBuilder.append("&" + URLEncoder.encode("nodeNm","UTF-8") + "=" + URLEncoder.encode(nodeNm, "UTF-8"));
+            urlBuilder.append("&" + URLEncoder.encode("cityCode","UTF-8") + "=" + cityCode);
+            urlBuilder.append("&" + URLEncoder.encode("nodeNm","UTF-8") + "=" + nodeNm);
 
             NodeList list = getData(urlBuilder.toString());
             DataController.Singleton().stationNumList.clear();
@@ -272,6 +230,47 @@ public class Receiver extends Thread {
                 }
             }
 
+        }
+        catch (ParserConfigurationException | IOException | SAXException e){
+            e.getMessage();
+        }
+    }
+
+    /**
+     * <p>노선별 경유 정류소 목록 조회</p>
+     * <p>노선별로 경유하는 정류장의 목록을 조회한 뒤 {@link AccessStation}객체에 저장한다.</p>
+     * <p>{@link AccessStation}객체는 {@link DataController}클래스의 accessStationList에 저장된다.</p>
+     * @param numOfRows 한 페이지에 출력할 데이터 개수
+     * @param pageNo 출력할 페이지 번호
+     * @param cityCode 각 도시별로 부여된 고유한 아이디 값
+     * @param routeId 각 노선별로 부여된 고유한 아이디 값
+     */
+    void getRouteAcctoThrghSttnList(int numOfRows, int pageNo, String cityCode, String routeId){
+
+
+        try{
+            StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusRouteInfoInqireService/getRouteAcctoThrghSttnList");
+            urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
+            urlBuilder.append("&" + URLEncoder.encode("cityCode","UTF-8") + "=" + cityCode);
+            urlBuilder.append("&" + URLEncoder.encode("routeId","UTF-8") + "=" + routeId);
+
+            NodeList list = getData(urlBuilder.toString());
+            for(int i = 0; i < list.getLength(); i++){
+                Node node = list.item(i);
+                if(node.getNodeType() == Node.ELEMENT_NODE){
+                    Element element = (Element) node;
+                    JSONObject json = new JSONObject();
+                    json.put("routeId", getValue("routeid", element));
+                    json.put("nodeid", getValue("nodeid", element));
+                    json.put("nodenm", getValue("nodenm", element));
+                    json.put("nodeno", getValue("nodeno", element));
+                    json.put("gpslong", getValue("gpslong", element));
+                    json.put("gpslati", getValue("gpslati", element));
+                    json.put("updowncd", getValue("updowncd", element));
+
+                    DataController.Singleton().accessStationList.add(json);
+                }
+            }
         }
         catch (ParserConfigurationException | IOException | SAXException e){
             e.getMessage();
