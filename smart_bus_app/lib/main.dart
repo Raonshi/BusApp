@@ -5,6 +5,7 @@ import 'package:smart_bus_app/src/web_server.dart';
 
 
 void main(){
+  //테스트코드
   runApp(MyApp());
 }
 
