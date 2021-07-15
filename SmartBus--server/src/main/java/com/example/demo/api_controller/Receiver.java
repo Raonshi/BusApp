@@ -302,13 +302,15 @@ public class Receiver extends Thread{
     }
 
     public static String getValue(String tag, Element element){
-        NodeList list = element.getElementsByTagName(tag).item(0).getChildNodes();
-        Node node = (Node)list.item(0);
 
-        if(node == null){
+        try{
+            NodeList list = element.getElementsByTagName(tag).item(0).getChildNodes();
+            Node node = (Node)list.item(0);
+            return node.getNodeValue();
+        }
+        catch (NullPointerException nullE){
             return "미지원";
         }
-        return node.getNodeValue();
     }
 
     //#endregion
