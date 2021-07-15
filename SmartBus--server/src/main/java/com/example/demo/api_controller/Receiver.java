@@ -14,9 +14,11 @@ import org.json.simple.*;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 
-public class Receiver extends Thread{
+public class Receiver extends Thread {
     private Function _function;
     SmartBusApplication sba;
 
@@ -45,7 +47,8 @@ public class Receiver extends Thread{
                 getRouteAcctoThrghSttnList(10, 1, "25", "DJB30300052");
                 break;
             case STATION_NUMBER_LIST:
-                getStationNumList(sba.cityCode, sba.nodeNm, sba.nodeNo);
+                System.out.println(sba.cityCode + sba.nodeNm);
+                getStationNumList(sba.cityCode, sba.nodeNm);
                 break;
             /*case LOCATION_CITY_LIST:
 
@@ -95,7 +98,7 @@ public class Receiver extends Thread{
                     json.put("cityName", getValue("cityname", element));
 
                     //City item = new City(getValue("citycode", element), getValue("cityname", element));
-                    //System.out.println(item.get_cityName());
+                    //System.out.println(json.get("cityName").toString());
                     DataController.Singleton().cityList.add(json);
                 }
             }
@@ -172,6 +175,7 @@ public class Receiver extends Thread{
                 if(node.getNodeType() == Node.ELEMENT_NODE){
                     Element element = (Element) node;
                     JSONObject json = new JSONObject();
+
                     json.put("routeid", getValue("routeid", element));
                     json.put("routeno", getValue("routeno", element));
                     json.put("routetp", getValue("routetp", element));
@@ -235,22 +239,21 @@ public class Receiver extends Thread{
     /**
      * <p>정류소 번호 목록 조회</p>
      * <p>노선별로 경유하는 정류장의 목록을 조회한 뒤 {@link StationNumList}객체에 저장한다.</p>
-     * <p>{@link StationNumList}객체는 {@link DataController}클래스의 accessStationList에 저장된다.</p>
+     * <p>{@link StationNumList}객체는 {@link DataController}클래스의 stationNumList에 저장된다.</p>
      * @param cityCode 각 도시별로 부여된 고유한 아이디 값
      * @param nodeNm 정류소 이름
-     * @param nodeNo 정류소 고유 식별 번호
      */
-    void getStationNumList(String cityCode, String nodeNm, String nodeNo) {
-        String endPoint = "http://openapi.tago.go.kr/openapi/service";
-        String service = "BusSttnInfoInqireService/getSttnNoList";
-        String serviceKey = "jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D&";
-
-
-        String url = endPoint + "/" + service + "?serviceKey=" + serviceKey +
-                "&cityCode=" + cityCode + "&nodeNm=" + nodeNm + "&nodeNo=" + nodeNo;
+    void getStationNumList(String cityCode, String nodeNm) {
 
         try{
-            NodeList list = getData(url);
+            StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusSttnInfoInqireService/getSttnNoList");
+            urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
+            urlBuilder.append("&" + URLEncoder.encode("cityCode","UTF-8") + "=" + URLEncoder.encode(cityCode, "UTF-8"));
+            urlBuilder.append("&" + URLEncoder.encode("nodeNm","UTF-8") + "=" + URLEncoder.encode(nodeNm, "UTF-8"));
+
+            NodeList list = getData(urlBuilder.toString());
+            DataController.Singleton().stationNumList.clear();
+
             for(int i = 0; i < list.getLength(); i++){
                 Node node = list.item(i);
                 if(node.getNodeType() == Node.ELEMENT_NODE){
@@ -259,14 +262,16 @@ public class Receiver extends Thread{
 
                     json.put("gpslati", getValue("gpslati", element));
                     json.put("gpslong", getValue("gpslong", element));
-                    json.put("nodeId", getValue("nodeid", element));
-                    json.put("nodeNm", getValue("nodenm", element));
-                    json.put("nodeNo", getValue("nodeno", element));
+                    json.put("nodeid", getValue("nodeid", element));
+                    json.put("nodenm", getValue("nodenm", element));
+                    json.put("nodeno", getValue("nodeno", element));
+
 
                     DataController.Singleton().stationNumList.add(json);
 
                 }
             }
+
         }
         catch (ParserConfigurationException | IOException | SAXException e){
             e.getMessage();

@@ -82,7 +82,7 @@ public class SmartBusApplication {
 		for(int i = 0; i < list.size(); i++) {
 			JSONObject json = (JSONObject) list.get(i);
 			if(json.get("cityName").toString().contains(cityName)){
-				System.out.println("Success");
+
 				return json.get("cityCode").toString();
 			}
 		}
@@ -91,7 +91,7 @@ public class SmartBusApplication {
 
 
 	@RequestMapping(method = RequestMethod.GET, path = "/getBusList")
-	JSONArray test(@RequestParam String cityName, @RequestParam String routeNo) throws InterruptedException {
+	JSONArray getBusList(@RequestParam String cityName, @RequestParam String routeNo) throws InterruptedException {
 
 		this.cityCode = getCityCode(cityName);
 		this.routeNo = routeNo;
@@ -107,9 +107,6 @@ public class SmartBusApplication {
 		for(int i = 0; i < routeList.size(); i++) {
 			JSONObject json = (JSONObject) routeList.get(i);
 
-			if (!json.get("routeno").toString().contains(routeNo)) {
-				routeList.remove(i);
-			}
 			if(!json.get("routeno").toString().contains(routeNo)){
 				//System.out.println("Success");
 				//return json;
@@ -117,6 +114,29 @@ public class SmartBusApplication {
 			}
 		}
 		return routeList;
+	}
+
+	@RequestMapping(method = RequestMethod.GET, path = "/test")
+	JSONArray test(@RequestParam String cityName, @RequestParam String nodeNm) throws InterruptedException {
+		this.cityCode = getCityCode(cityName);
+		this.nodeNm = nodeNm;
+
+		Receiver receiver = new Receiver(Function.STATION_NUMBER_LIST);
+		receiver.start();
+
+		Thread.sleep(1000);
+
+		JSONArray stationList = DataController.Singleton().stationNumList;
+		JSONArray result = new JSONArray();
+		for(int i = 0; i < stationList.size(); i++) {
+			JSONObject json = (JSONObject) stationList.get(i);
+
+			if(json.get("nodenm").toString().contains(nodeNm)) {
+				result.add(json);
+			}
+
+		}
+		return result;
 	}
 
 
