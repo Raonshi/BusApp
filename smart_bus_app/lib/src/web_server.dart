@@ -45,7 +45,7 @@ class WebServer {
     final service = "getStationList";
     final params = {
       "cityName": "청주",
-      "routeNo": station
+      "nodeNm": station
     };
 
     Uri uri = Uri.http(endpoint, service, params);

@@ -133,10 +133,11 @@ class StationItem extends StatelessWidget {
           shadowColor: Colors.blueGrey,
           elevation: 20.0,
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               //정거장 아이콘
-              Padding(
-                padding: EdgeInsets.all(ScreenUtil().setWidth(10.0)),
+              Expanded(
+                flex: 1,
                 child: Card(
                   color: Colors.white,
                   shadowColor: Colors.grey,
@@ -149,49 +150,39 @@ class StationItem extends StatelessWidget {
                 ),
               ),
 
-              //정거장 이름, 번호
-              Padding(
-                padding: EdgeInsets.all(ScreenUtil().setWidth(20.0)),
-                child: Column(
-                  children: [
-                    //첫번째 줄
-                    Card(
-                      color: Colors.white,
-                      shadowColor: Colors.black,
-                      elevation: 20.0,
-                      child: Row(
-                        children: [
-                          //정거장 이름
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                            child: Text(
-                                _stationItem.nodeName,
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold
-                                )
-                            ),
-                          ),
-
-                          //정거장 번호
-                          Container(
-                            alignment: Alignment.centerRight,
-                            child: Card(
-                              color: Colors.green,
-                              shadowColor: Colors.black,
-                              elevation: 20.0,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(_stationItem.nodeNum),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
+              //정거장 이름
+              Expanded(
+                flex: 4,
+                child: Card(
+                  color: Colors.white,
+                  shadowColor: Colors.black,
+                  elevation: 20.0,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                        _stationItem.nodeName,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold
+                        )
                     ),
-                  ],
+                  ),
+                ),
+              ),
+
+              //정거장 번호
+              Expanded(
+                flex: 1,
+                child: Card(
+                  color: Colors.cyan,
+                  shadowColor: Colors.black,
+                  elevation: 20.0,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(_stationItem.nodeNum),
+                  ),
                 ),
               )
             ],

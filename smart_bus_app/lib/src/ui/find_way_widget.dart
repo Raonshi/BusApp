@@ -109,7 +109,7 @@ class _BodyState extends State<Body> {
     departure = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => SearchWidget()
+            builder: (context) => SearchStationWidget()
         )
     );
 
@@ -128,7 +128,7 @@ class _BodyState extends State<Body> {
     destination = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => SearchWidget()
+            builder: (context) => SearchStationWidget()
         )
     );
 
@@ -155,7 +155,7 @@ class _BodyState extends State<Body> {
     keyword = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => SearchWidget()
+            builder: (context) => SearchBusWidget()
         )
     );
 

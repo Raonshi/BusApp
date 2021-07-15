@@ -56,16 +56,19 @@ class SearchProvider with ChangeNotifier{
     switch(_type){
       case Type.BUS:
         tmpList = await WebServer().getBusList(_keyword);
+        //리스트에 채워넣기
+        tmpList.forEach((element) {
+          _list.add(BusItem(element));
+        });
         break;
       case Type.STATION:
         tmpList = await WebServer().getStationList(_keyword);
+        //리스트에 채워넣기
+        tmpList.forEach((element) {
+          _list.add(StationItem(element));
+        });
         break;
     }
-
-    //리스트에 채워넣기
-    tmpList.forEach((element) {
-      _list.add(BusItem(element));
-    });
 
     notifyListeners();
   }
