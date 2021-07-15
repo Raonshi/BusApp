@@ -1,26 +1,23 @@
 import 'package:flutter/widgets.dart';
+import 'package:smart_bus_app/src/data/data.dart';
 
 class FindWayProvider with ChangeNotifier{
   ///출발지 정류장 정보
-  String _departure;
-  get departure => _departure;
+  //String _departure;
+  //get departure => _departure;
+  Station _departure;
+  Station get departure => _departure;
 
   ///도착지 정류장 정보
-  String _destination;
-  get destination => _destination;
+  //String _destination;
+  //get destination => _destination;
+  Station _destination;
+  Station get destination => _destination;
 
   FindWayProvider(this._departure, this._destination);
 
-  void setDeparture(String value){
-    _departure = value;
-    notifyListeners();
-  }
-
-  void setDestination(String value){
-    _destination = value;
-    notifyListeners();
-  }
-
+  void setDeparture(Station station) => _departure = station;
+  void setDestination(Station station) => _destination = station;
 
   ///출발지와 도착지 정보를 통해 경로를 탐색한다.
   void finding(){

@@ -13,7 +13,7 @@ class SelectionWidget extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${provider.departure} → ${provider.destination}'),
+        title: Text('${provider.departure.nodeName} → ${provider.destination.nodeName}'),
       ),
       body: MultiProvider(
         providers: [

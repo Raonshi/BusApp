@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_bus_app/src/data/data.dart';
 import 'package:smart_bus_app/src/provider/find_way_provider.dart';
 import 'package:smart_bus_app/src/provider/search_provider.dart';
 import 'package:smart_bus_app/src/ui/depature_widget.dart';
 import 'package:smart_bus_app/src/ui/destination_widget.dart';
+import 'package:smart_bus_app/src/ui/search_item.dart';
 import 'package:smart_bus_app/src/ui/search_widget.dart';
 import 'package:smart_bus_app/src/ui/selection_widget.dart';
 
@@ -12,9 +14,12 @@ import 'depature_widget.dart';
 
 class FindWayWidget extends StatelessWidget {
 
-  String departure;
-  String destination;
-  String busNum;
+  //String departure;
+  //String destination;
+  //String busNum;
+  Station departure;
+  Station destination;
+  Bus busNum;
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +43,11 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  String departure;
-  String destination;
   String keyword;
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<SearchProvider>(context);
+    final provider = Provider.of<FindWayProvider>(context);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -105,15 +108,15 @@ class _BodyState extends State<Body> {
     );
   }
 
-  void getDeparture(BuildContext context, SearchProvider provider) async {
-    departure = await Navigator.push(
+  void getDeparture(BuildContext context, FindWayProvider provider) async {
+    Station departure = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => SearchStationWidget()
         )
     );
 
-    provider.search(departure, Type.STATION);
+    provider.setDeparture(departure);
 
     /*
     //알림 출력
@@ -124,15 +127,15 @@ class _BodyState extends State<Body> {
      */
   }
 
-  void getDestination(BuildContext context, SearchProvider provider) async {
-    destination = await Navigator.push(
+  void getDestination(BuildContext context, FindWayProvider provider) async {
+    Station destination = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => SearchStationWidget()
         )
     );
 
-    provider.search(departure, Type.STATION);
+    provider.setDestination(destination);
 
 
     /*
@@ -146,20 +149,20 @@ class _BodyState extends State<Body> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => SelectionWidget(FindWayProvider(departure, destination))
+            builder: (context) => SelectionWidget(provider)
         )
     );
   }
 
-  void getBusNum(BuildContext context, SearchProvider provider) async {
-    keyword = await Navigator.push(
+  void getBusNum(BuildContext context, FindWayProvider provider) async {
+    BusItem busItem = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => SearchBusWidget()
         )
     );
 
-    provider.search(keyword, Type.BUS);
+    //provider.search(, Type.BUS);
 
     //알림 출력
     /*
