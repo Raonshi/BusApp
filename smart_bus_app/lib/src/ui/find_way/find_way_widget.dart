@@ -108,8 +108,11 @@ class _BodyState extends State<Body> {
         )
     );
 
-    provider.setDeparture(departure);
+    if(departure == null){
+      return;
+    }
 
+    provider.setDeparture(departure);
 
     //알림 출력
     ScaffoldMessenger.of(context)
@@ -124,6 +127,10 @@ class _BodyState extends State<Body> {
             builder: (context) => SearchStationWidget()
         )
     );
+
+    if(destination == null){
+      return;
+    }
 
     provider.setDestination(destination);
 
@@ -148,6 +155,11 @@ class _BodyState extends State<Body> {
         )
     );
 
+    if(busItem == null){
+      return;
+    }
+
+    /*
     //버스 노선 정보 위젯으로 넘어가야함
     Navigator.push(
         context,
@@ -155,5 +167,7 @@ class _BodyState extends State<Body> {
             builder: (context) => SelectionWidget(provider)
         )
     );
+
+     */
   }
 }
