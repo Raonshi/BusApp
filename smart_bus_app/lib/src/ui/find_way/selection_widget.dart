@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_bus_app/src/data/data.dart';
 import 'package:smart_bus_app/src/provider/find_way_provider.dart';
-import 'package:smart_bus_app/src/provider/search_provider.dart';
+import 'package:smart_bus_app/src/web_server.dart';
 
 class SelectionWidget extends StatelessWidget {
   FindWayProvider provider;
@@ -33,28 +34,46 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // 최근기록에 저장한다.
-    saveRecently();
-  }
+  List<dynamic> wayList;
+  bool recentlyUpLoad = false;
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<FindWayProvider>(context);
+    saveRecently(provider.departure, provider.destination);
+    wayList = provider.wayList;
 
     return Center(
-      child: Text('${provider.departure} 부터 ${provider.destination}'),
+      child: Column(
+        children: [
+          Text('${provider.departure.nodeName} 부터 ${provider.destination.nodeName}'),
+          //검색 결과 목록 출력
+          Expanded(
+            child: GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: ListView.builder(
+                itemBuilder: (context, index){
+                  return wayList[index];
+                },
+                itemCount: wayList.length,
+                reverse: false,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   ///최근 기록 db에 저장
-  void saveRecently(){
+  void saveRecently(Station departure, Station destination){
+    if(recentlyUpLoad){
+      return;
+    }
 
+    WebServer().postRecently(departure, destination);
+
+    recentlyUpLoad = true;
   }
 }
 

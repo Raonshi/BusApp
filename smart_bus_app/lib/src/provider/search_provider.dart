@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:smart_bus_app/src/ui/search_item.dart';
+import 'package:smart_bus_app/src/ui/item.dart';
 import 'package:smart_bus_app/src/web_server.dart';
 
 enum Type{ BUS, STATION }

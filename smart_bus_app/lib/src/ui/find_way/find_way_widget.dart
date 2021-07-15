@@ -3,20 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:smart_bus_app/src/data/data.dart';
 import 'package:smart_bus_app/src/provider/find_way_provider.dart';
 import 'package:smart_bus_app/src/provider/search_provider.dart';
-import 'package:smart_bus_app/src/ui/depature_widget.dart';
-import 'package:smart_bus_app/src/ui/destination_widget.dart';
-import 'package:smart_bus_app/src/ui/search_item.dart';
-import 'package:smart_bus_app/src/ui/search_widget.dart';
-import 'package:smart_bus_app/src/ui/selection_widget.dart';
-
-import 'depature_widget.dart';
+import 'package:smart_bus_app/src/ui/item.dart';
+import 'package:smart_bus_app/src/ui/find_way/search_widget.dart';
+import 'package:smart_bus_app/src/ui/find_way/selection_widget.dart';
 
 
 class FindWayWidget extends StatelessWidget {
-
-  //String departure;
-  //String destination;
-  //String busNum;
   Station departure;
   Station destination;
   Bus busNum;
@@ -118,13 +110,11 @@ class _BodyState extends State<Body> {
 
     provider.setDeparture(departure);
 
-    /*
+
     //알림 출력
     ScaffoldMessenger.of(context)
       ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text('출발지 설정 : $departure')));
-
-     */
+      ..showSnackBar(SnackBar(content: Text('출발지 설정 : ${departure.nodeName}')));
   }
 
   void getDestination(BuildContext context, FindWayProvider provider) async {
@@ -137,14 +127,10 @@ class _BodyState extends State<Body> {
 
     provider.setDestination(destination);
 
-
-    /*
     //알림 출력
     ScaffoldMessenger.of(context)
       ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text('도착지 설정 : $destination')));
-
-     */
+      ..showSnackBar(SnackBar(content: Text('도착지 설정 : ${destination.nodeName}')));
 
     Navigator.push(
         context,
@@ -162,13 +148,12 @@ class _BodyState extends State<Body> {
         )
     );
 
-    //provider.search(, Type.BUS);
-
-    //알림 출력
-    /*
-    ScaffoldMessenger.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text('출발지 설정 : $departure')));
-     */
+    //버스 노선 정보 위젯으로 넘어가야함
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SelectionWidget(provider)
+        )
+    );
   }
 }

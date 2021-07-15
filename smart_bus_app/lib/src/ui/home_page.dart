@@ -1,7 +1,13 @@
+/// 본 스크립트는 앱의 메인 화면을 구성하는 위젯의 스크립트가 작성되어 있다.
+/// find_way_widget.dart스크립트는 버스 노선 및 길찾기 관련 스크립트이다.
+/// favorite_widget.dart스크립트는 즐겨찾기에 등록한 경로 목록을 관리하는 스크립트이다.
+/// recently_widget.dart스크립트는 최근 검색기록을 보여주는 스크립트이다.
+/// 작성자 : 홍순원
+
 import 'package:flutter/material.dart';
-import 'favorite_widget.dart';
-import 'recently_widget.dart';
-import 'find_way_widget.dart';
+import 'favorite/favorite_widget.dart';
+import 'recently/recently_widget.dart';
+import 'find_way/find_way_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key key}) : super(key: key);

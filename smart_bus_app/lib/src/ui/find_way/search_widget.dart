@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:smart_bus_app/src/provider/departure_provider.dart';
 import 'package:smart_bus_app/src/provider/search_provider.dart';
-import 'package:smart_bus_app/src/ui/search_item.dart';
 
 
 class SearchBusWidget extends StatelessWidget {
@@ -74,12 +72,15 @@ class _SearchBusState extends State<SearchBus> {
 
           //검색 결과 목록 출력
           Expanded(
-              child: ListView.builder(
-                  itemBuilder: (context, index){
-                    return busList[index];
-                  },
-                itemCount: busList.length,
-                reverse: false,
+              child: GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                child: ListView.builder(
+                    itemBuilder: (context, index){
+                      return busList[index];
+                    },
+                  itemCount: busList.length,
+                  reverse: false,
+                ),
               ),
           ),
         ],
@@ -155,12 +156,15 @@ class _SearchStationState extends State<SearchStation> {
 
           //검색 결과 목록 출력
           Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, index){
-                return stationList[index];
-              },
-              itemCount: stationList.length,
-              reverse: false,
+            child: GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: ListView.builder(
+                itemBuilder: (context, index){
+                  return stationList[index];
+                },
+                itemCount: stationList.length,
+                reverse: false,
+              ),
             ),
           ),
         ],

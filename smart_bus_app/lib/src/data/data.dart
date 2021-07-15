@@ -31,6 +31,7 @@ class Bus{
   }
 }
 
+
 class Station{
   String _nodeName, _nodeId, _nodeNum;
   String _xPos, _yPos;
@@ -50,6 +51,36 @@ class Station{
       json['nodeno'] as String,
       json['gpslong'] as String,
       json['gpslati'] as String
+    );
+  }
+}
+
+
+class Way{
+  String _tmp;
+
+  Way(this._tmp);
+
+  factory Way.fromJson(dynamic json){
+    return Way(
+      json['tmp'] as String
+    );
+  }
+}
+
+
+class Recently{
+  Station _departure, _destination;
+
+  Station get departure => _departure;
+  Station get destination => _destination;
+
+  Recently(this._departure, this._destination);
+
+  factory Recently.fromJson(dynamic json){
+    return Recently(
+        Station.fromJson(json['departure']),
+        Station.fromJson(json['destination'])
     );
   }
 }
