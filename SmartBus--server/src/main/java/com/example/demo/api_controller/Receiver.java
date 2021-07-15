@@ -123,6 +123,10 @@ public class Receiver extends Thread{
         try{
             NodeList list = getData(url);
             DataController.Singleton().routeInfoList.clear();
+<<<<<<< HEAD
+=======
+
+>>>>>>> 81f402d40309746c80cc7dd6b9dacee3303b4e5d
             for(int i = 0; i < list.getLength(); i++){
                 Node node = list.item(i);
                 if(node.getNodeType() == Node.ELEMENT_NODE){
@@ -165,6 +169,10 @@ public class Receiver extends Thread{
         try{
             NodeList list = getData(url);
             DataController.Singleton().routeNumList.clear();
+<<<<<<< HEAD
+=======
+
+>>>>>>> 81f402d40309746c80cc7dd6b9dacee3303b4e5d
             for(int i = 0; i < list.getLength(); i++){
                 Node node = list.item(i);
                 if(node.getNodeType() == Node.ELEMENT_NODE){
