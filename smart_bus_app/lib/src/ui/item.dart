@@ -198,67 +198,150 @@ class WayItem extends StatelessWidget {
         designSize: Size(1440, 2560),
         builder: () => Container(
           margin: EdgeInsets.all(ScreenUtil().setWidth(10.0)),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  //출발 정거장 이름
-                  Card(
-                    color: Colors.lightGreenAccent,
-                    shadowColor: Colors.black,
-                    elevation: 20.0,
-                    child: Text(wayItem.deptName),
-                  ),
-
-                  //도착 정거장 이름
-                  Card(
-                      color: Colors.redAccent,
+          child: Card(
+            color: Colors.black12,
+            shadowColor: Colors.black87,
+            elevation: 30,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    //출발 정거장 이름
+                    Card(
+                      color: Colors.lightGreenAccent,
                       shadowColor: Colors.black,
                       elevation: 20.0,
-                      child: Text(wayItem.destName),
-                  )
-                ],
-              ),
-
-              Row(
-                children: [
-                  //소요 시간
-                  Card(
-                    color: Colors.redAccent,
-                    shadowColor: Colors.black,
-                    elevation: 20.0,
-                    child: Text("${int.parse(wayItem.destArrTime) - int.parse(wayItem.deptArrTime)}"),
-                  ),
-
-                  //버스 노선 이름
-                  Card(
-                      color: Colors.redAccent,
-                      shadowColor: Colors.black,
-                      elevation: 20.0,
-                      child: Row(
-                        children: [
-                          Text(wayItem.routeNum),
-                          Text(wayItem.routeType),
-                        ],
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          wayItem.deptName,
+                          style: TextStyle(
+                            fontSize: 20
+                          ),
+                        ),
                       ),
-                  ),
+                    ),
 
-                  //버스 출발지 도착 시간
-                  Card(
-                    color: Colors.redAccent,
-                    shadowColor: Colors.black,
-                    elevation: 20.0,
-                    child: Text("${int.parse(wayItem.deptArrTime)}"),
-                  ),
-                ],
-              ),
-            ],
+                    //도착 정거장 이름
+                    Card(
+                        color: Colors.redAccent,
+                        shadowColor: Colors.black,
+                        elevation: 20.0,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            wayItem.destName,
+                            style: TextStyle(
+                              fontSize: 20
+                            ),
+                          ),
+                        ),
+                    )
+                  ],
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    //소요 시간
+                    Card(
+                      color: Colors.blueAccent,
+                      shadowColor: Colors.black,
+                      elevation: 20.0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(9.0),
+                        child: Text(
+                          timeCalculate(int.parse(wayItem.destArrTime), int.parse(wayItem.deptArrTime)),
+                          style: TextStyle(
+                            fontSize: 15
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    //버스 노선 이름
+                    Card(
+                        color: Colors.blueAccent,
+                        shadowColor: Colors.black,
+                        elevation: 20.0,
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: Text(
+                                wayItem.routeNum,
+                                style: TextStyle(
+                                  fontSize: 15
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: Card(
+                                color: routeTypeColor(wayItem.routeType),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(3.0),
+                                  child: Text(
+                                    wayItem.routeType,
+                                    style: TextStyle(
+                                      fontSize: 15
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                    ),
+
+                    //버스 출발지 도착 시간
+                    Card(
+                      color: Colors.blueAccent,
+                      shadowColor: Colors.black,
+                      elevation: 20.0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(9.0),
+                        child: Text(
+                          "${int.parse(wayItem.deptArrTime)}",
+                          style: TextStyle(
+                            fontSize: 15
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
       onTap: () => Navigator.pop(context, _wayItem),
     );
+  }
+
+  String timeCalculate(int dept, int dest){
+    int totalSeconds = dept - dest;
+    String minutes = (totalSeconds / 60).toInt().toString();
+    int seconds = totalSeconds % 60;
+
+    return minutes + "분 " + seconds.toString() + "초";
+  }
+
+  Color routeTypeColor(String type){
+    Color color = Colors.blueGrey;
+
+    switch(type){
+      case "좌석":
+        color = Colors.lightGreenAccent;
+        break;
+      case "저상":
+        color = Colors.blueAccent;
+        break;
+    }
+
+    return color;
   }
 }
 

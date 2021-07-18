@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:smart_bus_app/src/data/data.dart';
+import 'package:smart_bus_app/src/ui/item.dart';
 
 import '../web_server.dart';
 
@@ -13,8 +14,8 @@ class FindWayProvider with ChangeNotifier{
   Station get destination => _destination;
 
   ///경로 리스트
-  List<Way> _wayList;
-  List<Way> get wayList => _wayList;
+  List<dynamic> _wayList = [];
+  List<dynamic> get wayList => _wayList;
 
   FindWayProvider(this._departure, this._destination);
 
@@ -45,7 +46,7 @@ class FindWayProvider with ChangeNotifier{
     };
 
     for(int i = 0; i < 10; i++){
-      _wayList.add(Way.fromJson(testJson));
+      _wayList.add(WayItem(Way.fromJson(testJson)));
     }
 
     notifyListeners();
