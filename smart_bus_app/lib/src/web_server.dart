@@ -67,8 +67,8 @@ class WebServer {
   Future<List> getWayList(String departure, String destination) async {
     final service = "getWayList";
     final params = {
-      "deaprtureId": departure,
-      "destinationId": destination
+      "deaprtureNo": departure,
+      "destinationNo": destination
     };
 
     Uri uri = Uri.http(endpoint, service, params);

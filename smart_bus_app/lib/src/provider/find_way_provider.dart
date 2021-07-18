@@ -29,7 +29,7 @@ class FindWayProvider with ChangeNotifier{
 
   ///출발지와 도착지 정보를 통해 경로를 탐색한다.
   void finding() async {
-    _wayList = await WebServer().getWayList(_departure.nodeId, _destination.nodeId);
+    _wayList = await WebServer().getWayList(_departure.nodeNum, _destination.nodeNum);
     notifyListeners();
   }
 
