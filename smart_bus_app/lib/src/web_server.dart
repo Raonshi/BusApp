@@ -57,6 +57,9 @@ class WebServer {
     dynamic jsonString = await get(uri);
 
     var jsonArray = jsonDecode(jsonString) as List;
+
+    Logger().d(jsonArray);
+
     List list = jsonArray.map((e) => Station.fromJson(e)).toList();
 
     return list;
@@ -67,12 +70,19 @@ class WebServer {
   Future<List> getWayList(String departure, String destination) async {
     final service = "getWayList";
     final params = {
-      "deaprtureNo": departure,
-      "destinationNo": destination
+      "cityName":"청주",
+      "deptId": departure,
+      "destId": destination
     };
+
+    Logger().d(departure);
+    Logger().d(destination);
+
 
     Uri uri = Uri.http(endpoint, service, params);
     dynamic jsonString = await get(uri);
+    Logger().d(jsonString);
+
 
     var jsonArray = jsonDecode(jsonString) as List;
     List list = jsonArray.map((e) => Way.fromJson(e)).toList();

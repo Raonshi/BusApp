@@ -40,7 +40,8 @@ class _BodyState extends State<Body> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<FindWayProvider>(context);
-    saveRecently(provider.departure, provider.destination);
+    provider.finding();
+    //saveRecently(provider.departure, provider.destination);
     wayList = provider.wayList;
 
     return Center(

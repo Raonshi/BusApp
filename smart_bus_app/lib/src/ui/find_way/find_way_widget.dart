@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_bus_app/src/data/data.dart';
 import 'package:smart_bus_app/src/provider/find_way_provider.dart';
@@ -138,6 +139,7 @@ class _BodyState extends State<Body> {
     ScaffoldMessenger.of(context)
       ..removeCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text('도착지 설정 : ${destination.nodeName}')));
+
 
     Navigator.push(
         context,

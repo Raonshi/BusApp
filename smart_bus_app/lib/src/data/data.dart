@@ -57,13 +57,37 @@ class Station{
 
 
 class Way{
-  String _tmp;
+  String _deptName, _destName;
+  String _deptArrTime, _destArrTime;
+  String _deptArrStationCnt, _destArrStationCnt;
+  String _routeType, _routeNum, _vehicleType;
 
-  Way(this._tmp);
+  String get deptName => _deptName;
+  String get destName => _destName;
+  String get deptArrTime => _deptArrTime;
+  String get destArrTime => _destArrTime;
+  String get deptArrStationCnt => _deptArrStationCnt;
+  String get destArrStationCnt => _destArrStationCnt;
+  String get routeType => _routeType;
+  String get routeNum => _routeNum;
+  String get vehicleType => _vehicleType;
+
+  Way(this._deptName, this._destName,
+      this._deptArrTime, this._destArrTime,
+      this._deptArrStationCnt, this._destArrStationCnt,
+      this._routeType, this._routeNum, this._vehicleType);
 
   factory Way.fromJson(dynamic json){
     return Way(
-      json['tmp'] as String
+      json['deptnodenm'] as String,
+      json['destnodenm'] as String,
+      json['deptarrtime'] as String,
+      json['destarrtime'] as String,
+      json['deptarrprevstationcnt'] as String,
+      json['destarrprevstationcnt'] as String,
+      json['routetp'] as String,
+      json['routeno'] as String,
+      json['vehicletp'] as String,
     );
   }
 }

@@ -111,9 +111,7 @@ class BusItem extends StatelessWidget {
 
 class StationItem extends StatelessWidget {
   Station _stationItem;
-
   Station get stationItem => _stationItem;
-
   StationItem(this._stationItem);
 
   @override
@@ -187,16 +185,80 @@ class StationItem extends StatelessWidget {
   }
 }
 
-class Wayitem extends StatelessWidget {
+class WayItem extends StatelessWidget {
+  Way _wayItem;
+  Way get wayItem => _wayItem;
+  WayItem(this._wayItem);
 
-  String departure;
-  String destination;
-
-  Wayitem(String departure, String destination, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return ListTile(
+      title: ScreenUtilInit(
+        designSize: Size(1440, 2560),
+        builder: () => Container(
+          margin: EdgeInsets.all(ScreenUtil().setWidth(10.0)),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  //출발 정거장 이름
+                  Card(
+                    color: Colors.lightGreenAccent,
+                    shadowColor: Colors.black,
+                    elevation: 20.0,
+                    child: Text(wayItem.deptName),
+                  ),
+
+                  //도착 정거장 이름
+                  Card(
+                      color: Colors.redAccent,
+                      shadowColor: Colors.black,
+                      elevation: 20.0,
+                      child: Text(wayItem.destName),
+                  )
+                ],
+              ),
+
+              Row(
+                children: [
+                  //소요 시간
+                  Card(
+                    color: Colors.redAccent,
+                    shadowColor: Colors.black,
+                    elevation: 20.0,
+                    child: Text("${int.parse(wayItem.destArrTime) - int.parse(wayItem.deptArrTime)}"),
+                  ),
+
+                  //버스 노선 이름
+                  Card(
+                      color: Colors.redAccent,
+                      shadowColor: Colors.black,
+                      elevation: 20.0,
+                      child: Row(
+                        children: [
+                          Text(wayItem.routeNum),
+                          Text(wayItem.routeType),
+                        ],
+                      ),
+                  ),
+
+                  //버스 출발지 도착 시간
+                  Card(
+                    color: Colors.redAccent,
+                    shadowColor: Colors.black,
+                    elevation: 20.0,
+                    child: Text("${int.parse(wayItem.deptArrTime)}"),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      onTap: () => Navigator.pop(context, _wayItem),
+    );
   }
 }
 
