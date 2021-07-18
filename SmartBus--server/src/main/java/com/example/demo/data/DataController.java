@@ -30,6 +30,7 @@ public class DataController {
     public JSONArray stationNumList = new JSONArray();
     public JSONArray accessStationList = new JSONArray();
     public JSONArray routeNumList = new JSONArray();
-
+    public JSONArray arrivalList = new JSONArray();
+    public JSONArray wayList = new JSONArray();
 
 }

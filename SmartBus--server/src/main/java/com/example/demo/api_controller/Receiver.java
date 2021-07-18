@@ -46,7 +46,10 @@ public class Receiver extends Thread {
                 getStationNumList(sba.cityCode, sba.nodeNm);
                 break;
             case ROUTE_THROUGH_STATION_LIST:
-                getRouteAcctoThrghSttnList("100", "1" , sba.cityCode, sba.routeId);
+                getRouteAcctoThrghSttnList(sba.cityCode, sba.routeId);
+                break;
+            case FIND_WAY:
+                getWayList(sba.cityCode, sba.deptId, sba.destId);
                 break;
             /*case LOCATION_CITY_LIST:
 
@@ -158,7 +161,7 @@ public class Receiver extends Thread {
      * @param cityCode 각 도시별로 부여된 고유한 아이디 값
      * @param routeNo 버스를 식별할 수 있는 노선 번호(예 : 502, 10-1, 811-2)
      */
-    void getRouteNoList(String cityCode, String routeNo){
+    public void getRouteNoList(String cityCode, String routeNo){
 
         try{
             StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusRouteInfoInqireService/getRouteNoList");
@@ -208,6 +211,7 @@ public class Receiver extends Thread {
             urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
             urlBuilder.append("&" + URLEncoder.encode("cityCode","UTF-8") + "=" + cityCode);
             urlBuilder.append("&" + URLEncoder.encode("nodeNm","UTF-8") + "=" + URLEncoder.encode(nodeNm, "UTF-8"));
+            urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("100", "UTF-8"));
 
             NodeList list = getData(urlBuilder.toString());
             DataController.Singleton().stationNumList.clear();
@@ -240,19 +244,14 @@ public class Receiver extends Thread {
      * <p>노선별 경유 정류소 목록 조회</p>
      * <p>노선별로 경유하는 정류장의 목록을 조회한 뒤 {@link AccessStation}객체에 저장한다.</p>
      * <p>{@link AccessStation}객체는 {@link DataController}클래스의 accessStationList에 저장된다.</p>
-     * @param numOfRows 한 페이지에 출력할 데이터 개수
-     * @param pageNo 출력할 페이지 번호
      * @param cityCode 각 도시별로 부여된 고유한 아이디 값
      * @param routeId 각 노선별로 부여된 고유한 아이디 값
      */
-    void getRouteAcctoThrghSttnList(String numOfRows, String pageNo, String cityCode, String routeId){
-
-
+    void getRouteAcctoThrghSttnList(String cityCode, String routeId){
         try{
             StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusRouteInfoInqireService/getRouteAcctoThrghSttnList");
             urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
-            urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + numOfRows);
-            urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + pageNo);
+            urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + "100");
             urlBuilder.append("&" + URLEncoder.encode("cityCode","UTF-8") + "=" + cityCode);
             urlBuilder.append("&" + URLEncoder.encode("routeId","UTF-8") + "=" + routeId);
 
@@ -284,11 +283,88 @@ public class Receiver extends Thread {
 
     //#endregion
 
+
+
     //#region 국토교통부-버스위치정보 API
 
     //#endregion
 
+
+
     //#region 국토교통부-버스도착정보 API
+
+    void getSttnAcctoArvlPrearngeInfoList(String cityCode, String nodeId){
+        try {
+            System.out.println("Node Id : " + nodeId);
+
+            StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList");
+            urlBuilder.append("?" + URLEncoder.encode("ServiceKey", "UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
+            urlBuilder.append("&" + URLEncoder.encode("cityCode", "UTF-8") + "=" + cityCode);
+            urlBuilder.append("&" + URLEncoder.encode("nodeId", "UTF-8") + "=" + nodeId);
+
+            NodeList list = getData(urlBuilder.toString());
+            DataController.Singleton().arrivalList.clear();
+
+            for (int i = 0; i < list.getLength(); i++) {
+                Node node = list.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    JSONObject json = new JSONObject();
+                    json.put("nodeid", getValue("nodeid", element));
+                    json.put("nodenm", getValue("nodenm", element));
+                    json.put("routeid", getValue("routeid", element));
+                    json.put("routeno", getValue("routeno", element));
+                    json.put("routetp", getValue("routetp", element));
+                    json.put("arrprevstationcnt", getValue("arrprevstationcnt", element));
+                    json.put("vehicletp", getValue("vehicletp", element));
+                    json.put("arrtime", getValue("arrtime", element));
+
+                    DataController.Singleton().arrivalList.add(json);
+                }
+            }
+        }
+        catch (ParserConfigurationException | IOException | SAXException e){
+            e.getMessage();
+        }
+    }
+
+    //#endregion
+
+
+
+    //#region 버스 경로 탐색
+
+    /**
+     * 출발지 정류장과 도착지 정류장 간의 경로 탐색을 수행한 뒤 결과를 {@link DataController}의 {@link JSONArray}에 저장한다.
+     * @param deptId 출발지의 id값
+     * @param destId 도착지의 id값
+     */
+    void getWayList(String cityCode, String deptId, String destId){
+        //1. 출발지 정류장에 도착할 버스 목록을 구한다.
+        getSttnAcctoArvlPrearngeInfoList(cityCode, deptId);
+        JSONArray deptArrivalList = DataController.Singleton().arrivalList;
+
+        System.out.println(deptArrivalList.size());
+
+        //2. 도착지 정류장에 도착할 버스 목록을 구한다.
+        getSttnAcctoArvlPrearngeInfoList(cityCode, destId);
+        JSONArray destArrivalList = DataController.Singleton().arrivalList;
+
+        System.out.println(destArrivalList.size());
+
+        //3. 두 버스 목록에서 겹치는 버스가 있을 경우 직통버스로 간주한다.
+        deptArrivalList.forEach(dept -> {
+            destArrivalList.forEach(dest -> {
+                JSONObject deptJson = (JSONObject)dept;
+                JSONObject destJson = (JSONObject)dest;
+
+                //출발지와 도착지에 동일한 버스노선 번호가 존재할 경우
+                if(deptJson.get("routeno").toString().equals(destJson.get("routeno").toString())){
+                    DataController.Singleton().wayList.add(deptJson);
+                }
+            });
+        });
+    }
 
     //#endregion
 
