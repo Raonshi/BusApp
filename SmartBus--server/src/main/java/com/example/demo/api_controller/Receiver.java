@@ -45,10 +45,10 @@ public class Receiver extends Thread {
             case STATION_NUMBER_LIST:
                 getStationNumList(sba.cityCode, sba.nodeNm);
                 break;
-            /*case ROUTE_THROUGH_STATION_LIST:
-                getRouteAcctoThrghSttnList(10, 1, "25", "DJB30300052");
+            case ROUTE_THROUGH_STATION_LIST:
+                getRouteAcctoThrghSttnList("100", "1" , sba.cityCode, sba.routeId);
                 break;
-            case LOCATION_CITY_LIST:
+            /*case LOCATION_CITY_LIST:
 
                 break;
             case LOCATION_BUS_LIST:
@@ -156,15 +156,15 @@ public class Receiver extends Thread {
      * <p>버스 노선번호의 목록을 조회한 뒤 {@link RouteNum}에 저장한다.</p>
      * <p>{@link RouteNum}객체는 {@link DataController}클래스의 routeNumList에 저장된다.</p>
      * @param cityCode 각 도시별로 부여된 고유한 아이디 값
-     * @param routeNum 버스를 식별할 수 있는 노선 번호(예 : 502, 10-1, 811-2)
+     * @param routeNo 버스를 식별할 수 있는 노선 번호(예 : 502, 10-1, 811-2)
      */
-    void getRouteNoList(String cityCode, String routeNum){
+    void getRouteNoList(String cityCode, String routeNo){
 
         try{
             StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusRouteInfoInqireService/getRouteNoList");
             urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
-            urlBuilder.append("&" + URLEncoder.encode("cityCode","UTF-8") + "=" + cityCode);
-            urlBuilder.append("&" + URLEncoder.encode("routeNum","UTF-8") + "=" + routeNum);
+            urlBuilder.append("&" + URLEncoder.encode("cityCode","UTF-8") + "=" + URLEncoder.encode(cityCode, "UTF-8"));
+            urlBuilder.append("&" + URLEncoder.encode("routeNo","UTF-8") + "=" + URLEncoder.encode(routeNo, "UTF-8"));
             String url = urlBuilder.toString();
             NodeList list = getData(url);
 
@@ -207,7 +207,7 @@ public class Receiver extends Thread {
             StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusSttnInfoInqireService/getSttnNoList");
             urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
             urlBuilder.append("&" + URLEncoder.encode("cityCode","UTF-8") + "=" + cityCode);
-            urlBuilder.append("&" + URLEncoder.encode("nodeNm","UTF-8") + "=" + nodeNm);
+            urlBuilder.append("&" + URLEncoder.encode("nodeNm","UTF-8") + "=" + URLEncoder.encode(nodeNm, "UTF-8"));
 
             NodeList list = getData(urlBuilder.toString());
             DataController.Singleton().stationNumList.clear();
@@ -245,16 +245,20 @@ public class Receiver extends Thread {
      * @param cityCode 각 도시별로 부여된 고유한 아이디 값
      * @param routeId 각 노선별로 부여된 고유한 아이디 값
      */
-    void getRouteAcctoThrghSttnList(int numOfRows, int pageNo, String cityCode, String routeId){
+    void getRouteAcctoThrghSttnList(String numOfRows, String pageNo, String cityCode, String routeId){
 
 
         try{
             StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusRouteInfoInqireService/getRouteAcctoThrghSttnList");
             urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
+            urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + numOfRows);
+            urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + pageNo);
             urlBuilder.append("&" + URLEncoder.encode("cityCode","UTF-8") + "=" + cityCode);
             urlBuilder.append("&" + URLEncoder.encode("routeId","UTF-8") + "=" + routeId);
 
             NodeList list = getData(urlBuilder.toString());
+            DataController.Singleton().accessStationList.clear();
+
             for(int i = 0; i < list.getLength(); i++){
                 Node node = list.item(i);
                 if(node.getNodeType() == Node.ELEMENT_NODE){
@@ -264,6 +268,7 @@ public class Receiver extends Thread {
                     json.put("nodeid", getValue("nodeid", element));
                     json.put("nodenm", getValue("nodenm", element));
                     json.put("nodeno", getValue("nodeno", element));
+                    json.put("nodeord", getValue("nodeord", element));
                     json.put("gpslong", getValue("gpslong", element));
                     json.put("gpslati", getValue("gpslati", element));
                     json.put("updowncd", getValue("updowncd", element));

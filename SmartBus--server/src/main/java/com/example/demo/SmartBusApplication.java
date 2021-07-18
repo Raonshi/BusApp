@@ -19,11 +19,8 @@ public class SmartBusApplication {
 
 	public static String cityCode;
 	public static String routeId;
-
 	public static String routeNo;
-
 	public static String nodeNm;
-	public static String nodeNo;
 
 
 	@RequestMapping(method = RequestMethod.GET, path = "/list")
@@ -71,24 +68,6 @@ public class SmartBusApplication {
 		return result;
 	}
 
-	public static String getCityCode(String cityName) throws InterruptedException {
-		Receiver receiver = new Receiver(Function.ROUTE_CITY_LIST);
-		receiver.start();
-
-		Thread.sleep(500);
-
-		JSONArray list = DataController.Singleton().cityList;
-
-		for(int i = 0; i < list.size(); i++) {
-			JSONObject json = (JSONObject) list.get(i);
-			if(json.get("cityName").toString().contains(cityName)){
-				return json.get("cityCode").toString();
-			}
-		}
-		return "failed";
-	}
-
-
 	@RequestMapping(method = RequestMethod.GET, path = "/getBusList")
 	JSONArray getBusList(@RequestParam String cityName, @RequestParam String routeNo) throws InterruptedException {
 
@@ -125,7 +104,6 @@ public class SmartBusApplication {
 		JSONArray result = new JSONArray();
 		for(int i = 0; i < stationList.size(); i++) {
 			JSONObject json = (JSONObject) stationList.get(i);
-
 			if(json.get("nodenm").toString().contains(nodeNm)) {
 				result.add(json);
 			}
@@ -133,6 +111,47 @@ public class SmartBusApplication {
 		}
 		return result;
 	}
+
+	@RequestMapping(method = RequestMethod.GET, path = "/test")
+	JSONArray test(@RequestParam String cityName, @RequestParam String routeNo) throws InterruptedException {
+		Receiver receiver = new Receiver(Function.ROUTE_THROUGH_STATION_LIST);
+		receiver.start();
+
+		Thread.sleep(1000);
+
+		JSONArray routeThroughStationList = DataController.Singleton().accessStationList;
+		JSONArray result = new JSONArray();
+
+		for(int i = 0; i < routeThroughStationList.size(); i++) {
+			JSONObject json = (JSONObject) routeThroughStationList.get(i);
+			if(json.get("routeId").toString().contains("DJB30300004")) {
+				result.add(json);
+			}
+		}
+		return result;
+	}
+
+	public static String getCityCode(String cityName) throws InterruptedException {
+		Receiver receiver = new Receiver(Function.ROUTE_CITY_LIST);
+		receiver.start();
+
+		Thread.sleep(500);
+
+		JSONArray list = DataController.Singleton().cityList;
+
+		for(int i = 0; i < list.size(); i++) {
+			JSONObject json = (JSONObject) list.get(i);
+			if(json.get("cityName").toString().contains(cityName)){
+				return json.get("cityCode").toString();
+			}
+		}
+		return "failed";
+	}
+
+
+
+
+
 
 
 	public static void main(String[] args) {
