@@ -25,12 +25,16 @@ public class DataController {
     //public ArrayList<RouteNum> routeNumList = new ArrayList<>();
     //public ArrayList<AccessStation> accessStationList = new ArrayList<>();
 
-    public JSONArray cityList = new JSONArray();
-    public JSONArray routeInfoList = new JSONArray();
-    public JSONArray stationNumList = new JSONArray();
-    public JSONArray accessStationList = new JSONArray();
-    public JSONArray routeNumList = new JSONArray();
-    public JSONArray arrivalList = new JSONArray();
-    public JSONArray wayList = new JSONArray();
+    public JSONArray cityList = new JSONArray();            //지원하는 도시 리스트
+    public JSONArray routeInfoList = new JSONArray();       //버스노선 상세 정보
+    public JSONArray stationNumList = new JSONArray();      //정류장 기본 정보
+    public JSONArray accessStationList = new JSONArray();   //노선이 지나는 정류장 정보
+    public JSONArray routeNumList = new JSONArray();        //버스노선 기본 정보
+    public JSONArray arrivalList = new JSONArray();         //도착지 노선 정보 리스트
+    public JSONArray wayList = new JSONArray();             //출발지 -> 도착지 중복 경로 노선 리스트
+    public JSONArray routeLocationList = new JSONArray();   //요청한 지나는 노선의 위치, 정보 및 정류장 정보
+
+    public JSONArray deptTodestList = new JSONArray();      //출발지 -> 목적지 경로에 해당하는 노선 정보
+
 
 }

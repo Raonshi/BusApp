@@ -51,10 +51,11 @@ public class Receiver extends Thread {
             case FIND_WAY:
                 getWayList(sba.cityCode, sba.deptId, sba.destId);
                 break;
-            /*case LOCATION_CITY_LIST:
-
-                break;
             case LOCATION_BUS_LIST:
+                getRouteLocationList("25", sba.routeId);
+                //트래픽 풀리면 파라미터 sba.cityCode로 설정
+                break;
+           /* case LOCATION_CITY_LIST:
 
                 break;
             case LOCATION_SPECIFY_STATION_ACCESS_BUS_LIST:
@@ -204,7 +205,7 @@ public class Receiver extends Thread {
      * @param cityCode 각 도시별로 부여된 고유한 아이디 값
      * @param nodeNm 정류소 이름
      */
-    void getStationNumList(String cityCode, String nodeNm) {
+    public void getStationNumList(String cityCode, String nodeNm) {
 
         try{
             StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusSttnInfoInqireService/getSttnNoList");
@@ -227,6 +228,7 @@ public class Receiver extends Thread {
                     json.put("nodeid", getValue("nodeid", element));
                     json.put("nodenm", getValue("nodenm", element));
                     json.put("nodeno", getValue("nodeno", element));
+
 
 
                     DataController.Singleton().stationNumList.add(json);
@@ -328,6 +330,16 @@ public class Receiver extends Thread {
         }
     }
 
+    /**
+     * 정류소별 특정노선 버스 도착예정 정보 목록 조회
+     * @param cityCode 조회하려는 도시
+     * @param nodeId 조회하려는 정류소 이름
+     * @param routeId 조회하려는 버스노선
+     */
+   /* void getSttnAcctoSpcifyRouteBusArvlPrearngeInfoList(String cityCode, String nodeId, String routeId){
+
+    }*/
+
     //#endregion
 
 
@@ -344,13 +356,13 @@ public class Receiver extends Thread {
         getSttnAcctoArvlPrearngeInfoList(cityCode, deptId);
         JSONArray deptArrivalList = DataController.Singleton().arrivalList;
 
-        System.out.println(deptArrivalList.size());
+        System.out.println(cityCode + deptId);
 
         //2. 도착지 정류장에 도착할 버스 목록을 구한다.
         getSttnAcctoArvlPrearngeInfoList(cityCode, destId);
         JSONArray destArrivalList = DataController.Singleton().arrivalList;
 
-        System.out.println(destArrivalList.size());
+        System.out.println(cityCode + destId);
 
         //3. 두 버스 목록에서 겹치는 버스가 있을 경우 직통버스로 간주한다.
         deptArrivalList.forEach(dept -> {
@@ -364,6 +376,44 @@ public class Receiver extends Thread {
                 }
             });
         });
+    }
+
+    /**
+     * 노선의 현재 위치 정보 및 정류소 정보
+     * @param cityCode 조회하려는 도시
+     * @param routeId 조회하려는 버스노선
+     */
+    void getRouteLocationList (String cityCode, String routeId){
+        try {
+            StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusLcInfoInqireService/getRouteAcctoBusLcList");
+            urlBuilder.append("?" + URLEncoder.encode("ServiceKey", "UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
+            urlBuilder.append("&" + URLEncoder.encode("cityCode", "UTF-8") + "=" + cityCode);
+            urlBuilder.append("&" + URLEncoder.encode("routeId", "UTF-8") + "=" + routeId);
+
+            NodeList list = getData(urlBuilder.toString());
+            DataController.Singleton().routeLocationList.clear();
+
+            for(int i = 0; i < list.getLength(); i++) {
+                Node node = list.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    JSONObject json = new JSONObject();
+                    json.put("routenm", getValue("routenm", element));
+                    json.put("gpslati", getValue("gpslati", element));
+                    json.put("gpslong", getValue("gpslong", element));
+                    json.put("nodeord", getValue("nodeord", element));
+                    json.put("nodenm", getValue("nodenm", element));
+                    json.put("nodeid", getValue("nodeid", element));
+                    json.put("routetp", getValue("routetp", element));
+                    json.put("vehicleno", getValue("vehicleno", element));
+
+                    DataController.Singleton().routeLocationList.add(json);
+                }
+            }
+
+        }catch(ParserConfigurationException | IOException | SAXException e) {
+            e.printStackTrace();
+        }
     }
 
     //#endregion

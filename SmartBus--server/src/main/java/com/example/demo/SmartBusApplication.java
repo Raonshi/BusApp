@@ -114,7 +114,45 @@ public class SmartBusApplication {
 		return result;
 	}
 
-	@RequestMapping(method = RequestMethod.GET, path = "/test")
+	/**
+	 * 각 도시별 출발지와 도착지 정류장 번호를 통해 경로를 탐색한 뒤 결과를 반환한다.
+	 * @param cityName 조회할 도시
+	 * @param deptId 조회할 정류장
+	 * @param destId 목적지 정류장
+	 * @return
+	 */
+	@RequestMapping(method = RequestMethod.GET, path = "/getWayList")
+	JSONArray getWayList(@RequestParam String cityName, @RequestParam String deptId, @RequestParam String destId) throws InterruptedException {
+		this.cityCode = getCityCode(cityName);
+		this.deptId = deptId;
+		this.destId = destId;
+
+		Receiver receiver = new Receiver(Function.FIND_WAY);
+		receiver.start();
+
+		Thread.sleep(2000);
+		//JSONArray result = new JSONArray();
+		//반환할 new jsonArray 항목
+		//출발지 : 정거장 이름, 도착 시간, 도착 정거장 까지 남은 수
+		//도착지 : 정거장 이름, 도착 시간, 도착 정거장 까지 남은 수
+		//노선 : 상하행버스 구분(1 : 하행,  0 : 상행)
+		return DataController.Singleton().wayList;
+	}
+
+	@RequestMapping(method = RequestMethod.GET, path = "/getBusLocation")
+	JSONArray getBusLocation(@RequestParam String cityName, @RequestParam String routeId) throws InterruptedException{
+		this.cityCode = getCityCode(cityName);
+		this.routeId = routeId;
+
+		Receiver receiver = new Receiver(Function.LOCATION_BUS_LIST);
+		receiver.start();
+		Thread.sleep(1000);
+		//JSONArray locationList = DataController.Singleton().routeLocationList;
+
+		return DataController.Singleton().routeLocationList;
+	}
+
+	/*@RequestMapping(method = RequestMethod.GET, path = "/test")
 	JSONArray test(@RequestParam String cityName, @RequestParam String routeNo) throws InterruptedException {
 		Receiver receiver = new Receiver(Function.ROUTE_THROUGH_STATION_LIST);
 		receiver.start();
@@ -131,7 +169,7 @@ public class SmartBusApplication {
 			}
 		}
 		return result;
-	}
+	}*/
 
 	/*cityName to cityCode*/
 	public static String getCityCode(String cityName) throws InterruptedException {
@@ -153,47 +191,26 @@ public class SmartBusApplication {
 
 
 	/*nodeNm to nodeId*/
-	public static String getNodeId(String cityName, String nodeNm) throws InterruptedException {
-		String cityCode = getCityCode(cityName);
-		Receiver receiver = new Receiver(null);
-		receiver.getRouteNoList(cityCode, nodeNm);
+	/*public String getNodeId(String cityName, String nodeNm) throws InterruptedException {
+		this.cityCode = getCityCode(cityName);
+		this.nodeNm = nodeNm;
+		System.out.println(this.cityCode + this.nodeNm);
+		Receiver receiver = new Receiver(Function.STATION_NUMBER_LIST);
+		receiver.start();
+
+		Thread.sleep(500);
 
 		JSONArray list = DataController.Singleton().stationNumList;
 
 		for(int i = 0; i < list.size(); i++) {
 			JSONObject json = (JSONObject) list.get(i);
-			if(json.get("nodeNm").toString().contains(nodeNm)){
+			if(json.get("nodenm").toString().contains(nodeNm)){
 				return json.get("nodeid").toString();
 			}
 		}
 
 		return "failed";
-	}
-
-
-	/**
-	 * 각 도시별 지발추와 도착지 정류장 번호를 통해 경로를 탐색한 뒤 결과를 반환한다.
-	 * @param cityName 조회할 도시
-	 * @param deptId 조회할 정류장
-	 * @param destId 목적지 정류장
-	 * @return
-	 */
-	@RequestMapping(method = RequestMethod.GET, path = "/getWayList")
-	JSONArray getWayList(@RequestParam String cityName, @RequestParam String deptId, @RequestParam String destId) throws InterruptedException {
-		this.cityCode = getCityCode(cityName);
-		this.deptId = deptId;
-		this.destId = destId;
-
-		Receiver receiver = new Receiver(Function.FIND_WAY);
-		receiver.start();
-
-		Thread.sleep(2000);
-
-		return DataController.Singleton().wayList;
-	}
-
-
-
+	}*/
 
 	public static void main(String[] args) {
 		SpringApplication.run(SmartBusApplication.class, args);
