@@ -495,7 +495,21 @@ public class Receiver extends Thread {
 
                 //출발지와 도착지에 동일한 버스노선 번호가 존재할 경우
                 if(deptJson.get("routeno").toString().equals(destJson.get("routeno").toString())){
-                    DataController.Singleton().wayList.add(deptJson);
+
+                    //새로운 JSONObject를 만든다.
+                    JSONObject way = new JSONObject();
+                    way.put("deptnodenm", deptJson.get("nodenm"));
+                    way.put("deptarrtime", deptJson.get("arrtime"));
+                    way.put("deptarrprevstationcnt", deptJson.get("arrprevstationcnt"));
+                    way.put("destnodenm", destJson.get("nodenm"));
+                    way.put("destarrtime", destJson.get("arrtime"));
+                    way.put("destarrprevstationcnt", destJson.get("arrprevstationcnt"));
+                    way.put("routeno", deptJson.get("routeno"));
+                    way.put("routetp", deptJson.get("routetp"));
+                    way.put("vehicletp", deptJson.get("vehicletp"));
+
+                    //way를 wayList에 담는다.
+                    DataController.Singleton().wayList.add(way);
                 }
             });
         });
