@@ -31,7 +31,6 @@ class _SearchBusState extends State<SearchBus> {
   Widget build(BuildContext context) {
     final provider = Provider.of<SearchProvider>(context);
 
-    print('call');
     return Scaffold(
       appBar: AppBar(
         title: Text('버스 노선 검색', style: TextStyle(fontSize: 30),),

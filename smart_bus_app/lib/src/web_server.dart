@@ -75,8 +75,8 @@ class WebServer {
       "destId": destination
     };
 
-    Logger().d(departure);
-    Logger().d(destination);
+    //Logger().d(departure);
+    //Logger().d(destination);
 
 
     Uri uri = Uri.http(endpoint, service, params);

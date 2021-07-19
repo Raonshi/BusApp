@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_bus_app/src/data/data.dart';
 import 'package:smart_bus_app/src/provider/find_way_provider.dart';
@@ -40,6 +41,9 @@ class _BodyState extends State<Body> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<FindWayProvider>(context);
+
+    Logger().d("Selection Widget Updated!");
+
     provider.finding();
     //saveRecently(provider.departure, provider.destination);
     wayList = provider.wayList;

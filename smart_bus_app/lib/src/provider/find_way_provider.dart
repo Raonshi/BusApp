@@ -17,6 +17,9 @@ class FindWayProvider with ChangeNotifier{
   List<dynamic> _wayList = [];
   List<dynamic> get wayList => _wayList;
 
+  ///JSON데이터를 담기위한 임시 리스트
+  //List<Way> tmpList = new List();
+
   FindWayProvider(this._departure, this._destination);
 
   void setDeparture(Station station) {
@@ -30,7 +33,13 @@ class FindWayProvider with ChangeNotifier{
 
   ///출발지와 도착지 정보를 통해 경로를 탐색한다.
   void finding() async {
-    _wayList = await WebServer().getWayList(_departure.nodeId, _destination.nodeId);
+    List<Way> tmpList = await WebServer().getWayList(_departure.nodeId, _destination.nodeId);
+
+    //tmpList = tmpList.isEmpty ? await WebServer().getWayList(_departure.nodeId, _destination.nodeId) : tmpList;
+
+    tmpList.forEach((element) {
+      _wayList.add(WayItem(element));
+    });
 
     /*
     //테스트코드
