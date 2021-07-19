@@ -7,6 +7,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.lang.Nullable;
 import org.springframework.util.RouteMatcher;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,9 @@ public class SmartBusApplication {
 	public static String deptId;	//출발지 정류소 id
 	public static String destId;	//도작지 정류소 id
 
+	/*
+	//지원 도시 목록 출력
+	//지금까지는 사용 할 필요성이 없었음.
 	@RequestMapping(method = RequestMethod.GET, path = "/list")
 	JSONArray list(@RequestParam String cityName) throws InterruptedException {
 
@@ -46,7 +50,11 @@ public class SmartBusApplication {
 
 		return result;
 	}
-	
+	*/
+
+	/*
+	//각 도시별 버스 노선 출력
+	//지금까지 사용할 필요성이 없었음.
 	@RequestMapping(method = RequestMethod.GET, path = "/route")
 	JSONArray route(@RequestParam String cityCode, @RequestParam String routeId) throws InterruptedException {
 		this.cityCode = cityCode;
@@ -69,11 +77,19 @@ public class SmartBusApplication {
 		}
 		return result;
 	}
+	*/
 
+	/**
+	 * 버스 노선 검색
+	 * @param cityName 검색할 도시
+	 * @param routeNo 검색할 버스 노선 번호
+	 * @return {@link JSONArray}타입의 버스 노선 정보
+	 * @throws InterruptedException
+	 */
 	@RequestMapping(method = RequestMethod.GET, path = "/getBusList")
 	JSONArray getBusList(@RequestParam String cityName, @RequestParam String routeNo) throws InterruptedException {
 
-		this.cityCode = getCityCode(cityName);
+		this.cityCode = getCityCode(cityName, Function.ROUTE_CITY_LIST);
 		this.routeNo = routeNo;
 
 		Receiver receiver = new Receiver(Function.ROUTE_NUMBER_LIST);
@@ -94,7 +110,7 @@ public class SmartBusApplication {
 
 	@RequestMapping(method = RequestMethod.GET, path = "/getStationList")
 	JSONArray getStationList(@RequestParam String cityName, @RequestParam String nodeNm) throws InterruptedException {
-		this.cityCode = getCityCode(cityName);
+		this.cityCode = getCityCode(cityName, Function.STATION_CITY_LIST);
 		this.nodeNm = nodeNm;
 
 		Receiver receiver = new Receiver(Function.STATION_NUMBER_LIST);
@@ -123,7 +139,7 @@ public class SmartBusApplication {
 	 */
 	@RequestMapping(method = RequestMethod.GET, path = "/getWayList")
 	JSONArray getWayList(@RequestParam String cityName, @RequestParam String deptId, @RequestParam String destId) throws InterruptedException {
-		this.cityCode = getCityCode(cityName);
+		this.cityCode = getCityCode(cityName, Function.ROUTE_CITY_LIST);
 		this.deptId = deptId;
 		this.destId = destId;
 
@@ -141,7 +157,7 @@ public class SmartBusApplication {
 
 	@RequestMapping(method = RequestMethod.GET, path = "/getBusLocation")
 	JSONArray getBusLocation(@RequestParam String cityName, @RequestParam String routeId) throws InterruptedException{
-		this.cityCode = getCityCode(cityName);
+		this.cityCode = getCityCode(cityName, Function.LOCATION_CITY_LIST);
 		this.routeId = routeId;
 
 		Receiver receiver = new Receiver(Function.LOCATION_BUS_LIST);
@@ -172,8 +188,10 @@ public class SmartBusApplication {
 	}*/
 
 	/*cityName to cityCode*/
-	public static String getCityCode(String cityName) throws InterruptedException {
-		Receiver receiver = new Receiver(Function.ROUTE_CITY_LIST);
+	public static String getCityCode(String cityName, @Nullable Function type) throws InterruptedException {
+		type = Optional.ofNullable(type).orElse(Function.ROUTE_CITY_LIST);
+
+		Receiver receiver = new Receiver(type);
 		receiver.start();
 
 		Thread.sleep(500);
