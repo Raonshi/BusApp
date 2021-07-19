@@ -31,6 +31,7 @@ class SearchProvider with ChangeNotifier{
 
     switch(_type){
       case Type.BUS:
+        /*
         final testBus = {
           'routetp': '좌석',
           'routeid': 'CJB454636',
@@ -40,18 +41,18 @@ class SearchProvider with ChangeNotifier{
           'startnodenm': '출발정류장',
           'endnodenm': '종점정류장'
         };
-
-        //tmpList = await WebServer().getBusList(_keyword);
-
         for(int i = 0; i < 10; i++){
           tmpList.add(Bus.fromJson(testBus));
         }
+         */
+        tmpList = await WebServer().getBusList(_keyword);
 
         tmpList.forEach((element) {
           _list.add(BusItem(element));
         });
         break;
       case Type.STATION:
+        /*
         final testStation = {
           'nodenm': '정거장 이름',
           'nodeid': '정거장 아이디',
@@ -59,12 +60,11 @@ class SearchProvider with ChangeNotifier{
           'gpslong': 'x축 좌표 ',
           'gpslati': 'y축 좌표'
         };
-
-        //tmpList = await WebServer().getStationList(_keyword);
-
         for(int i = 0; i < 10; i++){
           tmpList.add(Station.fromJson(testStation));
         }
+        */
+        tmpList = await WebServer().getStationList(_keyword);
 
         tmpList.forEach((element) {
           _list.add(StationItem(element));

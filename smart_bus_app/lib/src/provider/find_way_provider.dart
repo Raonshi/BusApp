@@ -30,8 +30,9 @@ class FindWayProvider with ChangeNotifier{
 
   ///출발지와 도착지 정보를 통해 경로를 탐색한다.
   void finding() async {
-    //_wayList = await WebServer().getWayList(_departure.nodeId, _destination.nodeId);
+    _wayList = await WebServer().getWayList(_departure.nodeId, _destination.nodeId);
 
+    /*
     //테스트코드
     final testJson = {
       "deptnodenm": "출발지정거장",
@@ -48,7 +49,7 @@ class FindWayProvider with ChangeNotifier{
     for(int i = 0; i < 10; i++){
       _wayList.add(WayItem(Way.fromJson(testJson)));
     }
-
+    */
     notifyListeners();
   }
 
