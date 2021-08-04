@@ -18,11 +18,11 @@ import java.net.URLEncoder;
 
 
 public class Receiver extends Thread {
-    private Function _function;
+    private Function function;
     SmartBusApplication sba;
 
     public Receiver(Function function){
-        _function = function;
+        this.function = function;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class Receiver extends Thread {
         super.run();
         System.out.println("==========Receiver Thread Generated!!==========");
         
-        switch(_function){
+        switch(function){
             //버스 노선 정보 API
             case ROUTE_CITY_LIST:
                 getCityList(0);
@@ -488,6 +488,7 @@ public class Receiver extends Thread {
         System.out.println(cityCode + destId);
 
         //3. 두 버스 목록에서 겹치는 버스가 있을 경우 직통버스로 간주한다.
+        //-> 그 외의 경우에는 환승으로 간주한다 -> 환승은 최대 2회를 넘기지 않는다.
         deptArrivalList.forEach(dept -> {
             destArrivalList.forEach(dest -> {
                 JSONObject deptJson = (JSONObject)dept;
@@ -510,6 +511,14 @@ public class Receiver extends Thread {
 
                     //way를 wayList에 담는다.
                     DataController.Singleton().wayList.add(way);
+                }
+                //출발지와 도착지에 동일한 버스 노선이 존재하지 않을 경우
+                else{
+                    //1. 출발지로 오는 각각의 버스에 대해 경유 정거장을 구한다.
+                    //2. 도착지로 오는 각각의 버스에 대해 경유 정거장을 구한다.
+                    //3. 1과 2의 결과를 통해 경유 정거장 중 가장 먼저 일치하는 경유 정거장을 구한다.
+                    //4. 일치하는 경유 정거장이 있다면 1번 환승하는 버스
+                    //5. 일치하는 경유 정거장이 없다면 ? -> 이거는 답이 없다.
                 }
             });
         });
