@@ -174,7 +174,7 @@ public class SmartBusApplication {
 		Receiver receiver = new Receiver(Function.FIND_WAY);
 		receiver.start();
 
-		Thread.sleep(1000);
+		Thread.sleep(3000);
 
 
 		return DataController.Singleton().wayList;
