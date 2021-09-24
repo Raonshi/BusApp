@@ -50,7 +50,7 @@ public class Receiver extends Thread {
                 getCityList(1);
                 break;
             case ARRIVE_BUS_LIST:
-                //getSttnAcctoArvlPrearngeInfoList(sba.cityCode, sba.nodeId);
+                getSttnAcctoArvlPrearngeInfoList(sba.cityCode, sba.nodeId);
                 break;
             case ARRIVE_SPECIFY_STATION_ACCESS_BUS_LIST:
                 //getSttnAcctoSpcifyRouteBusArvlPrearngeInfoList(sba.cityCode, sba.nodeId, sba.routeId);
@@ -235,7 +235,7 @@ public class Receiver extends Thread {
             urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
             urlBuilder.append("&" + URLEncoder.encode("cityCode","UTF-8") + "=" + cityCode);
             urlBuilder.append("&" + URLEncoder.encode("nodeNm","UTF-8") + "=" + URLEncoder.encode(nodeNm, "UTF-8"));
-            urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("100", "UTF-8"));
+            urlBuilder.append("&" + URLEncoder.encode("nodeno", "UTF-8") + "=");
 
             NodeList list = getData(urlBuilder.toString());
             DataController.Singleton().stationNumList.clear();
@@ -390,7 +390,7 @@ public class Receiver extends Thread {
 
     void getSttnAcctoArvlPrearngeInfoList(String cityCode, String nodeId){
         try {
-            System.out.println("Node Id : " + nodeId);
+            System.out.println("cityCode : " + cityCode + " Node Id : " + nodeId);
 
             StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList");
             urlBuilder.append("?" + URLEncoder.encode("ServiceKey", "UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
@@ -476,25 +476,45 @@ public class Receiver extends Thread {
      */
     void getWayList(String cityCode, String deptId, String destId){
         //1. 출발지 정류장에 도착할 버스 목록을 구한다.
+        DataController.Singleton().arrivalList.clear();
         getSttnAcctoArvlPrearngeInfoList(cityCode, deptId);
-        JSONArray deptArrivalList = DataController.Singleton().arrivalList;
 
-        System.out.println(cityCode + deptId);
+        JSONArray deptArrivalList = new JSONArray();
+        deptArrivalList.addAll(DataController.Singleton().arrivalList);
+
+
+        System.out.println("before : " + deptArrivalList);
+
 
         //2. 도착지 정류장에 도착할 버스 목록을 구한다.
+        DataController.Singleton().arrivalList.clear();
         getSttnAcctoArvlPrearngeInfoList(cityCode, destId);
-        JSONArray destArrivalList = DataController.Singleton().arrivalList;
 
-        System.out.println(cityCode + destId);
+        JSONArray destArrivalList = new JSONArray();
+        destArrivalList.addAll(DataController.Singleton().arrivalList);
 
+        System.out.println("after : " + deptArrivalList);
+
+        //3. 직통 버스 경로 구하기
+        System.out.println("=================CALL!!!!====================");
+        directWayList(deptArrivalList, destArrivalList);
+
+    }
+
+    void directWayList(JSONArray deptArrivalList,JSONArray destArrivalList){
         //3. 두 버스 목록에서 겹치는 버스가 있을 경우 직통버스로 간주한다.
         //-> 그 외의 경우에는 환승으로 간주한다 -> 환승은 최대 2회를 넘기지 않는다.
-        deptArrivalList.forEach(dept -> {
-            destArrivalList.forEach(dest -> {
-                JSONObject deptJson = (JSONObject)dept;
-                JSONObject destJson = (JSONObject)dest;
+
+
+        for(int i = 0; i < deptArrivalList.size(); i++){
+            for(int j = 0; j < destArrivalList.size(); j++){
+                JSONObject deptJson = (JSONObject)deptArrivalList.get(i);
+                JSONObject destJson = (JSONObject)destArrivalList.get(j);
 
                 //출발지와 도착지에 동일한 버스노선 번호가 존재할 경우
+                System.out.println(deptJson.get("nodenm").toString());
+                System.out.println(destJson.get("nodenm").toString());
+
                 if(deptJson.get("routeno").toString().equals(destJson.get("routeno").toString())){
 
                     //새로운 JSONObject를 만든다.
@@ -502,9 +522,11 @@ public class Receiver extends Thread {
                     way.put("deptnodenm", deptJson.get("nodenm"));
                     way.put("deptarrtime", deptJson.get("arrtime"));
                     way.put("deptarrprevstationcnt", deptJson.get("arrprevstationcnt"));
+
                     way.put("destnodenm", destJson.get("nodenm"));
                     way.put("destarrtime", destJson.get("arrtime"));
                     way.put("destarrprevstationcnt", destJson.get("arrprevstationcnt"));
+
                     way.put("routeno", deptJson.get("routeno"));
                     way.put("routetp", deptJson.get("routetp"));
                     way.put("vehicletp", deptJson.get("vehicletp"));
@@ -512,17 +534,25 @@ public class Receiver extends Thread {
                     //way를 wayList에 담는다.
                     DataController.Singleton().wayList.add(way);
                 }
-                //출발지와 도착지에 동일한 버스 노선이 존재하지 않을 경우
-                else{
-                    //1. 출발지로 오는 각각의 버스에 대해 경유 정거장을 구한다.
-                    //2. 도착지로 오는 각각의 버스에 대해 경유 정거장을 구한다.
-                    //3. 1과 2의 결과를 통해 경유 정거장 중 가장 먼저 일치하는 경유 정거장을 구한다.
-                    //4. 일치하는 경유 정거장이 있다면 1번 환승하는 버스
-                    //5. 일치하는 경유 정거장이 없다면 ? -> 이거는 답이 없다.
-                }
-            });
-        });
+            }
+        }
+
+        JSONArray tmpArray = new JSONArray();
+
+        for(int i = 0; i < DataController.Singleton().wayList.size(); i++){
+            JSONObject json = (JSONObject)DataController.Singleton().wayList.get(i);
+
+            String deptStr = json.get("deptnodenm").toString();
+            String destStr = json.get("destnodenm").toString();
+
+            if (!deptStr.equals(destStr)) {
+                tmpArray.add(json);
+            }
+        }
+
+        DataController.Singleton().wayList = tmpArray;
     }
+
 
     //#endregion
 

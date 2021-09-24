@@ -17,6 +17,13 @@ public class DataController {
         return instance;
     }
 
+
+    /**
+     * <p>경로 탐색시 실제로 사용자가 입력한 정거장 이름</p>
+     */
+    public String deptName, destName;
+
+
     /**
      * <p>국토교통부-버스노선정보 API를 통해 얻은 데이터를 저장하는 ArrayList</p>
      */

@@ -22,6 +22,7 @@ public class SmartBusApplication {
 	public static String routeId;	//타 클래스로 넘길 노선 id
 	public static String routeNo;	//타 클래스로 넘길 노선 번호
 	public static String nodeNm;	//타 클래스로 넘길 정류장 이름
+	public static String nodeId;	//타 클래스로 넘길 정류장 id
 
 	public static String deptId;	//출발지 정류소 id
 	public static String destId;	//도작지 정류소 id
@@ -129,6 +130,31 @@ public class SmartBusApplication {
 		}
 		return result;
 	}
+	@RequestMapping(method = RequestMethod.GET, path = "/TEST1")
+	JSONArray getStationPreArrivalNodeList(@RequestParam String cityName, @RequestParam String nodeNm) throws InterruptedException {
+		this.cityCode = getCityCode(cityName, Function.STATION_CITY_LIST);
+
+		ArrayList<String> nodeIdList = getNodeId(cityName, nodeNm);
+
+		JSONArray result = new JSONArray();
+		for(int i = 0; i < nodeIdList.size(); i++) {
+			this.nodeId = nodeIdList.get(i);
+
+			Receiver receiver = new Receiver(Function.ARRIVE_BUS_LIST);
+			receiver.start();
+
+			Thread.sleep(1000);
+			JSONArray arrivalList = DataController.Singleton().arrivalList;
+
+			for(int j = 0; j < arrivalList.size(); j++) {
+				JSONObject json = (JSONObject) arrivalList.get(i);
+				if(json.get("nodenm").toString().contains(nodeNm)) {
+					result.add(json);
+				}
+			}
+		}
+		return result;
+	}
 
 	/**
 	 * 각 도시별 출발지와 도착지 정류장 번호를 통해 경로를 탐색한 뒤 결과를 반환한다.
@@ -143,15 +169,14 @@ public class SmartBusApplication {
 		this.deptId = deptId;
 		this.destId = destId;
 
+		DataController.Singleton().wayList.clear();
+
 		Receiver receiver = new Receiver(Function.FIND_WAY);
 		receiver.start();
 
 		Thread.sleep(2000);
-		//JSONArray result = new JSONArray();
-		//반환할 new jsonArray 항목
-		//출발지 : 정거장 이름, 도착 시간, 도착 정거장 까지 남은 수
-		//도착지 : 정거장 이름, 도착 시간, 도착 정거장 까지 남은 수
-		//노선 : 상하행버스 구분(1 : 하행,  0 : 상행)
+
+
 		return DataController.Singleton().wayList;
 	}
 
@@ -168,24 +193,8 @@ public class SmartBusApplication {
 		return DataController.Singleton().routeLocationList;
 	}
 
-	/*@RequestMapping(method = RequestMethod.GET, path = "/test")
-	JSONArray test(@RequestParam String cityName, @RequestParam String routeNo) throws InterruptedException {
-		Receiver receiver = new Receiver(Function.ROUTE_THROUGH_STATION_LIST);
-		receiver.start();
 
-		Thread.sleep(1000);
 
-		JSONArray routeThroughStationList = DataController.Singleton().accessStationList;
-		JSONArray result = new JSONArray();
-
-		for(int i = 0; i < routeThroughStationList.size(); i++) {
-			JSONObject json = (JSONObject) routeThroughStationList.get(i);
-			if(json.get("routeId").toString().contains("DJB30300004")) {
-				result.add(json);
-			}
-		}
-		return result;
-	}*/
 
 	/*cityName to cityCode*/
 	public static String getCityCode(String cityName, @Nullable Function type) throws InterruptedException {
@@ -209,26 +218,43 @@ public class SmartBusApplication {
 
 
 	/*nodeNm to nodeId*/
-	/*public String getNodeId(String cityName, String nodeNm) throws InterruptedException {
-		this.cityCode = getCityCode(cityName);
+	public ArrayList<String> getNodeId(String cityName, String nodeNm) throws InterruptedException {
+		this.cityCode = getCityCode(cityName, Function.STATION_CITY_LIST);
 		this.nodeNm = nodeNm;
-		System.out.println(this.cityCode + this.nodeNm);
+
 		Receiver receiver = new Receiver(Function.STATION_NUMBER_LIST);
 		receiver.start();
 
 		Thread.sleep(500);
 
 		JSONArray list = DataController.Singleton().stationNumList;
-
+		
+		//결과 리스트 반환
+		ArrayList<String> result = new ArrayList<>();
 		for(int i = 0; i < list.size(); i++) {
 			JSONObject json = (JSONObject) list.get(i);
 			if(json.get("nodenm").toString().contains(nodeNm)){
-				return json.get("nodeid").toString();
+				result.add(json.get("nodeid").toString());
 			}
 		}
 
-		return "failed";
-	}*/
+		return result;
+	}
+
+	/*test*/
+	@RequestMapping(method = RequestMethod.GET, path = "/test")
+	JSONArray test(@RequestParam String cityCode, @RequestParam String nodeId) throws InterruptedException{
+		JSONArray result = new JSONArray();
+		this.cityCode = cityCode;
+		this.nodeId = nodeId;
+
+		Receiver receiver = new Receiver(Function.ARRIVE_BUS_LIST);
+		receiver.start();
+		Thread.sleep(500);
+		result = DataController.Singleton().arrivalList;
+
+		return result;
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(SmartBusApplication.class, args);
