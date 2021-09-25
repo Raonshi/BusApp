@@ -52,10 +52,10 @@ class _BodyState extends State<Body> {
             onPressed: (){
               getBusNum(context, provider);
             },
-            style: ElevatedButton.styleFrom(primary: Colors.blue),
+            style: ElevatedButton.styleFrom(primary: Color.fromARGB(255, 255, 184, 48)),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical : 10.0),
-              child: Text("버스 노선 찾기", style: TextStyle(fontSize: 20,),),
+              child: Text("버스 노선 찾기", style: TextStyle(fontSize: 20),),
             )
           )
         ),
@@ -68,7 +68,7 @@ class _BodyState extends State<Body> {
             onPressed: (){
               getDeparture(context, provider);
             },
-            style: ElevatedButton.styleFrom(primary: Colors.green),
+            style: ElevatedButton.styleFrom(primary: Color.fromARGB(255, 61, 178, 255)),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 30.0),
               child: Text("출발", style: TextStyle(fontSize: 50,),),
@@ -78,8 +78,24 @@ class _BodyState extends State<Body> {
 
         //점선
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.0),
-          child: Image.asset("images/line_circle.png", color: Colors.greenAccent,),
+          padding: EdgeInsets.symmetric(vertical: 5.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.arrow_drop_down_rounded,
+                color: Color.fromARGB(255, 255, 184, 48),
+                size: 50.0,
+              ),
+              Icon(Icons.arrow_drop_down_rounded,
+                color: Color.fromARGB(255, 255, 184, 48),
+                size: 50.0,
+              ),
+              Icon(Icons.arrow_drop_down_rounded,
+                color: Color.fromARGB(255, 255, 184, 48),
+                size: 50.0,
+              ),
+            ],
+          )
         ),
 
         //도착지 버튼
@@ -90,7 +106,7 @@ class _BodyState extends State<Body> {
               getDestination(context, provider);
             },
             style: ElevatedButton.styleFrom
-              (primary: Colors.redAccent),
+              (primary: Color.fromARGB(255, 255, 36, 66)),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 30.0),
               child: Text("도착", style: TextStyle(fontSize: 50,),),

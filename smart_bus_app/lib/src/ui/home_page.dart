@@ -18,6 +18,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   TabController tabController;
+  bool isVisible = true;
 
   @override
   void initState() {
@@ -39,6 +40,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
         appBar: AppBar(
@@ -57,6 +60,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           controller: tabController,
           children: [FindWayWidget(), RecentlyWidget(), FavoriteWidget()],
         ),
+      floatingActionButton: new Visibility(
+          visible: isVisible,
+          child: FloatingActionButton(
+            backgroundColor: Color.fromARGB(255, 255, 184, 48),
+            child: Text("삭제", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),),
+            onPressed: (){},
+          )),
     );
   }
 }
