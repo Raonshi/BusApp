@@ -38,20 +38,30 @@ class _BodyState extends State<Body> {
   List<dynamic> wayList;
   bool recentlyUpLoad = false;
 
+  dynamic provider;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      provider = Provider.of<FindWayProvider>(context, listen: false);
+      provider.finding();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<FindWayProvider>(context);
+    provider = Provider.of<FindWayProvider>(context);
 
     Logger().d("Selection Widget Updated!");
 
-    provider.finding();
     //saveRecently(provider.departure, provider.destination);
     wayList = provider.wayList;
 
     return Center(
       child: Column(
         children: [
-          Text('${provider.departure.nodeName} 부터 ${provider.destination.nodeName}'),
           //검색 결과 목록 출력
           Expanded(
             child: GestureDetector(

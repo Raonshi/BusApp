@@ -22,7 +22,7 @@ class WebServer {
   //#endregion
 
   ///접속 주소
-  final endpoint = "10.0.2.2:8080";
+  final endpoint = "localhost:8080";
 
 
   //#region GET

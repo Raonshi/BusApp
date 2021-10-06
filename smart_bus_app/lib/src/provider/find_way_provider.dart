@@ -35,11 +35,11 @@ class FindWayProvider with ChangeNotifier{
   void finding() async {
     List<Way> tmpList = await WebServer().getWayList(_departure.nodeId, _destination.nodeId);
 
-    //tmpList = tmpList.isEmpty ? await WebServer().getWayList(_departure.nodeId, _destination.nodeId) : tmpList;
-
     tmpList.forEach((element) {
       _wayList.add(WayItem(element));
     });
+
+    //tmpList = tmpList.isEmpty ? await WebServer().getWayList(_departure.nodeId, _destination.nodeId) : tmpList;
 
     /*
     //테스트코드

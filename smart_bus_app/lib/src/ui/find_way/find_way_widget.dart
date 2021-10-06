@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_bus_app/src/business_logic/get_controller.dart';
 import 'package:smart_bus_app/src/data/data.dart';
 import 'package:smart_bus_app/src/provider/find_way_provider.dart';
 import 'package:smart_bus_app/src/provider/search_provider.dart';
@@ -189,3 +191,176 @@ class _BodyState extends State<Body> {
      */
   }
 }
+
+
+class SearchPage extends StatelessWidget {
+  final controller = Get.put(Controller());
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Spacer(),
+
+          //검색 타입 선택
+          Expanded(
+            flex:1,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                    flex:1,
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: ElevatedButton(
+                        onPressed: (){
+                          controller.searchPageInfoSelect.value = 1;
+                        },
+                        child: Text("정류장", textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                      ),
+                    )
+                ),
+
+                Expanded(
+                    flex:1,
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: ElevatedButton(
+                        onPressed: (){
+                          controller.searchPageInfoSelect.value = 2;
+                        },
+                        child: Text("버스노선", textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                      ),
+                    ),
+                ),
+
+                Expanded(
+                    flex:1,
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: ElevatedButton(
+                        onPressed: (){
+                          controller.searchPageInfoSelect.value = 3;
+                        },
+                        child: Text("경로탐색", textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                      ),
+                    )
+                ),
+              ],
+            ),
+          ),
+
+          //정류장 정보 , 노선정보, 경로정보 출력
+          Expanded(
+            flex:10,
+            child: Obx(() => InfoSelect()),
+          ),
+
+
+          Expanded(
+            flex:1,
+            child: ElevatedButton(
+              onPressed: (){},
+              child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Text(
+                "버스 노선 검색",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                ),
+              ),
+              ),
+            ),
+          ),
+
+            Spacer(),
+
+            //뒤로가기
+            Expanded(
+              flex:1,
+              child: ElevatedButton(
+              onPressed: (){
+                Get.back();
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Text(
+                  "뒤로가기",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          Spacer(),
+        ],
+      ),
+    );
+  }
+
+  Widget InfoSelect(){
+    if(controller.searchPageInfoSelect.value == 1){
+      return Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            flex: 1,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Text("정류장 정보"),
+              ],
+            ),
+          )
+        ],
+      );
+    }
+    else if(controller.searchPageInfoSelect.value == 2){
+      return Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            flex: 1,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Text("버스 노선 정보"),
+              ],
+            ),
+          )
+        ],
+      );
+    }
+    else if(controller.searchPageInfoSelect.value == 3){
+      return Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            flex: 1,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Text("경로 탐색 정보"),
+              ],
+            ),
+          )
+        ],
+      );
+    }
+  }
+}
+

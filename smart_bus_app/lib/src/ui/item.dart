@@ -199,8 +199,8 @@ class WayItem extends StatelessWidget {
         builder: () => Container(
           margin: EdgeInsets.all(ScreenUtil().setWidth(10.0)),
           child: Card(
-            color: Colors.black12,
-            shadowColor: Colors.black87,
+            color: Color.fromARGB(255, 181, 222, 255),
+            //shadowColor: Colors.black87,
             elevation: 30,
             child: Column(
               children: [
@@ -210,8 +210,8 @@ class WayItem extends StatelessWidget {
                     //출발 정거장 이름
                     Card(
                       color: Colors.lightGreenAccent,
-                      shadowColor: Colors.black,
-                      elevation: 20.0,
+                      //shadowColor: Colors.black,
+                      elevation: 10.0,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
@@ -226,7 +226,7 @@ class WayItem extends StatelessWidget {
                     //도착 정거장 이름
                     Card(
                         color: Colors.redAccent,
-                        shadowColor: Colors.black,
+                        //shadowColor: Colors.black,
                         elevation: 20.0,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -246,8 +246,8 @@ class WayItem extends StatelessWidget {
                   children: [
                     //소요 시간
                     Card(
-                      color: Colors.blueAccent,
-                      shadowColor: Colors.black,
+                      color: timeCalculate(int.parse(wayItem.destArrTime), int.parse(wayItem.deptArrTime)).contains("알 수 없음") ? Colors.redAccent : Colors.blueAccent,
+                      //shadowColor: Colors.black,
                       elevation: 20.0,
                       child: Padding(
                         padding: const EdgeInsets.all(9.0),
@@ -263,7 +263,7 @@ class WayItem extends StatelessWidget {
                     //버스 노선 이름
                     Card(
                         color: Colors.blueAccent,
-                        shadowColor: Colors.black,
+                        //shadowColor: Colors.black,
                         elevation: 20.0,
                         child: Row(
                           children: [
@@ -298,7 +298,7 @@ class WayItem extends StatelessWidget {
                     //버스 출발지 도착 시간
                     Card(
                       color: Colors.blueAccent,
-                      shadowColor: Colors.black,
+                      //shadowColor: Colors.black,
                       elevation: 20.0,
                       child: Padding(
                         padding: const EdgeInsets.all(9.0),
@@ -323,6 +323,10 @@ class WayItem extends StatelessWidget {
 
   String timeCalculate(int dept, int dest){
     int totalSeconds = dept - dest;
+
+    if(totalSeconds < 0){
+      return "알 수 없음";
+    }
     String minutes = (totalSeconds / 60).toInt().toString();
     int seconds = totalSeconds % 60;
 
@@ -332,13 +336,14 @@ class WayItem extends StatelessWidget {
   Color routeTypeColor(String type){
     Color color = Colors.blueGrey;
 
-    switch(type){
-      case "좌석":
-        color = Colors.lightGreenAccent;
-        break;
-      case "저상":
-        color = Colors.blueAccent;
-        break;
+    if(type.contains("좌석")){
+      color = Colors.lightGreenAccent;
+    }
+    else if(type.contains("저상")){
+      color = Colors.blueAccent;
+    }
+    else{
+      color = Colors.amber;
     }
 
     return color;
