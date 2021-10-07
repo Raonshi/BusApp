@@ -5,8 +5,23 @@ import 'package:flutter/material.dart';
 import 'package:smart_bus_app/src/ui/find_way/find_way_widget.dart';
 import 'package:smart_bus_app/src/ui/home_page.dart';
 import 'package:get/get.dart';
+import 'package:smart_bus_app/src/web_server.dart';
 
-void main() => runApp(MyApp());
+import 'src/ui/find_way/station_search_widget.dart';
+
+void main(){
+  //전처리 - 웹서버 싱글톤 객체 생성
+  new WebServer.init();
+
+  //날씨 정보 받아오기
+
+  //GPS정보를 통해 내 근처 정거장 찾기
+
+  //
+
+  //앱 실행
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -259,7 +274,7 @@ class MainPage extends StatelessWidget {
 
   //버스 검색 버튼 이벤트
   void onClickBusSearch(){
-    Get.to(SearchPage());
+    Get.to(StationSearchPage());
   }
 }
 

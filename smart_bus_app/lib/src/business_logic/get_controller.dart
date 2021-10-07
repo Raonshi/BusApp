@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
+import 'data_define.dart';
 
 class Controller extends GetxController{
-    //검색화면 스위칭 트리거
-    RxInt searchPageInfoSelect = 1.obs;
+  //가까운 정류장
+  Rx nearStation = Rx(Station).obs;
+
 
 
 }
