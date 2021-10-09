@@ -1,18 +1,16 @@
-package com.example.demo.data;
+package com.example.demo.datacenter;
 
 import org.json.simple.JSONArray;
 
-import java.util.ArrayList;
-
-public class DataController {
+public class DataCenter {
 
     /**
      * 싱글톤
      */
-    private static DataController instance = null;
-    public static DataController Singleton(){
+    private static DataCenter instance = null;
+    public static DataCenter Singleton(){
         if(instance == null){
-            instance = new DataController();
+            instance = new DataCenter();
         }
         return instance;
     }

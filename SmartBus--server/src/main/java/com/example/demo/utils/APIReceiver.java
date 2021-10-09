@@ -1,8 +1,9 @@
-package com.example.demo.api_controller;
+package com.example.demo.utils;
 
-import com.example.demo.Function;
 import com.example.demo.SmartBusApplication;
-import com.example.demo.data.*;
+import com.example.demo.datacenter.DataCenter;
+import com.example.demo.dto.*;
+import com.example.demo.utils.APIHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -15,15 +16,15 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Comparator;
 
 
-public class Receiver extends Thread {
-    private Function function;
+
+public class APIReceiver extends Thread {
+    private com.example.demo.utils.APIHandler APIHandler;
     SmartBusApplication sba;
 
-    public Receiver(Function function){
-        this.function = function;
+    public APIReceiver(APIHandler APIHandler){
+        this.APIHandler = APIHandler;
     }
 
     @Override
@@ -31,7 +32,7 @@ public class Receiver extends Thread {
         super.run();
         System.out.println("==========Receiver Thread Generated!!==========");
         
-        switch(function){
+        switch(APIHandler){
             //버스 노선 정보 API
             case ROUTE_CITY_LIST:
                 getCityList(0);
@@ -93,7 +94,7 @@ public class Receiver extends Thread {
     /**
      * <p>노선정보 항목 조회</p>
      * <p>노선의 기본정보를 조회한 뒤 {@link RouteInfo}객체에 저장한다.</p>
-     * <p>{@link RouteInfo}객체는 {@link DataController}클래스의 routeInfoList에 저장된다.</p>
+     * <p>{@link RouteInfo}객체는 {@link DataCenter}클래스의 routeInfoList에 저장된다.</p>
      * @param cityCode 각 도시별로 부여된 고유한 아이디 값
      * @param routeId 각 노선별로 부여된 고유한 아이디 값
      */
@@ -107,7 +108,7 @@ public class Receiver extends Thread {
             String url = urlBuilder.toString();
             NodeList list = getData(url);
 
-            DataController.Singleton().routeInfoList.clear();
+            DataCenter.Singleton().routeInfoList.clear();
 
             for(int i = 0; i < list.getLength(); i++){
                 Node node = list.item(i);
@@ -125,7 +126,7 @@ public class Receiver extends Thread {
                     json.put("intervalsattime", getValue("intervalsattime", element));
                     json.put("intervalsuntime", getValue("intervalsuntime", element));
 
-                    DataController.Singleton().routeInfoList.add(json);
+                    DataCenter.Singleton().routeInfoList.add(json);
                 }
             }
         }
@@ -137,7 +138,7 @@ public class Receiver extends Thread {
     /**
      * <p>노선 번호 목록 조회</p>
      * <p>버스 노선번호의 목록을 조회한 뒤 {@link RouteNum}에 저장한다.</p>
-     * <p>{@link RouteNum}객체는 {@link DataController}클래스의 routeNumList에 저장된다.</p>
+     * <p>{@link RouteNum}객체는 {@link DataCenter}클래스의 routeNumList에 저장된다.</p>
      * @param cityCode 각 도시별로 부여된 고유한 아이디 값
      * @param routeNo 버스를 식별할 수 있는 노선 번호(예 : 502, 10-1, 811-2)
      */
@@ -151,7 +152,7 @@ public class Receiver extends Thread {
             String url = urlBuilder.toString();
             NodeList list = getData(url);
 
-            DataController.Singleton().routeNumList.clear();
+            DataCenter.Singleton().routeNumList.clear();
 
             for(int i = 0; i < list.getLength(); i++){
                 Node node = list.item(i);
@@ -167,7 +168,7 @@ public class Receiver extends Thread {
                     json.put("startvehicletime", getValue("startvehicletime", element));
                     json.put("endvehicletime", getValue("endvehicletime", element));
 
-                    DataController.Singleton().routeNumList.add(json);
+                    DataCenter.Singleton().routeNumList.add(json);
                 }
             }
         }
@@ -179,7 +180,7 @@ public class Receiver extends Thread {
     /**
      * <p>노선별 경유 정류소 목록 조회</p>
      * <p>노선별로 경유하는 정류장의 목록을 조회한 뒤 {@link AccessStation}객체에 저장한다.</p>
-     * <p>{@link AccessStation}객체는 {@link DataController}클래스의 accessStationList에 저장된다.</p>
+     * <p>{@link AccessStation}객체는 {@link DataCenter}클래스의 accessStationList에 저장된다.</p>
      * @param cityCode 각 도시별로 부여된 고유한 아이디 값
      * @param routeId 각 노선별로 부여된 고유한 아이디 값
      */
@@ -192,7 +193,7 @@ public class Receiver extends Thread {
             urlBuilder.append("&" + URLEncoder.encode("routeId","UTF-8") + "=" + routeId);
 
             NodeList list = getData(urlBuilder.toString());
-            DataController.Singleton().accessStationList.clear();
+            DataCenter.Singleton().accessStationList.clear();
 
             for(int i = 0; i < list.getLength(); i++){
                 Node node = list.item(i);
@@ -208,7 +209,7 @@ public class Receiver extends Thread {
                     json.put("gpslati", getValue("gpslati", element));
                     json.put("updowncd", getValue("updowncd", element));
 
-                    DataController.Singleton().accessStationList.add(json);
+                    DataCenter.Singleton().accessStationList.add(json);
                 }
             }
         }
@@ -225,7 +226,7 @@ public class Receiver extends Thread {
     /**
      * <p>정류소 번호 목록 조회</p>
      * <p>노선별로 경유하는 정류장의 목록을 조회한 뒤 {@link StationNumList}객체에 저장한다.</p>
-     * <p>{@link StationNumList}객체는 {@link DataController}클래스의 stationNumList에 저장된다.</p>
+     * <p>{@link StationNumList}객체는 {@link DataCenter}클래스의 stationNumList에 저장된다.</p>
      * @param cityCode 각 도시별로 부여된 고유한 아이디 값
      * @param nodeNm 정류소 이름
      */
@@ -239,7 +240,7 @@ public class Receiver extends Thread {
             urlBuilder.append("&" + URLEncoder.encode("nodeno", "UTF-8") + "=");
 
             NodeList list = getData(urlBuilder.toString());
-            DataController.Singleton().stationNumList.clear();
+            DataCenter.Singleton().stationNumList.clear();
 
             for(int i = 0; i < list.getLength(); i++){
                 Node node = list.item(i);
@@ -253,7 +254,7 @@ public class Receiver extends Thread {
                     json.put("nodenm", getValue("nodenm", element));
                     json.put("nodeno", getValue("nodeno", element));
 
-                    DataController.Singleton().stationNumList.add(json);
+                    DataCenter.Singleton().stationNumList.add(json);
 
                 }
             }
@@ -279,7 +280,7 @@ public class Receiver extends Thread {
             urlBuilder.append("&" + URLEncoder.encode("gpsLong","UTF-8") + "=" + URLEncoder.encode(xPos, "UTF-8"));
 
             NodeList list = getData(urlBuilder.toString());
-            DataController.Singleton().gpsStationList.clear();
+            DataCenter.Singleton().gpsStationList.clear();
 
             for(int i = 0; i < list.getLength(); i++){
                 Node node = list.item(i);
@@ -293,7 +294,7 @@ public class Receiver extends Thread {
                     json.put("nodenm", getValue("nodenm", element));
                     json.put("citycode", getValue("citycode", element));
 
-                    DataController.Singleton().gpsStationList.add(json);
+                    DataCenter.Singleton().gpsStationList.add(json);
                 }
             }
 
@@ -321,7 +322,7 @@ public class Receiver extends Thread {
             urlBuilder.append("&" + URLEncoder.encode("routeId", "UTF-8") + "=" + routeId);
 
             NodeList list = getData(urlBuilder.toString());
-            DataController.Singleton().routeLocationList.clear();
+            DataCenter.Singleton().routeLocationList.clear();
 
             for(int i = 0; i < list.getLength(); i++) {
                 Node node = list.item(i);
@@ -337,7 +338,7 @@ public class Receiver extends Thread {
                     json.put("routetp", getValue("routetp", element));
                     json.put("vehicleno", getValue("vehicleno", element));
 
-                    DataController.Singleton().routeLocationList.add(json);
+                    DataCenter.Singleton().routeLocationList.add(json);
                 }
             }
 
@@ -360,7 +361,7 @@ public class Receiver extends Thread {
             urlBuilder.append("&" + URLEncoder.encode("cityCode", "UTF-8") + "=" + cityCode);
 
             NodeList list = getData(urlBuilder.toString());
-            DataController.Singleton().arrivalRouteList.clear();
+            DataCenter.Singleton().arrivalRouteList.clear();
 
             for(int i = 0; i < list.getLength(); i++) {
                 Node node = list.item(i);
@@ -373,7 +374,7 @@ public class Receiver extends Thread {
                     json.put("nodenm", getValue("nodenm", element));
                     json.put("routetp", getValue("routetp", element));
 
-                    DataController.Singleton().arrivalRouteList.add(json);
+                    DataCenter.Singleton().arrivalRouteList.add(json);
                 }
             }
 
@@ -397,7 +398,7 @@ public class Receiver extends Thread {
             urlBuilder.append("&" + URLEncoder.encode("nodeId", "UTF-8") + "=" + nodeId);
 
             NodeList list = getData(urlBuilder.toString());
-            DataController.Singleton().arrivalList.clear();
+            DataCenter.Singleton().arrivalList.clear();
 
             for (int i = 0; i < list.getLength(); i++) {
                 Node node = list.item(i);
@@ -413,7 +414,7 @@ public class Receiver extends Thread {
                     json.put("vehicletp", getValue("vehicletp", element));
                     json.put("arrtime", getValue("arrtime", element));
 
-                    DataController.Singleton().arrivalList.add(json);
+                    DataCenter.Singleton().arrivalList.add(json);
                 }
             }
         }
@@ -437,7 +438,7 @@ public class Receiver extends Thread {
            urlBuilder.append("&" + URLEncoder.encode("routeId", "UTF-8") + "=" + routeId);
 
            NodeList list = getData(urlBuilder.toString());
-           DataController.Singleton().arrivalList.clear();
+           DataCenter.Singleton().arrivalList.clear();
 
            for (int i = 0; i < list.getLength(); i++) {
                Node node = list.item(i);
@@ -453,7 +454,7 @@ public class Receiver extends Thread {
                    json.put("vehicletp", getValue("vehicletp", element));
                    json.put("arrtime", getValue("arrtime", element));
 
-                   DataController.Singleton().arrivalList.add(json);
+                   DataCenter.Singleton().arrivalList.add(json);
                }
            }
        }
@@ -469,24 +470,24 @@ public class Receiver extends Thread {
     //#region 버스 경로 탐색
 
     /**
-     * 출발지 정류장과 도착지 정류장 간의 경로 탐색을 수행한 뒤 결과를 {@link DataController}의 {@link JSONArray}에 저장한다.
+     * 출발지 정류장과 도착지 정류장 간의 경로 탐색을 수행한 뒤 결과를 {@link DataCenter}의 {@link JSONArray}에 저장한다.
      * @param deptId 출발지의 id값
      * @param destId 도착지의 id값
      */
     void getWayList(String cityCode, String deptId, String destId){
         //1. 출발지 정류장에 도착할 버스 목록을 구한다.
-        DataController.Singleton().arrivalList.clear();
+        DataCenter.Singleton().arrivalList.clear();
         getSttnAcctoArvlPrearngeInfoList(cityCode, deptId);
 
         JSONArray deptArrivalList = new JSONArray();
-        deptArrivalList.addAll(DataController.Singleton().arrivalList);
+        deptArrivalList.addAll(DataCenter.Singleton().arrivalList);
 
         //2. 도착지 정류장에 도착할 버스 목록을 구한다.
-        DataController.Singleton().arrivalList.clear();
+        DataCenter.Singleton().arrivalList.clear();
         getSttnAcctoArvlPrearngeInfoList(cityCode, destId);
 
         JSONArray destArrivalList = new JSONArray();
-        destArrivalList.addAll(DataController.Singleton().arrivalList);
+        destArrivalList.addAll(DataCenter.Singleton().arrivalList);
 
         //3. 직통 버스 경로 구하기
         System.out.println("=================CALL!!!!====================");
@@ -500,6 +501,7 @@ public class Receiver extends Thread {
      * @param deptArrivalList 출발지 버스 리스트
      * @param destArrivalList 도착지 버스 리스트
      */
+
     void directWayList(JSONArray deptArrivalList,JSONArray destArrivalList){
         //3. 두 버스 목록에서 겹치는 버스가 있을 경우 직통버스로 간주한다.
         //-> 그 외의 경우에는 환승으로 간주한다 -> 환승은 최대 1회를 넘기지 않는다.
@@ -526,7 +528,7 @@ public class Receiver extends Thread {
                     way.put("vehicletp", deptJson.get("vehicletp"));
 
                     //way를 wayList에 담는다.
-                    DataController.Singleton().wayList.add(way);
+                    DataCenter.Singleton().wayList.add(way);
                 }
             }
         }
@@ -535,8 +537,8 @@ public class Receiver extends Thread {
         JSONArray tmpArray = new JSONArray();
 
         //경로 목록 탐색
-        for(int i = 0; i < DataController.Singleton().wayList.size(); i++){
-            JSONObject json = (JSONObject)DataController.Singleton().wayList.get(i);
+        for(int i = 0; i < DataCenter.Singleton().wayList.size(); i++){
+            JSONObject json = (JSONObject) DataCenter.Singleton().wayList.get(i);
 
             String deptStr = json.get("deptnodenm").toString();
             String destStr = json.get("destnodenm").toString();
@@ -548,10 +550,10 @@ public class Receiver extends Thread {
         }
 
         if(tmpArray.isEmpty()){
-            DataController.Singleton().wayList = transportWayList(deptArrivalList, destArrivalList);
+            DataCenter.Singleton().wayList = transportWayList(deptArrivalList, destArrivalList);
         }
         else{
-            DataController.Singleton().wayList = tmpArray;
+            DataCenter.Singleton().wayList = tmpArray;
         }
     }
 
@@ -568,7 +570,7 @@ public class Receiver extends Thread {
         JSONArray destStationList = new JSONArray();
 
         //1. 출발지 버스 리스트에서는 출발지부터 경유 정거장을 순차적으로 탐색
-        DataController.Singleton().accessStationList.clear();
+        DataCenter.Singleton().accessStationList.clear();
         for (Object o : deptArrivalList) {
             JSONObject deptBus = (JSONObject) o;
 
@@ -578,12 +580,12 @@ public class Receiver extends Thread {
             }
 
             getRouteAcctoThrghSttnList(sba.cityCode, deptBus.get("routeid").toString());
-            deptStationList.addAll(DataController.Singleton().accessStationList);
+            deptStationList.addAll(DataCenter.Singleton().accessStationList);
 
         }
 
         //2. 도착지 버스 리스트에서는 도착지부터 경유 정거장을 역순으로 탐색
-        DataController.Singleton().accessStationList.clear();
+        DataCenter.Singleton().accessStationList.clear();
         for(int i = destArrivalList.size()-1; i >= 0; i--){
             JSONObject destBus = (JSONObject)destArrivalList.get(i);
 
@@ -594,7 +596,7 @@ public class Receiver extends Thread {
 
             getRouteAcctoThrghSttnList(sba.cityCode, destBus.get("routeid").toString());
             JSONArray destBusStationList = new JSONArray();
-            destBusStationList.addAll(DataController.Singleton().accessStationList);
+            destBusStationList.addAll(DataCenter.Singleton().accessStationList);
 
 
             for(int j = destBusStationList.size()-1; j >= 0; j--){
@@ -648,7 +650,7 @@ public class Receiver extends Thread {
     /**
      * <p>도시코드 목록 조회</p>
      * <p>서비스 가능 지역들의 도시코드 목록을 조회한 뒤 {@link City}객체에 저장한다.</p>
-     * <p>{@link City}객체는 {@link DataController}클래스의 cityList에 저장된다.</p>
+     * <p>{@link City}객체는 {@link DataCenter}클래스의 cityList에 저장된다.</p>
      * @param type 각 API서비스별 지원 도시목록을 확인하기 위한 구분 파라미터
      */
     void getCityList(int type){
@@ -675,7 +677,7 @@ public class Receiver extends Thread {
             String url = urlBuilder.toString();
             NodeList list = getData(url);
 
-            DataController.Singleton().cityList.clear();
+            DataCenter.Singleton().cityList.clear();
 
             for(int i = 0; i < list.getLength(); i++){
                 Node node = list.item(i);
@@ -684,7 +686,7 @@ public class Receiver extends Thread {
                     JSONObject json = new JSONObject();
                     json.put("cityCode", getValue("citycode", element));
                     json.put("cityName", getValue("cityname", element));
-                    DataController.Singleton().cityList.add(json);
+                    DataCenter.Singleton().cityList.add(json);
                 }
             }
 

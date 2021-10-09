@@ -1,4 +1,4 @@
-package com.example.demo.data;
+package com.example.demo.dto;
 
 public class City {
     private String _cityCode;

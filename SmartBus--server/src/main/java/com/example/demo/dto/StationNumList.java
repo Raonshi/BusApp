@@ -1,4 +1,4 @@
-package com.example.demo.data;
+package com.example.demo.dto;
 
 public class StationNumList {
     private String _gpslati, _gpslong;

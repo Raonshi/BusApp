@@ -1,4 +1,4 @@
-package com.example.demo.data;
+package com.example.demo.dto;
 
 public class RouteNum {
     private String _routeId, _routeNum, _routeType;

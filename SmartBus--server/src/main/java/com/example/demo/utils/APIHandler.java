@@ -1,6 +1,7 @@
-package com.example.demo;
+package com.example.demo.utils;
 
-public enum Function {
+
+public enum APIHandler {
     //버스 노선 정보
     ROUTE_CITY_LIST,                            //(도착 정보조회 서비스)노선정보 지원 도시 목록
     ROUTE_NUMBER_LIST,                          //(버스 노선 정보조회 서비스)노선 번호 목록 조회

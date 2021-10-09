@@ -1,18 +1,16 @@
 package com.example.demo;
 
-import com.example.demo.api_controller.Receiver;
-import com.example.demo.data.*;
-import com.example.demo.data.DataController;
+import com.example.demo.utils.APIHandler;
+import com.example.demo.utils.APIReceiver;
+import com.example.demo.datacenter.DataCenter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.lang.Nullable;
-import org.springframework.util.RouteMatcher;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @SpringBootApplication
@@ -90,15 +88,15 @@ public class SmartBusApplication {
 	@RequestMapping(method = RequestMethod.GET, path = "/getBusList")
 	JSONArray getBusList(@RequestParam String cityName, @RequestParam String routeNo) throws InterruptedException {
 
-		this.cityCode = getCityCode(cityName, Function.ROUTE_CITY_LIST);
+		this.cityCode = getCityCode(cityName, APIHandler.ROUTE_CITY_LIST);
 		this.routeNo = routeNo;
 
-		Receiver receiver = new Receiver(Function.ROUTE_NUMBER_LIST);
-		receiver.start();
+		APIReceiver APIReceiver = new APIReceiver(APIHandler.ROUTE_NUMBER_LIST);
+		APIReceiver.start();
 
 		Thread.sleep(1000);
 
-		JSONArray routeList = DataController.Singleton().routeNumList;
+		JSONArray routeList = DataCenter.Singleton().routeNumList;
 		JSONArray result = new JSONArray();
 		for(int i = 0; i < routeList.size(); i++) {
 			JSONObject json = (JSONObject) routeList.get(i);
@@ -111,15 +109,15 @@ public class SmartBusApplication {
 
 	@RequestMapping(method = RequestMethod.GET, path = "/getStationList")
 	JSONArray getStationList(@RequestParam String cityName, @RequestParam String nodeNm) throws InterruptedException {
-		this.cityCode = getCityCode(cityName, Function.STATION_CITY_LIST);
+		this.cityCode = getCityCode(cityName, APIHandler.STATION_CITY_LIST);
 		this.nodeNm = nodeNm;
 
-		Receiver receiver = new Receiver(Function.STATION_NUMBER_LIST);
-		receiver.start();
+		APIReceiver APIReceiver = new APIReceiver(APIHandler.STATION_NUMBER_LIST);
+		APIReceiver.start();
 
 		Thread.sleep(1000);
 
-		JSONArray stationList = DataController.Singleton().stationNumList;
+		JSONArray stationList = DataCenter.Singleton().stationNumList;
 		JSONArray result = new JSONArray();
 		for(int i = 0; i < stationList.size(); i++) {
 			JSONObject json = (JSONObject) stationList.get(i);
@@ -132,7 +130,7 @@ public class SmartBusApplication {
 	}
 	@RequestMapping(method = RequestMethod.GET, path = "/TEST1")
 	JSONArray getStationPreArrivalNodeList(@RequestParam String cityName, @RequestParam String nodeNm) throws InterruptedException {
-		this.cityCode = getCityCode(cityName, Function.STATION_CITY_LIST);
+		this.cityCode = getCityCode(cityName, APIHandler.STATION_CITY_LIST);
 
 		ArrayList<String> nodeIdList = getNodeId(cityName, nodeNm);
 
@@ -140,11 +138,11 @@ public class SmartBusApplication {
 		for(int i = 0; i < nodeIdList.size(); i++) {
 			this.nodeId = nodeIdList.get(i);
 
-			Receiver receiver = new Receiver(Function.ARRIVE_BUS_LIST);
-			receiver.start();
+			APIReceiver APIReceiver = new APIReceiver(APIHandler.ARRIVE_BUS_LIST);
+			APIReceiver.start();
 
 			Thread.sleep(1000);
-			JSONArray arrivalList = DataController.Singleton().arrivalList;
+			JSONArray arrivalList = DataCenter.Singleton().arrivalList;
 
 			for(int j = 0; j < arrivalList.size(); j++) {
 				JSONObject json = (JSONObject) arrivalList.get(i);
@@ -163,49 +161,50 @@ public class SmartBusApplication {
 	 * @param destId 목적지 정류장
 	 * @return
 	 */
+
 	@RequestMapping(method = RequestMethod.GET, path = "/getWayList")
 	JSONArray getWayList(@RequestParam String cityName, @RequestParam String deptId, @RequestParam String destId) throws InterruptedException {
-		this.cityCode = getCityCode(cityName, Function.ROUTE_CITY_LIST);
+		this.cityCode = getCityCode(cityName, APIHandler.ROUTE_CITY_LIST);
 		this.deptId = deptId;
 		this.destId = destId;
 
-		DataController.Singleton().wayList.clear();
+		DataCenter.Singleton().wayList.clear();
 
-		Receiver receiver = new Receiver(Function.FIND_WAY);
-		receiver.start();
+		APIReceiver APIReceiver = new APIReceiver(APIHandler.FIND_WAY);
+		APIReceiver.start();
 
 		Thread.sleep(3000);
 
 
-		return DataController.Singleton().wayList;
+		return DataCenter.Singleton().wayList;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, path = "/getBusLocation")
 	JSONArray getBusLocation(@RequestParam String cityName, @RequestParam String routeId) throws InterruptedException{
-		this.cityCode = getCityCode(cityName, Function.LOCATION_CITY_LIST);
+		this.cityCode = getCityCode(cityName, APIHandler.LOCATION_CITY_LIST);
 		this.routeId = routeId;
 
-		Receiver receiver = new Receiver(Function.LOCATION_BUS_LIST);
-		receiver.start();
+		APIReceiver APIReceiver = new APIReceiver(APIHandler.LOCATION_BUS_LIST);
+		APIReceiver.start();
 		Thread.sleep(1000);
 		//JSONArray locationList = DataController.Singleton().routeLocationList;
 
-		return DataController.Singleton().routeLocationList;
+		return DataCenter.Singleton().routeLocationList;
 	}
 
 
 
 
 	/*cityName to cityCode*/
-	public static String getCityCode(String cityName, @Nullable Function type) throws InterruptedException {
-		type = Optional.ofNullable(type).orElse(Function.ROUTE_CITY_LIST);
+	public static String getCityCode(String cityName, @Nullable APIHandler type) throws InterruptedException {
+		type = Optional.ofNullable(type).orElse(APIHandler.ROUTE_CITY_LIST);
 
-		Receiver receiver = new Receiver(type);
-		receiver.start();
+		APIReceiver APIReceiver = new APIReceiver(type);
+		APIReceiver.start();
 
 		Thread.sleep(500);
 
-		JSONArray list = DataController.Singleton().cityList;
+		JSONArray list = DataCenter.Singleton().cityList;
 
 		for(int i = 0; i < list.size(); i++) {
 			JSONObject json = (JSONObject) list.get(i);
@@ -219,15 +218,15 @@ public class SmartBusApplication {
 
 	/*nodeNm to nodeId*/
 	public ArrayList<String> getNodeId(String cityName, String nodeNm) throws InterruptedException {
-		this.cityCode = getCityCode(cityName, Function.STATION_CITY_LIST);
+		this.cityCode = getCityCode(cityName, APIHandler.STATION_CITY_LIST);
 		this.nodeNm = nodeNm;
 
-		Receiver receiver = new Receiver(Function.STATION_NUMBER_LIST);
-		receiver.start();
+		APIReceiver APIReceiver = new APIReceiver(APIHandler.STATION_NUMBER_LIST);
+		APIReceiver.start();
 
 		Thread.sleep(500);
 
-		JSONArray list = DataController.Singleton().stationNumList;
+		JSONArray list = DataCenter.Singleton().stationNumList;
 		
 		//결과 리스트 반환
 		ArrayList<String> result = new ArrayList<>();
@@ -237,21 +236,6 @@ public class SmartBusApplication {
 				result.add(json.get("nodeid").toString());
 			}
 		}
-
-		return result;
-	}
-
-	/*test*/
-	@RequestMapping(method = RequestMethod.GET, path = "/test")
-	JSONArray test(@RequestParam String cityCode, @RequestParam String nodeId) throws InterruptedException{
-		JSONArray result = new JSONArray();
-		this.cityCode = cityCode;
-		this.nodeId = nodeId;
-
-		Receiver receiver = new Receiver(Function.ARRIVE_BUS_LIST);
-		receiver.start();
-		Thread.sleep(500);
-		result = DataController.Singleton().arrivalList;
 
 		return result;
 	}
