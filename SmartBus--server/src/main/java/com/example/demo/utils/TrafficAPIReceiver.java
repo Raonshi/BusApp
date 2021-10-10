@@ -1,6 +1,8 @@
 package com.example.demo.utils;
 
 import com.example.demo.SmartBusApplication;
+import com.example.demo.controller.BusInfo;
+import com.example.demo.controller.StationInfo;
 import com.example.demo.datacenter.DataCenter;
 import com.example.demo.dto.*;
 import com.example.demo.utils.APIHandler;
@@ -19,11 +21,15 @@ import java.net.URLEncoder;
 
 
 
-public class APIReceiver extends Thread {
+public class TrafficAPIReceiver extends Thread {
     private com.example.demo.utils.APIHandler APIHandler;
     SmartBusApplication sba;
+    //제거 예정
 
-    public APIReceiver(APIHandler APIHandler){
+    BusInfo busInfo;
+    StationInfo stationInfo;
+
+    public TrafficAPIReceiver(APIHandler APIHandler){
         this.APIHandler = APIHandler;
     }
 
@@ -38,7 +44,7 @@ public class APIReceiver extends Thread {
                 getCityList(0);
                 break;
             case ROUTE_NUMBER_LIST:
-                getRouteNoList(sba.cityCode, sba.routeNo);
+                getRouteNoList(busInfo.cityCode, busInfo.routeNo);
                 break;
             case ROUTE_THROUGH_STATION_LIST:
                 getRouteAcctoThrghSttnList(sba.cityCode, sba.routeId);
@@ -63,7 +69,7 @@ public class APIReceiver extends Thread {
                 getCityList(2);
                 break;
             case STATION_NUMBER_LIST:
-                getStationNumList(sba.cityCode, sba.nodeNm);
+                getStationNumList(stationInfo.cityCode, stationInfo.nodeNm);
                 break;
             case STATION_SPECIFY_LOCATION_LIST:
                 //getCrdntPrxmtSttnList(sba.xPos, sba.yPos);
@@ -74,7 +80,7 @@ public class APIReceiver extends Thread {
                 getCityList(3);
                 break;
             case LOCATION_BUS_LIST:
-                getRouteLocationList("25", sba.routeId);
+                getRouteLocationList(busInfo.cityCode, busInfo.routeId);
                 //트래픽 풀리면 파라미터 sba.cityCode로 설정
                 break;
             case LOCATION_SPECIFY_STATION_ACCESS_BUS_LIST:
@@ -87,53 +93,86 @@ public class APIReceiver extends Thread {
                 break;
         }
     }
-
-
-    //#region 국토교통부-버스노선정보 API
+    //#region 공통 메서드
 
     /**
-     * <p>노선정보 항목 조회</p>
-     * <p>노선의 기본정보를 조회한 뒤 {@link RouteInfo}객체에 저장한다.</p>
-     * <p>{@link RouteInfo}객체는 {@link DataCenter}클래스의 routeInfoList에 저장된다.</p>
-     * @param cityCode 각 도시별로 부여된 고유한 아이디 값
-     * @param routeId 각 노선별로 부여된 고유한 아이디 값
+     * <p>도시코드 목록 조회</p>
+     * <p>서비스 가능 지역들의 도시코드 목록을 조회한 뒤 {@link City}객체에 저장한다.</p>
+     * <p>{@link City}객체는 {@link DataCenter}클래스의 cityList에 저장된다.</p>
+     * @param type 각 API서비스별 지원 도시목록을 확인하기 위한 구분 파라미터
      */
-    void getRouteInfoItem(String cityCode, String routeId){
-        try{
+    void getCityList(int type){
 
-            StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusRouteInfoInqireService/getRouteInfoIem");
+        try{
+            StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/");
+
+            switch(type){
+                case 0:
+                    urlBuilder.append("BusRouteInfoInqireService/getCtyCodeList");
+                    break;
+                case 1:
+                    urlBuilder.append("ArvlInfoInqireService/getCtyCodeList");
+                    break;
+                case 2:
+                    urlBuilder.append("BusSttnInfoInqireService/getCtyCodeList");
+                    break;
+                case 3:
+                    urlBuilder.append("BusLcInfoInqireService/getCtyCodeList");
+                    break;
+            }
+
             urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
-            urlBuilder.append("&" + URLEncoder.encode("cityCode","UTF-8") + "=" + cityCode);
-            urlBuilder.append("&" + URLEncoder.encode("routeId","UTF-8") + "=" + routeId);
             String url = urlBuilder.toString();
             NodeList list = getData(url);
 
-            DataCenter.Singleton().routeInfoList.clear();
+            DataCenter.Singleton().cityList.clear();
 
             for(int i = 0; i < list.getLength(); i++){
                 Node node = list.item(i);
                 if(node.getNodeType() == Node.ELEMENT_NODE){
                     Element element = (Element) node;
                     JSONObject json = new JSONObject();
-                    json.put("routeId", getValue("routeid", element));
-                    json.put("routeno", getValue("routeno", element));
-                    json.put("routetp", getValue("routetp", element));
-                    json.put("startnodenm", getValue("startnodenm", element));
-                    json.put("endnodenm", getValue("endnodenm", element));
-                    json.put("startvehicletime", getValue("startvehicletime", element));
-                    json.put("endvehicletime", getValue("endvehicletime", element));
-                    json.put("intervaltime", getValue("intervaltime", element));
-                    json.put("intervalsattime", getValue("intervalsattime", element));
-                    json.put("intervalsuntime", getValue("intervalsuntime", element));
-
-                    DataCenter.Singleton().routeInfoList.add(json);
+                    json.put("cityCode", getValue("citycode", element));
+                    json.put("cityName", getValue("cityname", element));
+                    DataCenter.Singleton().cityList.add(json);
                 }
             }
+
         }
         catch (ParserConfigurationException | IOException | SAXException e){
             e.getMessage();
         }
     }
+
+
+    public NodeList getData(String url) throws ParserConfigurationException, IOException, SAXException {
+        Document document = DocumentBuilderFactory
+                .newInstance()
+                .newDocumentBuilder()
+                .parse(url);
+
+        document.getDocumentElement().normalize();
+
+        return document.getElementsByTagName("item");
+    }
+
+    public static String getValue(String tag, Element element){
+
+        try{
+            NodeList list = element.getElementsByTagName(tag).item(0).getChildNodes();
+            Node node = (Node)list.item(0);
+            return node.getNodeValue();
+        }
+        catch (NullPointerException nullE){
+            return "미지원";
+        }
+    }
+
+    //#endregion
+
+    //#region 국토교통부-버스노선정보 API
+
+
 
     /**
      * <p>노선 번호 목록 조회</p>
@@ -210,6 +249,130 @@ public class APIReceiver extends Thread {
                     json.put("updowncd", getValue("updowncd", element));
 
                     DataCenter.Singleton().accessStationList.add(json);
+                }
+            }
+        }
+        catch (ParserConfigurationException | IOException | SAXException e){
+            e.getMessage();
+        }
+    }
+
+    /**
+     * <p>노선정보 항목 조회</p>
+     * <p>노선의 기본정보를 조회한 뒤 {@link RouteInfo}객체에 저장한다.</p>
+     * <p>{@link RouteInfo}객체는 {@link DataCenter}클래스의 routeInfoList에 저장된다.</p>
+     * @param cityCode 각 도시별로 부여된 고유한 아이디 값
+     * @param routeId 각 노선별로 부여된 고유한 아이디 값
+     */
+    void getRouteInfoItem(String cityCode, String routeId){
+        try{
+
+            StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusRouteInfoInqireService/getRouteInfoIem");
+            urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
+            urlBuilder.append("&" + URLEncoder.encode("cityCode","UTF-8") + "=" + cityCode);
+            urlBuilder.append("&" + URLEncoder.encode("routeId","UTF-8") + "=" + routeId);
+            String url = urlBuilder.toString();
+            NodeList list = getData(url);
+
+            DataCenter.Singleton().routeInfoList.clear();
+
+            for(int i = 0; i < list.getLength(); i++){
+                Node node = list.item(i);
+                if(node.getNodeType() == Node.ELEMENT_NODE){
+                    Element element = (Element) node;
+                    JSONObject json = new JSONObject();
+                    json.put("routeId", getValue("routeid", element));
+                    json.put("routeno", getValue("routeno", element));
+                    json.put("routetp", getValue("routetp", element));
+                    json.put("startnodenm", getValue("startnodenm", element));
+                    json.put("endnodenm", getValue("endnodenm", element));
+                    json.put("startvehicletime", getValue("startvehicletime", element));
+                    json.put("endvehicletime", getValue("endvehicletime", element));
+                    json.put("intervaltime", getValue("intervaltime", element));
+                    json.put("intervalsattime", getValue("intervalsattime", element));
+                    json.put("intervalsuntime", getValue("intervalsuntime", element));
+
+                    DataCenter.Singleton().routeInfoList.add(json);
+                }
+            }
+        }
+        catch (ParserConfigurationException | IOException | SAXException e){
+            e.getMessage();
+        }
+    }
+
+    //#endregion
+
+
+    //#region 국토교통부-버스도착정보 API
+
+    void getSttnAcctoArvlPrearngeInfoList(String cityCode, String nodeId){
+        try {
+            System.out.println("cityCode : " + cityCode + " Node Id : " + nodeId);
+
+            StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList");
+            urlBuilder.append("?" + URLEncoder.encode("ServiceKey", "UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
+            urlBuilder.append("&" + URLEncoder.encode("cityCode", "UTF-8") + "=" + cityCode);
+            urlBuilder.append("&" + URLEncoder.encode("nodeId", "UTF-8") + "=" + nodeId);
+
+            NodeList list = getData(urlBuilder.toString());
+            DataCenter.Singleton().arrivalList.clear();
+
+            for (int i = 0; i < list.getLength(); i++) {
+                Node node = list.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    JSONObject json = new JSONObject();
+                    json.put("nodeid", getValue("nodeid", element));
+                    json.put("nodenm", getValue("nodenm", element));
+                    json.put("routeid", getValue("routeid", element));
+                    json.put("routeno", getValue("routeno", element));
+                    json.put("routetp", getValue("routetp", element));
+                    json.put("arrprevstationcnt", getValue("arrprevstationcnt", element));
+                    json.put("vehicletp", getValue("vehicletp", element));
+                    json.put("arrtime", getValue("arrtime", element));
+
+                    DataCenter.Singleton().arrivalList.add(json);
+                }
+            }
+        }
+        catch (ParserConfigurationException | IOException | SAXException e){
+            e.getMessage();
+        }
+    }
+
+    /**
+     * 정류소별 특정노선 버스 도착예정 정보 목록 조회
+     * @param cityCode 조회하려는 도시
+     * @param nodeId 조회하려는 정류소 이름
+     * @param routeId 조회하려는 버스노선
+     */
+    void getSttnAcctoSpcifyRouteBusArvlPrearngeInfoList(String cityCode, String nodeId, String routeId){
+        try {
+            StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/ArvlInfoInqireService/getSttnAcctoSpcifyRouteBusArvlPrearngeInfoList");
+            urlBuilder.append("?" + URLEncoder.encode("ServiceKey", "UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
+            urlBuilder.append("&" + URLEncoder.encode("cityCode", "UTF-8") + "=" + cityCode);
+            urlBuilder.append("&" + URLEncoder.encode("nodeId", "UTF-8") + "=" + nodeId);
+            urlBuilder.append("&" + URLEncoder.encode("routeId", "UTF-8") + "=" + routeId);
+
+            NodeList list = getData(urlBuilder.toString());
+            DataCenter.Singleton().arrivalList.clear();
+
+            for (int i = 0; i < list.getLength(); i++) {
+                Node node = list.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    JSONObject json = new JSONObject();
+                    json.put("nodeid", getValue("nodeid", element));
+                    json.put("nodenm", getValue("nodenm", element));
+                    json.put("routeid", getValue("routeid", element));
+                    json.put("routeno", getValue("routeno", element));
+                    json.put("routetp", getValue("routetp", element));
+                    json.put("arrprevstationcnt", getValue("arrprevstationcnt", element));
+                    json.put("vehicletp", getValue("vehicletp", element));
+                    json.put("arrtime", getValue("arrtime", element));
+
+                    DataCenter.Singleton().arrivalList.add(json);
                 }
             }
         }
@@ -385,88 +548,6 @@ public class APIReceiver extends Thread {
 
     //#endregion
 
-
-    //#region 국토교통부-버스도착정보 API
-
-    void getSttnAcctoArvlPrearngeInfoList(String cityCode, String nodeId){
-        try {
-            System.out.println("cityCode : " + cityCode + " Node Id : " + nodeId);
-
-            StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList");
-            urlBuilder.append("?" + URLEncoder.encode("ServiceKey", "UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
-            urlBuilder.append("&" + URLEncoder.encode("cityCode", "UTF-8") + "=" + cityCode);
-            urlBuilder.append("&" + URLEncoder.encode("nodeId", "UTF-8") + "=" + nodeId);
-
-            NodeList list = getData(urlBuilder.toString());
-            DataCenter.Singleton().arrivalList.clear();
-
-            for (int i = 0; i < list.getLength(); i++) {
-                Node node = list.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    JSONObject json = new JSONObject();
-                    json.put("nodeid", getValue("nodeid", element));
-                    json.put("nodenm", getValue("nodenm", element));
-                    json.put("routeid", getValue("routeid", element));
-                    json.put("routeno", getValue("routeno", element));
-                    json.put("routetp", getValue("routetp", element));
-                    json.put("arrprevstationcnt", getValue("arrprevstationcnt", element));
-                    json.put("vehicletp", getValue("vehicletp", element));
-                    json.put("arrtime", getValue("arrtime", element));
-
-                    DataCenter.Singleton().arrivalList.add(json);
-                }
-            }
-        }
-        catch (ParserConfigurationException | IOException | SAXException e){
-            e.getMessage();
-        }
-    }
-
-    /**
-     * 정류소별 특정노선 버스 도착예정 정보 목록 조회
-     * @param cityCode 조회하려는 도시
-     * @param nodeId 조회하려는 정류소 이름
-     * @param routeId 조회하려는 버스노선
-     */
-   void getSttnAcctoSpcifyRouteBusArvlPrearngeInfoList(String cityCode, String nodeId, String routeId){
-       try {
-           StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/ArvlInfoInqireService/getSttnAcctoSpcifyRouteBusArvlPrearngeInfoList");
-           urlBuilder.append("?" + URLEncoder.encode("ServiceKey", "UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
-           urlBuilder.append("&" + URLEncoder.encode("cityCode", "UTF-8") + "=" + cityCode);
-           urlBuilder.append("&" + URLEncoder.encode("nodeId", "UTF-8") + "=" + nodeId);
-           urlBuilder.append("&" + URLEncoder.encode("routeId", "UTF-8") + "=" + routeId);
-
-           NodeList list = getData(urlBuilder.toString());
-           DataCenter.Singleton().arrivalList.clear();
-
-           for (int i = 0; i < list.getLength(); i++) {
-               Node node = list.item(i);
-               if (node.getNodeType() == Node.ELEMENT_NODE) {
-                   Element element = (Element) node;
-                   JSONObject json = new JSONObject();
-                   json.put("nodeid", getValue("nodeid", element));
-                   json.put("nodenm", getValue("nodenm", element));
-                   json.put("routeid", getValue("routeid", element));
-                   json.put("routeno", getValue("routeno", element));
-                   json.put("routetp", getValue("routetp", element));
-                   json.put("arrprevstationcnt", getValue("arrprevstationcnt", element));
-                   json.put("vehicletp", getValue("vehicletp", element));
-                   json.put("arrtime", getValue("arrtime", element));
-
-                   DataCenter.Singleton().arrivalList.add(json);
-               }
-           }
-       }
-       catch (ParserConfigurationException | IOException | SAXException e){
-           e.getMessage();
-       }
-    }
-
-    //#endregion
-
-
-
     //#region 버스 경로 탐색
 
     /**
@@ -641,83 +722,6 @@ public class APIReceiver extends Thread {
             }
         }
         return result;
-    }
-
-    //#endregion
-
-    //#region 공통 메서드
-
-    /**
-     * <p>도시코드 목록 조회</p>
-     * <p>서비스 가능 지역들의 도시코드 목록을 조회한 뒤 {@link City}객체에 저장한다.</p>
-     * <p>{@link City}객체는 {@link DataCenter}클래스의 cityList에 저장된다.</p>
-     * @param type 각 API서비스별 지원 도시목록을 확인하기 위한 구분 파라미터
-     */
-    void getCityList(int type){
-
-        try{
-            StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/");
-
-            switch(type){
-                case 0:
-                    urlBuilder.append("BusRouteInfoInqireService/getCtyCodeList");
-                    break;
-                case 1:
-                    urlBuilder.append("ArvlInfoInqireService/getCtyCodeList");
-                    break;
-                case 2:
-                    urlBuilder.append("BusSttnInfoInqireService/getCtyCodeList");
-                    break;
-                case 3:
-                    urlBuilder.append("BusLcInfoInqireService/getCtyCodeList");
-                    break;
-            }
-
-            urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
-            String url = urlBuilder.toString();
-            NodeList list = getData(url);
-
-            DataCenter.Singleton().cityList.clear();
-
-            for(int i = 0; i < list.getLength(); i++){
-                Node node = list.item(i);
-                if(node.getNodeType() == Node.ELEMENT_NODE){
-                    Element element = (Element) node;
-                    JSONObject json = new JSONObject();
-                    json.put("cityCode", getValue("citycode", element));
-                    json.put("cityName", getValue("cityname", element));
-                    DataCenter.Singleton().cityList.add(json);
-                }
-            }
-
-        }
-        catch (ParserConfigurationException | IOException | SAXException e){
-            e.getMessage();
-        }
-    }
-
-
-    public NodeList getData(String url) throws ParserConfigurationException, IOException, SAXException {
-        Document document = DocumentBuilderFactory
-                .newInstance()
-                .newDocumentBuilder()
-                .parse(url);
-
-        document.getDocumentElement().normalize();
-
-        return document.getElementsByTagName("item");
-    }
-
-    public static String getValue(String tag, Element element){
-
-        try{
-            NodeList list = element.getElementsByTagName(tag).item(0).getChildNodes();
-            Node node = (Node)list.item(0);
-            return node.getNodeValue();
-        }
-        catch (NullPointerException nullE){
-            return "미지원";
-        }
     }
 
     //#endregion
