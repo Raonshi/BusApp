@@ -2,6 +2,8 @@ package com.example.demo.utils;
 
 import com.example.demo.SmartBusApplication;
 import com.example.demo.controller.BusInfo;
+import com.example.demo.controller.PathInfo;
+import com.example.demo.controller.PublicOperation;
 import com.example.demo.controller.StationInfo;
 import com.example.demo.datacenter.DataCenter;
 import com.example.demo.dto.*;
@@ -28,6 +30,8 @@ public class TrafficAPIReceiver extends Thread {
 
     BusInfo busInfo;
     StationInfo stationInfo;
+    PathInfo pathInfo;
+    PublicOperation publicOperation;
 
     public TrafficAPIReceiver(APIHandler APIHandler){
         this.APIHandler = APIHandler;
@@ -40,17 +44,18 @@ public class TrafficAPIReceiver extends Thread {
         
         switch(APIHandler){
             //버스 노선 정보 API
+            //사용중이 아닌 API는 주석처리
             case ROUTE_CITY_LIST:
                 getCityList(0);
                 break;
             case ROUTE_NUMBER_LIST:
-                getRouteNoList(busInfo.cityCode, busInfo.routeNo);
+                getRouteNoList(publicOperation.cityCode, publicOperation.routeNo);
                 break;
             case ROUTE_THROUGH_STATION_LIST:
-                getRouteAcctoThrghSttnList(sba.cityCode, sba.routeId);
+                //getRouteAcctoThrghSttnList(sba.cityCode, sba.routeId);
                 break;
             case ROUTE_INFO:
-                getRouteInfoItem(sba.cityCode, sba.routeId);
+                getRouteInfoItem(busInfo.cityCode, busInfo.routeId);
                 break;
 
             //버스 도착 정보 API
@@ -58,7 +63,7 @@ public class TrafficAPIReceiver extends Thread {
                 getCityList(1);
                 break;
             case ARRIVE_BUS_LIST:
-                getSttnAcctoArvlPrearngeInfoList(sba.cityCode, sba.nodeId);
+                //getSttnAcctoArvlPrearngeInfoList(sba.cityCode, sba.nodeId);
                 break;
             case ARRIVE_SPECIFY_STATION_ACCESS_BUS_LIST:
                 //getSttnAcctoSpcifyRouteBusArvlPrearngeInfoList(sba.cityCode, sba.nodeId, sba.routeId);
@@ -69,7 +74,7 @@ public class TrafficAPIReceiver extends Thread {
                 getCityList(2);
                 break;
             case STATION_NUMBER_LIST:
-                getStationNumList(stationInfo.cityCode, stationInfo.nodeNm);
+                getStationNumList(publicOperation.cityCode, publicOperation.nodeNm);
                 break;
             case STATION_SPECIFY_LOCATION_LIST:
                 //getCrdntPrxmtSttnList(sba.xPos, sba.yPos);
@@ -80,7 +85,7 @@ public class TrafficAPIReceiver extends Thread {
                 getCityList(3);
                 break;
             case LOCATION_BUS_LIST:
-                getRouteLocationList(busInfo.cityCode, busInfo.routeId);
+                //getRouteLocationList(busInfo.cityCode, busInfo.routeId);
                 //트래픽 풀리면 파라미터 sba.cityCode로 설정
                 break;
             case LOCATION_SPECIFY_STATION_ACCESS_BUS_LIST:
@@ -89,7 +94,7 @@ public class TrafficAPIReceiver extends Thread {
 
             //경로 연산
             case FIND_WAY:
-                getWayList(sba.cityCode, sba.deptId, sba.destId);
+                getWayList(pathInfo.cityCode, pathInfo.deptId, pathInfo.destId);
                 break;
         }
     }
@@ -660,7 +665,7 @@ public class TrafficAPIReceiver extends Thread {
                 continue;
             }
 
-            getRouteAcctoThrghSttnList(sba.cityCode, deptBus.get("routeid").toString());
+            getRouteAcctoThrghSttnList(pathInfo.cityCode, deptBus.get("routeid").toString());
             deptStationList.addAll(DataCenter.Singleton().accessStationList);
 
         }
@@ -675,7 +680,7 @@ public class TrafficAPIReceiver extends Thread {
                 continue;
             }
 
-            getRouteAcctoThrghSttnList(sba.cityCode, destBus.get("routeid").toString());
+            getRouteAcctoThrghSttnList(pathInfo.cityCode, destBus.get("routeid").toString());
             JSONArray destBusStationList = new JSONArray();
             destBusStationList.addAll(DataCenter.Singleton().accessStationList);
 

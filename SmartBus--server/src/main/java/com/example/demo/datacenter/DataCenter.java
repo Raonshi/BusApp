@@ -2,6 +2,8 @@ package com.example.demo.datacenter;
 
 import org.json.simple.JSONArray;
 
+import java.util.ArrayList;
+
 public class DataCenter {
 
     /**
@@ -23,7 +25,7 @@ public class DataCenter {
 
 
     /**
-     * <p>국토교통부-버스노선정보 API를 통해 얻은 데이터를 저장하는 ArrayList</p>
+     * <p>국토교통부-버스노선정보 API를 통해 얻은 데이터를 저장하는 List</p>
      */
     public JSONArray cityList = new JSONArray();            //지원하는 도시 리스트
 
@@ -37,5 +39,22 @@ public class DataCenter {
     public JSONArray accessStationList = new JSONArray();   //노선이 지나는 정류장 정보
     public JSONArray gpsStationList = new JSONArray();      //좌표 기반 주변 정류장 목록
 
-    public JSONArray wayList = new JSONArray();             //출발지 -> 도착지 중복 경로 노선 리스트
+
+
+    /*
+    * 국토교통부-버스노선정보 API를 가공하여 얻은 데이터를 저장하는 List
+    */
+
+    public ArrayList<String> routeIdList = new ArrayList<>();
+    //getBusList 요청시 PublicOperation.getRouteId 로 얻어온 버스 노선들의 id 리스트
+    public ArrayList<String> stationIdList = new ArrayList<>();
+    //getStation 요청시 PublicOperation.getStationId 로 얻어온 버스 정류장들의 id 리스트
+
+    public JSONArray finalRouteList = new JSONArray();
+    //도시이름, 노선번호로 getBusList 요청시 API를 통해 얻어온 데이터들을 가공한 버스 노선들의 상세 정보 리스트
+    public JSONArray finalStationList = new JSONArray();
+    //도시이름, 정류장이름으로 getStationList 요청시 API를 통해 얻어온 데이터들을 가공한 버스 정류장들의 상세 정보 리스트
+
+    public JSONArray wayList = new JSONArray();
+    //출발지 -> 도착지 중복 경로 노선 리스트
 }
