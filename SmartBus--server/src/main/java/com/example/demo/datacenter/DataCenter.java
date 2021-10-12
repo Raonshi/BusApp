@@ -57,4 +57,16 @@ public class DataCenter {
 
     public JSONArray wayList = new JSONArray();
     //출발지 -> 도착지 중복 경로 노선 리스트
+
+
+    /*
+    * OpenWeatherAPI 현재 날씨 정보 API를 통해 얻은 데이터를 저장하는 List
+    */
+    public JSONArray weatherList = new JSONArray();
+
+
+    /*
+     * 한국환경공단(에어코리아) 대기오염정보 API를 통해 얻은 데이터를 저장하는 List
+     */
+    public JSONArray dustList = new JSONArray();
 }

@@ -1,13 +1,11 @@
 package com.example.demo.utils;
 
-import com.example.demo.SmartBusApplication;
 import com.example.demo.controller.BusInfo;
 import com.example.demo.controller.PathInfo;
 import com.example.demo.controller.PublicOperation;
 import com.example.demo.controller.StationInfo;
 import com.example.demo.datacenter.DataCenter;
 import com.example.demo.dto.*;
-import com.example.demo.utils.APIHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -24,9 +22,7 @@ import java.net.URLEncoder;
 
 
 public class TrafficAPIReceiver extends Thread {
-    private com.example.demo.utils.APIHandler APIHandler;
-    SmartBusApplication sba;
-    //제거 예정
+    private APIHandler APIHandler;
 
     BusInfo busInfo;
     StationInfo stationInfo;

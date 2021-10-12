@@ -2,7 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.datacenter.DataCenter;
 import com.example.demo.utils.APIHandler;
+import com.example.demo.utils.DustAPIReceiver;
 import com.example.demo.utils.TrafficAPIReceiver;
+import com.example.demo.utils.WeatherAPIReceiver;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +18,8 @@ import java.util.function.BooleanSupplier;
 
 /* 기능
  * 1. 본 애플리케이션의 서비스를 지원하는 도시 인지 확인  (List)
- * 2. 클라이언트에서 위치를 입력받아 기상 정보를 조회  (List)
- * 3. 클라이언트에서 위치를 입력받아 미세먼지 정보 조회 (list)
+ * 2. 클라이언트에서 위치(위도, 경도)를 입력받아 기상 정보를 조회  (List)
+ * 3. 클라이언트에서 시, 도를 입력받아 미세먼지 정보 조회 (list)
  */
 
 
@@ -25,9 +27,12 @@ import java.util.function.BooleanSupplier;
 @RestController
 public class RegionInfo {
 
+    public static String latitude;
+    public static String longitude;
+    public static String sido;
 
     //본 애플리케이션의 서비스를 지원하는 도시 인지 확인
-    @RequestMapping(method = RequestMethod.GET, path = "/region")
+    @RequestMapping(method = RequestMethod.GET, path = "/getRegionInfo")
     public JSONArray getRegionInfo(@RequestParam String cityName) throws InterruptedException {
 
         TrafficAPIReceiver receiver = new TrafficAPIReceiver(APIHandler.ROUTE_CITY_LIST);
@@ -46,6 +51,35 @@ public class RegionInfo {
         }
 
         return result;
+    }
+
+
+    //클라이언트에서 위치를 입력받아 기상 정보를 조회
+    @RequestMapping(method = RequestMethod.GET, path = "/getWeatherInfo")
+    public JSONArray getWeatherInfo(@RequestParam String latitude, @RequestParam String longitude) throws InterruptedException {
+        this.latitude = latitude;
+        this.longitude = longitude;
+
+        WeatherAPIReceiver receiver = new WeatherAPIReceiver(APIHandler.REGION_WEATHER_INFO);
+        receiver.start();
+
+        Thread.sleep(1000);
+
+        return DataCenter.Singleton().weatherList;
+    }
+
+
+    //클라이언트에서 시, 도를 입력받아 미세먼지 정보 조회
+    @RequestMapping(method = RequestMethod.GET, path = "/getDustInfo")
+    public JSONArray getDustInfo(@RequestParam String sido) throws InterruptedException {
+        this.sido = sido;
+
+        DustAPIReceiver receiver = new DustAPIReceiver(APIHandler.REGION_DUST_INFO);
+        receiver.start();
+
+        Thread.sleep(1000);
+
+        return DataCenter.Singleton().dustList;
     }
 
 }

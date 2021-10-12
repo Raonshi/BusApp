@@ -80,7 +80,7 @@ public class PublicOperation {
     /*routeNo to routeId*/
     @RequestMapping(method = RequestMethod.GET, path = "/routeIdList")
     public ArrayList<String> getRouteId(String cityName, String routeNo) throws InterruptedException{
-        System.out.println(cityName + " " + routeNo);
+
         this.cityCode = getCityCode(cityName, APIHandler.ROUTE_CITY_LIST);
         this.routeNo = routeNo;
 
