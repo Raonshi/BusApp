@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /* 기능
  * 1. 클라이언트에서 출발지, 목적지가 설정되었으면 직통 및 환승 경로를 찾아 출력
+ * (직통 : 버스 노선 출력, 환승 : 정류장 경로 출력)
  */
 
 @RestController
@@ -22,6 +23,9 @@ public class PathInfo {
     public static String deptId;
     public static String destId;
 
+
+    //클라이언트에서 출발지, 목적지가 설정되었으면 직통 및 환승 경로를 찾아 출력
+    //(직통 : 버스 노선 출력, 환승 : 정류장 경로 출력)
     @RequestMapping(method = RequestMethod.GET, path = "/getWayList")
     JSONArray getWayList(@RequestParam String cityName, @RequestParam String deptId, @RequestParam String destId) throws InterruptedException {
         this.cityCode = PublicOperation.getCityCode(cityName, APIHandler.ROUTE_CITY_LIST);

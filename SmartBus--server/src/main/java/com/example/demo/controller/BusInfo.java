@@ -16,8 +16,8 @@ import java.util.ArrayList;
 
 /* 기능
  * 1. 매개변수로 입력받은 버스노선에 대한 상세 정보
- * 2. 매개변수로 입력받은 버스노선 별로 현재 운행중인 버스의 gps 정보 출력 (List)
- * 3. 매개변수로 입력받은 버스노선에 대해 경유하는 모든 정류장을 출력. (List)
+ * 2. 매개변수로 입력받은 버스노선에 대해 경유하는 모든 정류장을 출력. (List)
+ * 3. 매개변수로 입력받은 버스노선 별로 현재 운행중인 버스의 gps 정보 출력 (List)
  */
 
 
@@ -41,8 +41,6 @@ public class BusInfo {
         this.cityCode = pub.getCityCode(cityName, APIHandler.ROUTE_CITY_LIST);
         DataCenter.Singleton().routeIdList = pub.getRouteId(cityName, routeNo);
 
-        JSONArray result = new JSONArray();
-
         for(Object obj : DataCenter.Singleton().routeIdList) {
             this.routeId = (String) obj;
             String routeId = this.routeId;
@@ -64,6 +62,42 @@ public class BusInfo {
         }
 
         return DataCenter.Singleton().finalRouteList;
+    }
+
+    //매개변수로 입력받은 버스노선에 대해 경유하는 모든 정류장을 출력
+    @RequestMapping(method = RequestMethod.GET, path = "/getThroughStation")
+    JSONArray getThroughStationList(@RequestParam String cityName, @RequestParam String routeNo) throws InterruptedException {
+
+        PublicOperation pub = new PublicOperation();
+        DataCenter.Singleton().routeIdList.clear();
+        DataCenter.Singleton().finalRouteAceessList.clear();
+
+        this.cityCode = pub.getCityCode(cityName, APIHandler.ROUTE_CITY_LIST);
+        DataCenter.Singleton().routeIdList = pub.getRouteId(cityName, routeNo);
+
+        for(Object obj : DataCenter.Singleton().routeIdList) {
+            this.routeId = (String) obj;
+            String routeId = this.routeId;
+            TrafficAPIReceiver trafficAPIReceiver = new TrafficAPIReceiver(APIHandler.ROUTE_THROUGH_STATION_LIST);
+            trafficAPIReceiver.start();
+
+            Thread.sleep(1000);
+
+            JSONArray accessStationList = DataCenter.Singleton().accessStationList;
+            JSONArray subResult = new JSONArray();
+
+            for(Object o : accessStationList) {
+                JSONObject json = (JSONObject) o;
+                if(json.get("routeId").toString().contains(routeId)) {
+                    subResult.add(json);
+                }
+            }
+            DataCenter.Singleton().finalRouteAceessList.add(subResult);
+        }
+
+        return DataCenter.Singleton().finalRouteAceessList;
+
+
     }
 
 

@@ -34,9 +34,9 @@ public class DataCenter {
     public JSONArray arrivalList = new JSONArray();         //도착지 노선 정보 리스트
     public JSONArray routeLocationList = new JSONArray();   //요청한 지나는 노선의 위치, 정보 및 정류장 정보
     public JSONArray arrivalRouteList = new JSONArray();
+    public JSONArray accessStationList = new JSONArray();   //노선이 지나는 정류장 정보
 
     public JSONArray stationNumList = new JSONArray();      //정류장 기본 정보
-    public JSONArray accessStationList = new JSONArray();   //노선이 지나는 정류장 정보
     public JSONArray gpsStationList = new JSONArray();      //좌표 기반 주변 정류장 목록
 
 
@@ -54,6 +54,8 @@ public class DataCenter {
     //도시이름, 노선번호로 getBusList 요청시 API를 통해 얻어온 데이터들을 가공한 버스 노선들의 상세 정보 리스트
     public JSONArray finalStationList = new JSONArray();
     //도시이름, 정류장이름으로 getStationList 요청시 API를 통해 얻어온 데이터들을 가공한 버스 정류장들의 상세 정보 리스트
+    public JSONArray finalRouteAceessList = new JSONArray();
+
 
     public JSONArray wayList = new JSONArray();
     //출발지 -> 도착지 중복 경로 노선 리스트

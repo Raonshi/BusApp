@@ -48,7 +48,7 @@ public class TrafficAPIReceiver extends Thread {
                 getRouteNoList(publicOperation.cityCode, publicOperation.routeNo);
                 break;
             case ROUTE_THROUGH_STATION_LIST:
-                //getRouteAcctoThrghSttnList(sba.cityCode, sba.routeId);
+                getRouteAcctoThrghSttnList(busInfo.cityCode, busInfo.routeId);
                 break;
             case ROUTE_INFO:
                 getRouteInfoItem(busInfo.cityCode, busInfo.routeId);
@@ -73,7 +73,7 @@ public class TrafficAPIReceiver extends Thread {
                 getStationNumList(publicOperation.cityCode, publicOperation.nodeNm);
                 break;
             case STATION_SPECIFY_LOCATION_LIST:
-                //getCrdntPrxmtSttnList(sba.xPos, sba.yPos);
+                getCrdntPrxmtSttnList(stationInfo.xPos, stationInfo.yPos);
                 break;
 
             //버스 위치 정보 API
@@ -82,7 +82,6 @@ public class TrafficAPIReceiver extends Thread {
                 break;
             case LOCATION_BUS_LIST:
                 //getRouteLocationList(busInfo.cityCode, busInfo.routeId);
-                //트래픽 풀리면 파라미터 sba.cityCode로 설정
                 break;
             case LOCATION_SPECIFY_STATION_ACCESS_BUS_LIST:
                 //getRouteAcctoSpcifySttnAccesBusLcInfo(sba.cityCode, sba.routeId, sba.nodeId);
@@ -436,13 +435,13 @@ public class TrafficAPIReceiver extends Thread {
      * @param yPos 위도 좌표
      */
     void getCrdntPrxmtSttnList(String xPos, String yPos) {
-
+        System.out.println(xPos + " " + yPos);
         try{
             StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusSttnInfoInqireService/getCrdntPrxmtSttnList");
             urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
             urlBuilder.append("&" + URLEncoder.encode("gpsLati","UTF-8") + "=" + URLEncoder.encode(yPos, "UTF-8"));
             urlBuilder.append("&" + URLEncoder.encode("gpsLong","UTF-8") + "=" + URLEncoder.encode(xPos, "UTF-8"));
-
+            System.out.println(urlBuilder.toString());
             NodeList list = getData(urlBuilder.toString());
             DataCenter.Singleton().gpsStationList.clear();
 
