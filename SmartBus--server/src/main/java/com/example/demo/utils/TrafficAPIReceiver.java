@@ -6,6 +6,7 @@ import com.example.demo.controller.PublicOperation;
 import com.example.demo.controller.StationInfo;
 import com.example.demo.datacenter.DataCenter;
 import com.example.demo.dto.*;
+import org.springframework.cache.annotation.Cacheable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -34,6 +35,7 @@ public class TrafficAPIReceiver extends Thread {
     }
 
     @Override
+    @Cacheable(value = "trafficDataCache")
     public void run() {
         super.run();
         System.out.println("==========Receiver Thread Generated!!==========");
