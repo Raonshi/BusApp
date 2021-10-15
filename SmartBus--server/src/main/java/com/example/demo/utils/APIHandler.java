@@ -28,6 +28,6 @@ public enum APIHandler {
 
     //지역 기상 정보
     REGION_DUST_INFO,
-    REGION_WEATHER_INFO
+    REGION_WEATHER_INFO,
 
 }

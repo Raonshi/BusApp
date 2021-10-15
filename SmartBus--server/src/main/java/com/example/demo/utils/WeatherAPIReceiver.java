@@ -25,7 +25,6 @@ public class WeatherAPIReceiver extends Thread{
 
         switch(APIHandler) {
             case REGION_WEATHER_INFO:
-                System.out.println(regionInfo.latitude + " " + regionInfo.longitude);
                 getRegionWeather(regionInfo.latitude, regionInfo.longitude);
                 break;
         }
@@ -34,7 +33,7 @@ public class WeatherAPIReceiver extends Thread{
     void getRegionWeather(String latitude, String longitude) {
 
         try {
-            StringBuilder urlBuilder = new StringBuilder("https://api.openweathermap.org/data/2.5/weather");
+            StringBuilder urlBuilder = new StringBuilder("https://api.openweathermap.org/data/2.5/forecast");
             urlBuilder.append("?" + URLEncoder.encode("lat", "UTF-8") + "=" + URLEncoder.encode(latitude, "UTF-8"));
             urlBuilder.append("&" + URLEncoder.encode("lon", "UTF-8") + "=" + URLEncoder.encode(longitude, "UTF-8"));
             urlBuilder.append("&" + URLEncoder.encode("appid", "UTF-8") + "=0db7106ec70e7b086c079aaf5db4af9c");
@@ -51,23 +50,29 @@ public class WeatherAPIReceiver extends Thread{
                 result = result.concat(line);
             }
 
-            JSONObject resultObj = new JSONObject();
             JSONParser jsonParser = new JSONParser();
-
             JSONObject parsejson = (JSONObject) jsonParser.parse(result);
 
-            resultObj.put("region", parsejson.get("name"));
+            JSONArray weatherDays5 = (JSONArray) parsejson.get("list");
+            JSONObject regionObj = (JSONObject) parsejson.get("city");
+            JSONObject obj = new JSONObject();
+            obj.put("region", regionObj.get("name"));
+            DataCenter.Singleton().weatherList.add(obj);
 
-            JSONArray weatherArray = (JSONArray) parsejson.get("weather");
-            JSONObject weatherObj = (JSONObject) weatherArray.get(0);
+            for(int i = 0; i < weatherDays5.size(); i++) {
+                JSONObject resultObj = new JSONObject();
+                JSONObject json = (JSONObject) weatherDays5.get(i);
 
-            resultObj.put("weather", weatherObj.get("main"));
+                JSONObject mainObject = (JSONObject) json.get("main");
+                JSONArray weatherList = (JSONArray) json.get("weather");
+                JSONObject weatherObject = (JSONObject) weatherList.get(0);
 
-            JSONObject tempArray = (JSONObject) parsejson.get("main");
+                resultObj.put("temparature", mainObject.get("temp"));
+                resultObj.put("weather", weatherObject.get("main"));
+                resultObj.put("datetime", json.get("dt_txt"));
 
-            resultObj.put("temparature", tempArray.get("temp"));
-
-            DataCenter.Singleton().weatherList.add(resultObj);
+                DataCenter.Singleton().weatherList.add(resultObj);
+            }
 
         }catch(Exception e) {
             e.printStackTrace();

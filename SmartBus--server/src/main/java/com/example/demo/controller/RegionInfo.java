@@ -29,7 +29,7 @@ public class RegionInfo {
 
     public static String latitude;
     public static String longitude;
-    public static String sido;
+    //public static String sido;
 
     //본 애플리케이션의 서비스를 지원하는 도시 인지 확인
     @RequestMapping(method = RequestMethod.GET, path = "/getRegionInfo")
@@ -54,7 +54,7 @@ public class RegionInfo {
     }
 
 
-    //클라이언트에서 위치를 입력받아 기상 정보를 조회
+    //클라이언트에서 위치(위도, 경도)를 입력받아 기상 정보를 조회
     @RequestMapping(method = RequestMethod.GET, path = "/getWeatherInfo")
     public JSONArray getWeatherInfo(@RequestParam String latitude, @RequestParam String longitude) throws InterruptedException {
         this.latitude = latitude;
@@ -63,21 +63,23 @@ public class RegionInfo {
         WeatherAPIReceiver receiver = new WeatherAPIReceiver(APIHandler.REGION_WEATHER_INFO);
         receiver.start();
 
-        Thread.sleep(1000);
+        Thread.sleep(1500);
+
 
         return DataCenter.Singleton().weatherList;
     }
 
 
-    //클라이언트에서 시, 도를 입력받아 미세먼지 정보 조회
+    //클라이언트에서 위치(위도, 경도)를 입력받아 미세먼지 정보 조회
     @RequestMapping(method = RequestMethod.GET, path = "/getDustInfo")
-    public JSONArray getDustInfo(@RequestParam String sido) throws InterruptedException {
-        this.sido = sido;
+    public JSONArray getDustInfo(@RequestParam String latitude,  @RequestParam String longitude) throws InterruptedException {
+        this.latitude = latitude;
+        this.longitude = longitude;
 
         DustAPIReceiver receiver = new DustAPIReceiver(APIHandler.REGION_DUST_INFO);
         receiver.start();
 
-        Thread.sleep(1000);
+        Thread.sleep(1500);
 
         return DataCenter.Singleton().dustList;
     }

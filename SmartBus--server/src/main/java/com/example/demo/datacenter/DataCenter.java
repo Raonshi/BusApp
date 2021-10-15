@@ -71,4 +71,8 @@ public class DataCenter {
      * 한국환경공단(에어코리아) 대기오염정보 API를 통해 얻은 데이터를 저장하는 List
      */
     public JSONArray dustList = new JSONArray();
+    public ArrayList<String> tmX = new ArrayList<>();
+    public ArrayList<String> tmY = new ArrayList<>();
+    public ArrayList<String> stationNameList = new ArrayList<>();
+
 }
