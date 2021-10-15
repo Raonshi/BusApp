@@ -2,18 +2,20 @@
 /// 작성자 : 홍순원
 
 import 'package:flutter/material.dart';
-import 'package:smart_bus_app/src/ui/find_way/find_way_widget.dart';
-import 'package:smart_bus_app/src/ui/home_page.dart';
+import 'package:smart_bus_app/src/business_logic/get_controller.dart';
 import 'package:get/get.dart';
 import 'package:smart_bus_app/src/web_server.dart';
-
 import 'src/ui/find_way/station_search_widget.dart';
 
 void main(){
+
+
   //전처리 - 웹서버 싱글톤 객체 생성
-  new WebServer.init();
+  final web = new WebServer.init();
 
   //날씨 정보 받아오기
+
+
 
   //GPS정보를 통해 내 근처 정거장 찾기
 
@@ -34,11 +36,14 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends StatelessWidget {
-
+  final controller = Get.put(Controller());
   List list = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+
 
   @override
   Widget build(BuildContext context) {
+    controller.getGPS();
+
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -251,7 +256,7 @@ class MainPage extends StatelessWidget {
         builder: (BuildContext) {
           return AlertDialog(
             title: Text("지역 설정"),
-            content: Text("test"),
+            content: Text("${controller.place.value}"),
             actions: [
               ElevatedButton(
                   onPressed: (){

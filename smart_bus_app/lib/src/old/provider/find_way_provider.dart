@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
-import 'package:smart_bus_app/src/data/data.dart';
-import 'package:smart_bus_app/src/ui/item.dart';
+import 'package:smart_bus_app/src/old/data/data.dart';
+import 'package:smart_bus_app/src/old/item.dart';
 
-import '../web_server.dart';
+import 'package:smart_bus_app/src/web_server.dart';
 
 class FindWayProvider with ChangeNotifier{
   ///출발지 정류장 정보

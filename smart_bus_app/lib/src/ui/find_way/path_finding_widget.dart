@@ -35,7 +35,7 @@ class PathFindingPage extends StatelessWidget {
                 Expanded(
                   flex:1,
                   child: Card(
-                    color: Color.fromARGB(255, 72, 192, 72),
+                    color: Color.fromARGB(0, 0, 0, 0),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: Text("버스노선", textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
@@ -46,7 +46,7 @@ class PathFindingPage extends StatelessWidget {
                 Expanded(
                   flex:1,
                   child: Card(
-                    color: Color.fromARGB(0, 0, 0, 0),
+                    color: Color.fromARGB(255, 72, 192, 72),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: Text("경로탐색", textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),

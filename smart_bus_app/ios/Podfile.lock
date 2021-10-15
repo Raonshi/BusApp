@@ -1,0 +1,34 @@
+PODS:
+  - Flutter (1.0.0)
+  - geocoding (1.0.5):
+    - Flutter
+  - geolocator_apple (1.2.0):
+    - Flutter
+  - imei_plugin (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - geocoding (from `.symlinks/plugins/geocoding/ios`)
+  - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
+  - imei_plugin (from `.symlinks/plugins/imei_plugin/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  geocoding:
+    :path: ".symlinks/plugins/geocoding/ios"
+  geolocator_apple:
+    :path: ".symlinks/plugins/geolocator_apple/ios"
+  imei_plugin:
+    :path: ".symlinks/plugins/imei_plugin/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  geocoding: 32cfcdb16d38d907caaba65e2e42ad10d38bee58
+  geolocator_apple: b741765c55dc21950e3e106e8b3584e55cf81ce5
+  imei_plugin: cb1af7c223ac2d82dcd1457a7137d93d65d2a3cd
+
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+
+COCOAPODS: 1.11.2

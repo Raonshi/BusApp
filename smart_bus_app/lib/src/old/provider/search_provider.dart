@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:smart_bus_app/src/data/data.dart';
-import 'package:smart_bus_app/src/ui/item.dart';
+import 'package:smart_bus_app/src/old/data/data.dart';
+import 'package:smart_bus_app/src/old/item.dart';
 import 'package:smart_bus_app/src/web_server.dart';
 
 enum Type{ BUS, STATION }

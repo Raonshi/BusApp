@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-import 'package:smart_bus_app/src/data/data.dart';
-import 'package:smart_bus_app/src/provider/find_way_provider.dart';
+import 'package:smart_bus_app/src/old/data/data.dart';
+import 'package:smart_bus_app/src/old/provider/find_way_provider.dart';
 import 'package:smart_bus_app/src/web_server.dart';
 
 class SelectionWidget extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:smart_bus_app/src/data/data.dart';
+import 'package:smart_bus_app/src/old/data/data.dart';
 
 class BusItem extends StatelessWidget {
   Bus _busItem;

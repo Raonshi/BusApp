@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:smart_bus_app/src/provider/search_provider.dart';
+import 'package:smart_bus_app/src/old/provider/search_provider.dart';
 
 
 class SearchBusWidget extends StatelessWidget {

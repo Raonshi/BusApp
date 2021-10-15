@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:smart_bus_app/src/business_logic/get_controller.dart';
-
 import 'bus_search_widget.dart';
 
 //정류장 검색
@@ -12,6 +11,9 @@ class StationSearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //controller.getNearStation();
+    //Station start = controller.nearStation.value;
+
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -104,7 +106,7 @@ class StationSearchPage extends StatelessWidget {
                 //정류장 이름
                 Expanded(
                   flex:1,
-                  child: Text("정류장 이름 : ", style: TextStyle(fontSize: 20), maxLines: 2,),
+                  child: Text("출발지 : ", style: TextStyle(fontSize: 20), maxLines: 2,),
                 ),
 
                 //목적지 입력

@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-import 'package:smart_bus_app/src/business_logic/get_controller.dart';
-import 'package:smart_bus_app/src/data/data.dart';
-import 'package:smart_bus_app/src/provider/find_way_provider.dart';
-import 'package:smart_bus_app/src/provider/search_provider.dart';
-import 'package:smart_bus_app/src/ui/item.dart';
-import 'package:smart_bus_app/src/ui/find_way/search_widget.dart';
-import 'package:smart_bus_app/src/ui/find_way/selection_widget.dart';
+import 'package:smart_bus_app/src/old/data/data.dart';
+import 'package:smart_bus_app/src/old/provider/find_way_provider.dart';
+import 'package:smart_bus_app/src/old/provider/search_provider.dart';
+import 'package:smart_bus_app/src/old/item.dart';
+import 'package:smart_bus_app/src/old/search_widget.dart';
+import 'package:smart_bus_app/src/old/selection_widget.dart';
 
 
 class FindWayWidget extends StatelessWidget {

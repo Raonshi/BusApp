@@ -5,9 +5,10 @@
 /// 작성자 : 홍순원
 
 import 'package:flutter/material.dart';
-import 'favorite/favorite_widget.dart';
-import 'recently/recently_widget.dart';
-import 'find_way/find_way_widget.dart';
+import '../ui/favorite/favorite_widget.dart';
+import '../ui/recently/recently_widget.dart';
+import 'find_way_widget.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key key}) : super(key: key);

@@ -4,7 +4,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
-import 'data/data.dart';
+import 'old/data/data.dart';
 
 
 class WebServer {
@@ -26,6 +26,69 @@ class WebServer {
 
 
   //#region GET
+
+  Future<List> getDustInfo(double latitude, double longtitude) async {
+    final service = "getDustInfo";
+    final params = {
+      "latitude": latitude.toString(),
+      "longtitude": longtitude.toString()
+    };
+
+    Uri uri = Uri.http(endpoint, service, params);
+    dynamic jsonString = await get(uri);
+
+    var jsonArray = jsonDecode(jsonString) as List;
+    List list = jsonArray.map((e) => Bus.fromJson(e)).toList();
+
+    return list;
+  }
+
+  Future<List> getWeatherInfo(double latitude, double longtitude) async {
+    final service = "getWeatherInfo";
+    final params = {
+      "latitude": latitude.toString(),
+      "longtitude": longtitude.toString()
+    };
+
+    Uri uri = Uri.http(endpoint, service, params);
+    dynamic jsonString = await get(uri);
+
+    var jsonArray = jsonDecode(jsonString) as List;
+    List list = jsonArray.map((e) => Bus.fromJson(e)).toList();
+
+    return list;
+  }
+
+  ///위도 경도 기반으로 주변 정류장 값을 받아옴
+  Future<List> getStationByLocation(double latitude, double longtitude) async {
+    final service = "getBusList";
+    final params = {
+      "latitude": latitude.toString(),
+      "longtitude": longtitude.toString()
+    };
+
+    Uri uri = Uri.http(endpoint, service, params);
+    dynamic jsonString = await get(uri);
+
+    var jsonArray = jsonDecode(jsonString) as List;
+    List list = jsonArray.map((e) => Station.fromJson(e)).toList();
+
+    return list;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   ///지정된 도시의 버스 노선 정보 중 [busNum]이 포함되는 모든 버스번호를 불러온다.
   Future<List> getBusList(String busNum) async {
