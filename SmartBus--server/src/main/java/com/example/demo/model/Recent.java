@@ -18,7 +18,7 @@ public class Recent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name ="USER_IMEI", nullable = false, length=20)
+    @Column(name ="USER_IMEI", nullable = false, length=40, unique = true)
     private String User_IMEI;
 
     @Column(name ="DEPTNODE", nullable = false, length=30)
@@ -45,4 +45,6 @@ public class Recent {
     @ManyToOne
     @JoinColumn(name = "IMEI_ID", nullable = false)
     private User user;
+    
+    //cascade on delete or update 옵션은 mysql 운영환경에서 조정
 }

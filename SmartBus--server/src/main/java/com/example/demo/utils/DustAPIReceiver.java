@@ -80,23 +80,28 @@ public class DustAPIReceiver extends Thread{
                 StringBuilder url = new StringBuilder("http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty");
                 url.append("?" + URLEncoder.encode("ServiceKey", "UTF-8") + "=xKQb85gLMzaWSIlF7L%2BADI5652d752CRPIul%2FAlv5KLdQLJYl4eMRLZ25kSnDA0dvj2iYXfceDNWcPB7j4%2BdiA%3D%3D");
                 //url.append("&" + URLEncoder.encode("returnType", "UTF-8") + "=xml");
-                //url.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=100");
-                //url.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=1");
+                url.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=100");
+                url.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=1");
                 url.append("&" + URLEncoder.encode("stationName", "UTF-8") + "=" + URLEncoder.encode(stationName, "UTF-8"));
                 url.append("&" + URLEncoder.encode("dataTerm", "UTF-8") + "=DAILY");
                 //url.append("&" + URLEncoder.encode("ver", "UTF-8") + "=1.0");
 
                 NodeList list = getData(url.toString());
-                JSONObject json = new JSONObject();
+
                 for(int j = 0; j < list.getLength(); j++) {
+                    JSONObject json = new JSONObject();
                     Node node = list.item(j);
                     if (node.getNodeType() == Node.ELEMENT_NODE) {
                         Element element = (Element) node;
                         json.put("stationName", stationName);
                         json.put("pm10Value", getValue("pm10Value", element));
+                        json.put("dataTime", getValue("dataTime", element));
+
+                        DataCenter.Singleton().dustList.add(json);
                     }
+
                 }
-                DataCenter.Singleton().dustList.add(json);
+
 
             }catch(Exception e) {
                 e.printStackTrace();

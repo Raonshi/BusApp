@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,12 +17,17 @@ import java.util.List;
 public class User {
 
     @Id
-    @Column(name = "IMEI_ID", nullable = false, length = 20)
-    private String IMEI_ID;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @OneToMany
-    private List<BookMark> bookMark;
+    @Column(name = "IMEI_ID",  length = 40, unique = true)
+    private String IMEI_id;
 
-    @OneToMany
-    private List<Recent> recent;
+
+
+    @Builder
+    public User(Long id, String IMEI_id) {
+        this.id = id;
+        this.IMEI_id = IMEI_id;
+    }
 }

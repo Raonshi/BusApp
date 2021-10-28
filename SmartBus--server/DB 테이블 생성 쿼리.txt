@@ -3,39 +3,45 @@
 
 1. USER 테이블
 CREATE TABLE `user` (
-  `IMEI_ID` varchar(20) NOT NULL,
-  PRIMARY KEY (`IMEI_ID`)
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `imei_id` varchar(40) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_g0chkaphedndg652qaodf6gly` (`imei_id`)
 ) 
 
 2. 즐겨찾기 테이블
 CREATE TABLE `bookmark` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,      //SPRING JPA 식별을 위해 자동증가 ID값을 줌
-  `USER_IMEI` varchar(20) NOT NULL,
-  `DEPTNODE` varchar(30) NOT NULL,
-  `DESTNODE` varchar(30) NOT NULL,
-  `TRANSNODE1` varchar(30) DEFAULT NULL,
-  `TRANSNODE2` varchar(30) DEFAULT NULL,
-  `ROUTENO1` varchar(10) NOT NULL,
-  `TROUTENO1` varchar(10) DEFAULT NULL,
-  `TROUTENO2` varchar(10) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `FK_BOOKMARK_IMEI_idx` (`USER_IMEI`),
-  CONSTRAINT `FK_BOOKMARK_IMEI` FOREIGN KEY (`USER_IMEI`) REFERENCES `user` (`IMEI_ID`) ON DELETE CASCADE ON UPDATE CASCADE
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `deptnode` varchar(30) NOT NULL,
+  `destnode` varchar(30) NOT NULL,
+  `routeno1` varchar(10) NOT NULL,
+  `trouteno1` varchar(10) DEFAULT NULL,
+  `trouteno2` varchar(10) DEFAULT NULL,
+  `transnode1` varchar(30) DEFAULT NULL,
+  `transnode2` varchar(30) DEFAULT NULL,
+  `user_imei` varchar(40) NOT NULL,
+  `imei_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_ro3tbj3i0veu3fhm4r99wojkt` (`user_imei`),
+  KEY `FKdo5tkqtdxqgmn0uoad5hb6xeh` (`imei_id`),
+  CONSTRAINT `FKdo5tkqtdxqgmn0uoad5hb6xeh` FOREIGN KEY (`imei_id`) REFERENCES `user` (`id`)
 )
 
 
 3. 최근기록 테이블
 CREATE TABLE `recent` (
-  `ID` bigint NOT NULL AUTO_INCREMENT,      //SPRING JPA 식별을 위해 자동증가 ID값을 줌
-  `USER_IMEI` varchar(20) NOT NULL,
-  `DEPTNODE` varchar(30) NOT NULL,
-  `DESTNODE` varchar(30) NOT NULL,
-  `TRANSNODE1` varchar(30) DEFAULT NULL,
-  `TRANSNODE2` varchar(30) DEFAULT NULL,
-  `ROUTENO1` varchar(10) NOT NULL,
-  `TROUTENO1` varchar(10) DEFAULT NULL,
-  `TROUTENO2` varchar(10) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `FK_RECENT_IMEI_idx` (`USER_IMEI`),
-  CONSTRAINT `FK_RECENT_IMEI` FOREIGN KEY (`USER_IMEI`) REFERENCES `user` (`IMEI_ID`) ON DELETE CASCADE ON UPDATE CASCADE
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `deptnode` varchar(30) NOT NULL,
+  `destnode` varchar(30) NOT NULL,
+  `routeno1` varchar(10) NOT NULL,
+  `trouteno1` varchar(10) DEFAULT NULL,
+  `trouteno2` varchar(10) DEFAULT NULL,
+  `transnode1` varchar(30) DEFAULT NULL,
+  `transnode2` varchar(30) DEFAULT NULL,
+  `user_imei` varchar(40) NOT NULL,
+  `imei_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_hm16chupyq428f2rm3s8tc4w6` (`user_imei`),
+  KEY `FKc3p1dd1ydepgap02dawumu8ha` (`imei_id`),
+  CONSTRAINT `FKc3p1dd1ydepgap02dawumu8ha` FOREIGN KEY (`imei_id`) REFERENCES `user` (`id`)
 )
