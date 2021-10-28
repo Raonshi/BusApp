@@ -55,6 +55,7 @@ class Station{
 
 //GPS정보
 class GPS{
+
   Future<Position> getLocation() async {
     bool serviceEnabled;
     LocationPermission permission;

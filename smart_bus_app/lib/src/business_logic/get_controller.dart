@@ -27,21 +27,21 @@ class Controller extends GetxController{
   RxString place = "Unknown".obs;
   RxDouble latitude = 0.0.obs;
   RxDouble longtitude = 0.0.obs;
+  RxBool isLoading = false.obs;
 
 
   void getGPS() async {
-    GPS tmp = new GPS();
+    isLoading.value = true;
 
-    Position pos = await tmp.getLocation();
-    String place = await tmp.getAddress();
+    GPS gps = new GPS();
+    Position pos = await gps.getLocation();
+    String place = await gps.getAddress();
 
     latitude.value = pos.latitude;
     longtitude.value = pos.longitude;
-
-    Logger().d("${pos.latitude}");
-    Logger().d("$place");
-
     this.place.value = place;
+
+    isLoading.value = false;
   }
 
   void getNearStation() async{

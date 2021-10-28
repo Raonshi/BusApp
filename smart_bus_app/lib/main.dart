@@ -1,7 +1,10 @@
 /// 본 스크립트는 앱이 실행될 때 최초도 실핼되는 스크립트이다.
 /// 작성자 : 홍순원
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:smart_bus_app/src/business_logic/get_controller.dart';
 import 'package:get/get.dart';
 import 'package:smart_bus_app/src/web_server.dart';
@@ -175,7 +178,7 @@ class MainPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed: () => onClickRegion(context),
+                  onPressed: () => onClickRegion(context, controller),
                   child: Text(
                       "지역 설정",
                       textAlign: TextAlign.center,
@@ -250,17 +253,24 @@ class MainPage extends StatelessWidget {
   }
 
   //지역 설정 버튼 이벤트
-  void onClickRegion(BuildContext context){
+  void onClickRegion(BuildContext context, Controller controller){
     showDialog(
         context: context,
         builder: (BuildContext) {
           return AlertDialog(
             title: Text("지역 설정"),
-            content: Text("${controller.place.value}"),
+            content: Obx((){
+              if(controller.isLoading.value){
+                return IntrinsicHeight(child: Center(child: CircularProgressIndicator()));
+              }
+              else{
+                return Text("${controller.place.value}");
+              }
+            }),
             actions: [
               ElevatedButton(
-                  onPressed: (){
-                    Get.back();
+                  onPressed: () async {
+                    controller.getGPS();
                   },
                   child: Text("설정")
               ),
