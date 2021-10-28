@@ -4,7 +4,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
-import 'old/data/data.dart';
+
+import 'business_logic/data_define.dart';
 
 
 class WebServer {
@@ -27,44 +28,59 @@ class WebServer {
 
   //#region GET
 
-  Future<List> getDustInfo(double latitude, double longtitude) async {
+  ///서버로부터 미세먼지 정보를 가져온다. <br>
+  ///params : String latitude, String logitude <br>
+  ///return : List<Dust>
+  Future<List> getDustInfo(double latitude, double longitude) async {
     final service = "getDustInfo";
     final params = {
       "latitude": latitude.toString(),
-      "longtitude": longtitude.toString()
+      "longitude": longitude.toString()
     };
 
     Uri uri = Uri.http(endpoint, service, params);
     dynamic jsonString = await get(uri);
 
     var jsonArray = jsonDecode(jsonString) as List;
-    List list = jsonArray.map((e) => Bus.fromJson(e)).toList();
+    List list = jsonArray.map((e) => Dust.fromJson(e)).toList();
 
     return list;
   }
 
-  Future<List> getWeatherInfo(double latitude, double longtitude) async {
+
+  ///서버로부터 날씨 정보를 가져온다. <br>
+  ///params : String latitude, String logitude <br>
+  ///return : List<Weather>
+  Future<List> getWeatherInfo(double latitude, double longitude) async {
     final service = "getWeatherInfo";
     final params = {
       "latitude": latitude.toString(),
-      "longtitude": longtitude.toString()
+      "longitude": longitude.toString()
     };
 
     Uri uri = Uri.http(endpoint, service, params);
     dynamic jsonString = await get(uri);
 
     var jsonArray = jsonDecode(jsonString) as List;
-    List list = jsonArray.map((e) => Bus.fromJson(e)).toList();
+
+    List<Weather> list = [];
+    for(int i = 1; i < jsonArray.length; i++){
+      list.add(Weather.fromJson(jsonArray[i]));
+    }
+    //List list = jsonArray.map((e) => Weather.fromJson(e)).toList();
 
     return list;
   }
 
-  ///위도 경도 기반으로 주변 정류장 값을 받아옴
-  Future<List> getStationByLocation(double latitude, double longtitude) async {
+
+  ///위도 경도 기반으로 주변 정류장 값을 받아온다. <br>
+  ///params : double latitude, double longitude <br>
+  ///return : List<Station>
+  Future<List> getStationByLocation(double latitude, double longitude) async {
     final service = "getBusList";
     final params = {
       "latitude": latitude.toString(),
-      "longtitude": longtitude.toString()
+      "longitude": longitude.toString()
     };
 
     Uri uri = Uri.http(endpoint, service, params);
@@ -75,10 +91,6 @@ class WebServer {
 
     return list;
   }
-
-
-
-
 
 
 
@@ -175,6 +187,20 @@ class WebServer {
     List list = jsonArray.map((e) => Way.fromJson(e)).toList();
 
     return list;
+  }
+
+
+  void postIMEI(String imei) async {
+    final service = "postImei";
+    final header = {
+      "operation":"postIMEI"
+    };
+    final body = {
+      "imei" : imei,
+    };
+
+    Uri uri = Uri.http(endpoint, service);
+    dynamic jsonString = await post(uri,header, body);
   }
 
   //#endregion

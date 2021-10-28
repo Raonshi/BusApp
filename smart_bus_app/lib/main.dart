@@ -5,24 +5,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:smart_bus_app/src/business_logic/data_define.dart';
 import 'package:smart_bus_app/src/business_logic/get_controller.dart';
 import 'package:get/get.dart';
 import 'package:smart_bus_app/src/web_server.dart';
 import 'src/ui/find_way/station_search_widget.dart';
 
 void main(){
-
-
   //전처리 - 웹서버 싱글톤 객체 생성
   final web = new WebServer.init();
-
-  //날씨 정보 받아오기
-
-
-
-  //GPS정보를 통해 내 근처 정거장 찾기
-
-  //
 
   //앱 실행
   runApp(MyApp());
@@ -45,7 +36,10 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    controller.getGPS();
+    controller.getGPS();          // GPS정보 초기화
+    controller.getIdentifier();   // IMEI정보 얻기
+    controller.getWeatherInfo();  // 현재 위치의 날씨 정보 얻기
+    controller.getDustInfo();     // 현재 위치의 미세먼지 정보 얻기
 
     return Scaffold(
       body: Column(
@@ -120,10 +114,9 @@ class MainPage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(child: Icon(Icons.wb_sunny_rounded, size: 50,)),
-                  Expanded(child: Icon(Icons.wb_cloudy_rounded, size: 50,)),
-                  Expanded(child: Icon(Icons.wb_sunny_rounded, size: 50,)),
-
+                  Expanded(child: weatherInfomation(controller.weatherList.value[0].type)),
+                  Expanded(child: weatherInfomation(controller.weatherList.value[1].type)),
+                  Expanded(child: weatherInfomation(controller.weatherList.value[2].type)),
                 ],
               ),
             ),
@@ -141,7 +134,7 @@ class MainPage extends StatelessWidget {
                       color: Color.fromARGB(0, 0, 0, 0),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: Text("낮음", textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                        child: Text(dustInfomation(), textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                       ),
                     )
                 ),
@@ -152,7 +145,7 @@ class MainPage extends StatelessWidget {
                       color: Color.fromARGB(0, 0, 0, 0),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: Text("보통", textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                        child: Text(dustInfomation(), textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                       ),
                     )
                 ),
@@ -163,7 +156,7 @@ class MainPage extends StatelessWidget {
                       color: Color.fromARGB(0, 0, 0, 0),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: Text("높음", textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                        child: Text(dustInfomation(), textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                       ),
                     )
                 ),
@@ -291,5 +284,34 @@ class MainPage extends StatelessWidget {
   void onClickBusSearch(){
     Get.to(StationSearchPage());
   }
+
+
+  //미세먼지 상태에 빠른 화면 이벤트
+  String dustInfomation(){
+    if(controller.dustList.value[0].type == DUST_TYPE.LOW){
+      return "청정";
+    }
+    else if(controller.dustList.value[0].type == DUST_TYPE.MID){
+      return "보통";
+    }
+    else if(controller.dustList.value[0].type == DUST_TYPE.HIGH){
+      return "높음";
+    }
+    else if(controller.dustList.value[0].type == DUST_TYPE.DANGER){
+      return "위험";
+    }
+    else{
+      return "불명";
+    }
+  }
+
+  Icon weatherInfomation(WEATHER_TYPE type){
+    if(type == WEATHER_TYPE.SUN) { return Icon(Icons.wb_sunny_rounded, size: 50,);}
+    else if(type == WEATHER_TYPE.CLOUD) { return Icon(Icons.wb_cloudy_rounded, size: 50,);}
+    else if(type == WEATHER_TYPE.RAIN) { return Icon(Icons.beach_access_rounded, size: 50,);}
+    else if(type == WEATHER_TYPE.SNOW) { return Icon(Icons.ac_unit_rounded, size: 50,);}
+    else { return Icon(Icons.wb_cloudy_rounded, size: 50,);}
+  }
+
 }
 

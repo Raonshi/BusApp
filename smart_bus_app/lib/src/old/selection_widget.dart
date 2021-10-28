@@ -86,7 +86,7 @@ class _BodyState extends State<Body> {
       return;
     }
 
-    WebServer().postRecently(departure, destination);
+    //WebServer().postRecently(departure, destination);
 
     recentlyUpLoad = true;
   }
