@@ -30,8 +30,8 @@ class WebServer {
   //#endregion
 
   ///접속 주소
-  final endpoint = "220.86.224.184:12010";
-  final testEndpoint = "localhost:8080";
+  //final endpoint = "220.86.224.184:12010";
+  final endpoint = "localhost:8080";
 
 
   //#region GET
