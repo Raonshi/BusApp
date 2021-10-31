@@ -1,20 +1,24 @@
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:logger/logger.dart';
 
 //#region 날씨
 enum WEATHER_TYPE{ SUN, RAIN, CLOUD, SNOW, }
 
 class Weather{
   String dateTime;
-  double temp;
+  String temp;
   String weather;
   WEATHER_TYPE type;
 
-  Weather(this.dateTime, this.temp, this.weather);
+  Weather({this.dateTime, this.temp, this.weather});
 
   factory Weather.fromJson(dynamic json){
-    double value = double.parse(json['temparature'].toString());
-    return Weather(json['datetime'].toString(), value, json['weather'].toString());
+    return Weather(
+      dateTime: json['datetime'] as String,
+      temp: json['temparature'] as String,
+      weather: json['weather'] as String,
+    );
   }
 
   void setType(){
@@ -35,18 +39,21 @@ class Weather{
 
 
 //#region 미세먼지
-enum DUST_TYPE{ LOW, MID, HIGH, DANGER, }
+enum DUST_TYPE{ LOW, MID, HIGH, DANGER, UNKNOWN}
 
 class Dust{
-  DUST_TYPE type;
-  int pm10Value;
-  String stationName;
+  DUST_TYPE type = DUST_TYPE.UNKNOWN;
+  int pm10Value = 0;
+  String stationName = "Unknown";
 
-  Dust(this.pm10Value, this.stationName);
+  Dust({this.pm10Value, this.stationName});
 
   factory Dust.fromJson(dynamic json){
-    int value = int.parse(json['pm10value'] as String);
-    return Dust(value, json['stationName'] as String);
+    int value = int.parse(json['pm10Value'] as String);
+    return Dust(
+      pm10Value: value,
+      stationName: json['stationName'] as String,
+    );
   }
 
   void setType(){

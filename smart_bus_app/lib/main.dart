@@ -13,7 +13,7 @@ import 'src/ui/find_way/station_search_widget.dart';
 
 void main(){
   //전처리 - 웹서버 싱글톤 객체 생성
-  final web = new WebServer.init();
+  new WebServer.init();
 
   //앱 실행
   runApp(MyApp());
@@ -33,13 +33,16 @@ class MainPage extends StatelessWidget {
   final controller = Get.put(Controller());
   List list = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
 
+  void init() async{
+    await controller.getIdentifier();   // IMEI정보 얻기
+    await controller.getGPS();          // GPS 정보 얻기
+    await controller.getDustInfo();     // 현재 위치의 미세먼지 정보 얻기
+    await controller.getWeatherInfo();  // 현재 위치의 날씨 정보 얻기
+  }
 
   @override
   Widget build(BuildContext context) {
-    controller.getGPS();          // GPS정보 초기화
-    controller.getIdentifier();   // IMEI정보 얻기
-    controller.getWeatherInfo();  // 현재 위치의 날씨 정보 얻기
-    controller.getDustInfo();     // 현재 위치의 미세먼지 정보 얻기
+    init();
 
     return Scaffold(
       body: Column(
@@ -112,15 +115,15 @@ class MainPage extends StatelessWidget {
             flex:2,
             child: Card(
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(child: weatherInfomation(controller.weatherList.value[0].type)),
-                  Expanded(child: weatherInfomation(controller.weatherList.value[1].type)),
-                  Expanded(child: weatherInfomation(controller.weatherList.value[2].type)),
-                ],
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(child: Obx(() => weatherInfomation(controller.weatherList.value[0] as Weather))),
+                    Expanded(child: Obx(() => weatherInfomation(controller.weatherList.value[1] as Weather))),
+                    Expanded(child: Obx(() => weatherInfomation(controller.weatherList.value[2] as Weather))),
+                  ],
+                ),
               ),
             ),
-          ),
 
           //미세먼지정보
           Expanded(
@@ -134,29 +137,12 @@ class MainPage extends StatelessWidget {
                       color: Color.fromARGB(0, 0, 0, 0),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: Text(dustInfomation(), textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-                      ),
-                    )
-                ),
-
-                Expanded(
-                    flex:1,
-                    child: Card(
-                      color: Color.fromARGB(0, 0, 0, 0),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: Text(dustInfomation(), textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-                      ),
-                    )
-                ),
-
-                Expanded(
-                    flex:1,
-                    child: Card(
-                      color: Color.fromARGB(0, 0, 0, 0),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: Text(dustInfomation(), textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                        child: Obx(() => Text(
+                            controller.dustStr.value,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        ),
                       ),
                     )
                 ),
@@ -286,30 +272,11 @@ class MainPage extends StatelessWidget {
   }
 
 
-  //미세먼지 상태에 빠른 화면 이벤트
-  String dustInfomation(){
-    if(controller.dustList.value[0].type == DUST_TYPE.LOW){
-      return "청정";
-    }
-    else if(controller.dustList.value[0].type == DUST_TYPE.MID){
-      return "보통";
-    }
-    else if(controller.dustList.value[0].type == DUST_TYPE.HIGH){
-      return "높음";
-    }
-    else if(controller.dustList.value[0].type == DUST_TYPE.DANGER){
-      return "위험";
-    }
-    else{
-      return "불명";
-    }
-  }
-
-  Icon weatherInfomation(WEATHER_TYPE type){
-    if(type == WEATHER_TYPE.SUN) { return Icon(Icons.wb_sunny_rounded, size: 50,);}
-    else if(type == WEATHER_TYPE.CLOUD) { return Icon(Icons.wb_cloudy_rounded, size: 50,);}
-    else if(type == WEATHER_TYPE.RAIN) { return Icon(Icons.beach_access_rounded, size: 50,);}
-    else if(type == WEATHER_TYPE.SNOW) { return Icon(Icons.ac_unit_rounded, size: 50,);}
+  Widget weatherInfomation(Weather weather){
+    if(weather.type == WEATHER_TYPE.SUN) { return Icon(Icons.wb_sunny_rounded, size: 50,);}
+    else if(weather.type == WEATHER_TYPE.CLOUD) { return Icon(Icons.wb_cloudy_rounded, size: 50,);}
+    else if(weather.type == WEATHER_TYPE.RAIN) { return Icon(Icons.beach_access_rounded, size: 50,);}
+    else if(weather.type == WEATHER_TYPE.SNOW) { return Icon(Icons.ac_unit_rounded, size: 50,);}
     else { return Icon(Icons.wb_cloudy_rounded, size: 50,);}
   }
 

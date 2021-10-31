@@ -31,7 +31,7 @@ class WebServer {
 
   ///접속 주소
   //final endpoint = "220.86.224.184:12010";
-  final endpoint = "localhost:8080";
+  final endpoint = "10.0.2.2:8080";
 
 
   //#region GET
@@ -40,6 +40,9 @@ class WebServer {
   ///params : String latitude, String logitude <br>
   ///return : List<Dust>
   Future<List> getDustInfo(double latitude, double longitude) async {
+
+    Logger().d("Latitude : $latitude || Longitude : $longitude");
+
     final service = "getDustInfo";
     final params = {
       "latitude": latitude.toString(),
@@ -71,7 +74,8 @@ class WebServer {
 
     var jsonArray = jsonDecode(jsonString) as List;
 
-    List<Weather> list = [];
+    List<dynamic> list = [];
+
     for(int i = 1; i < jsonArray.length; i++){
       list.add(Weather.fromJson(jsonArray[i]));
     }

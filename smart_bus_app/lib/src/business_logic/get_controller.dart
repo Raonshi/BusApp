@@ -16,12 +16,15 @@ import 'data_define.dart';
 class Controller extends GetxController{
   static Controller _instance = Controller.init();
 
+  int sequence = 0;
+
   factory Controller(){
     return _instance;
   }
 
-  Controller.init(){
-    Logger().d("WebServerCreated!");
+  Controller.init() {
+
+    Logger().d("Controller Created!");
   }
 
 
@@ -53,7 +56,8 @@ class Controller extends GetxController{
   RxString uuid = "Unknown".obs;
 
   //미세먼지 정보
-  RxList<dynamic> dustList = [].obs;
+  Rx<Dust> dust = Dust().obs;
+  RxString dustStr = "불명".obs;
 
   //날씨 정보
   RxList<dynamic> weatherList = [].obs;
@@ -115,7 +119,10 @@ class Controller extends GetxController{
   ///<p>클라이언트의 현재 위치를 위도, 경도 값으로 구한다.</p>
   ///<p>params : none</p>
   ///<p>return : void</p>
-  void getGPS() async {
+  Future<void> getGPS() async {
+    Logger().d("getGPS");
+
+
     isLoading.value = true;
 
     GPS gps = new GPS();
@@ -148,9 +155,11 @@ class Controller extends GetxController{
   ///<p>클라이언트의 IMEI와 UUID정보를 구한다.</p>
   ///<p>params : none</p>
   ///<p>return : void</p>
-  void getIdentifier() async {
+  Future<void> getIdentifier() async {
     imei.value = await ImeiPlugin.getImei();
     uuid.value = await ImeiPlugin.getId();
+
+    Logger().d("IMEI : ${imei.value}");
   }
 
 
@@ -158,30 +167,46 @@ class Controller extends GetxController{
   ///<p>클라이언트의 위치 좌표를 기반으로 현재 지역의 날씨 정보를 조회한다.</p>
   ///<p>params : none</p>
   ///<p>return : void</p>
-  void getWeatherInfo() async{
-    List<dynamic> list = await WebServer().getWeatherInfo(latitude.value, longitude.value);
+  Future<void> getWeatherInfo() async{
+    Logger().d("getWeather");
+
+    List<Weather> list = await WebServer().getWeatherInfo(latitude.value, longitude.value);
 
     if(list.length <= 0){
       Logger().d("날씨 정보 수신 실패!");
       return;
     }
 
-    List<Weather> todayList = [];
     for(int i = 0; i < list.length; i++){
-      DateTime date = DateTime.tryParse(list[i].dateTime);
-      DateTime today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+      list[i].setType();
+    }
 
+    /*
+    List<Weather> todayList = [];
+    DateTime today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+    for(int i = 0; i < list.length; i++){
+      String str = today.toString();
+      Weather item = list[i];
+      Logger().d("DATE TIME : ${item.dateTime} || Index : $i");
+
+      DateTime date = DateTime.tryParse(item.dateTime);
       //오늘 날짜일 경우
       if(date.year == today.year && date.month == today.month && date.day == today.day){
         //6시 = 오전, 12시 = 점심, 18시 = 저녁
         if(date.hour == 6 || date.hour == 12 || date.hour == 18){
-          list[i].setType();
-          todayList.add(list[i]);
+          item.setType();
+          todayList.add(item);
         }
       }
     }
 
+    Logger().d("SIZE : ${todayList.length}");
+
     weatherList.value = todayList;
+
+     */
+    weatherList.value = list;
   }
 
 
@@ -189,20 +214,22 @@ class Controller extends GetxController{
   ///<p>클라이언트의 위치 좌표를 기반으로 현재 지역의 미세먼지 정보를 조회한다.</p>
   ///<p>params : none</p>
   ///<p>return : void</p>
-  void getDustInfo() async {
-    List<dynamic> list = await WebServer().getDustInfo(latitude.value, longitude.value);
+  Future<void> getDustInfo() async {
+    List<Dust> list = await WebServer().getDustInfo(latitude.value, longitude.value);
 
     if(list.length <= 0){
       Logger().d("미세먼지 정보 수신 실패!");
       return;
     }
 
-    //미세먼지 알림 타입 설정
-    for(int i = 0; i < list.length; i++){
-      list[i].setType();
-    }
+    Logger().d(list[0].pm10Value);
 
-    dustList.value = list;
+    //미세먼지 알림 타입 설정
+    dust.value = list[0] as Dust;
+    dust.value.setType();
+
+
+    dustInfomation();
   }
 
 
@@ -220,5 +247,24 @@ class Controller extends GetxController{
   }
 
 
+  //미세먼지 상태에 빠른 화면 이벤트
+  void dustInfomation(){
+    switch(dust.value.type){
+      case DUST_TYPE.LOW:
+        dustStr.value = "청정";
+        break;
+      case DUST_TYPE.MID:
+        dustStr.value = "보통";
+        break;
+      case DUST_TYPE.HIGH:
+        dustStr.value = "높음";
+        break;
+      case DUST_TYPE.DANGER:
+        dustStr.value = "위험";
+        break;
+      default:
+        dustStr.value = "불명";
+    }
+  }
 
 }
