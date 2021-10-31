@@ -4,17 +4,15 @@ import com.example.demo.dto.UserDto;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @GetMapping("/userSave")
+    @RequestMapping(method = RequestMethod.GET, path ="/createUser")
     public String createUser(@RequestParam String imei) {
         UserDto userDto = new UserDto();
         userDto.setIMEI_id(imei);

@@ -13,8 +13,6 @@ public class UserService {
     private UserRepository userRepository;
 
     public void createUser(UserDto userDto) {
-        System.out.println(userDto.getId());
-        System.out.println(userDto.getIMEI_id());
         User user = userDto.toEntity();
 
         userRepository.save(user);

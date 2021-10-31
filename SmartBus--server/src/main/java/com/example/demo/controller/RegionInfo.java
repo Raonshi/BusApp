@@ -7,6 +7,7 @@ import com.example.demo.utils.TrafficAPIReceiver;
 import com.example.demo.utils.WeatherAPIReceiver;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -78,6 +79,8 @@ public class RegionInfo {
 
         DustAPIReceiver receiver = new DustAPIReceiver(APIHandler.REGION_DUST_INFO);
         receiver.start();
+
+
 
         Thread.sleep(1500);
 

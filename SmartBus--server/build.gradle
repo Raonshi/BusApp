@@ -12,6 +12,10 @@ repositories {
 	mavenCentral()
 }
 
+bootJar {
+	mainClass = 'com.example.demo.SmartBusApplication'
+}
+
 dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-web'

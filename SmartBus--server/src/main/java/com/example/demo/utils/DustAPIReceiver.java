@@ -102,6 +102,10 @@ public class DustAPIReceiver extends Thread{
 
                 }
 
+                if(DataCenter.Singleton().dustList.size() <= 0) {
+                    getDustInfo(latitude, longitude);
+                }
+
 
             }catch(Exception e) {
                 e.printStackTrace();
