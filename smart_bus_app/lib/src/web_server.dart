@@ -7,7 +7,14 @@ import 'package:logger/logger.dart';
 
 import 'business_logic/data_define.dart';
 
-
+///<h1>클라이언트 서버 접속 모듈</h1>
+///<p>[WebServer]는 클라이언트가 서버에 접속하기 위해 이용하는 모듈이다.</p>
+///<p></p>
+///<p></p>
+///<p></p>
+///<p></p>
+///<p></p>
+///<p></p>
 class WebServer {
   //#region Singleton Pattern
   static WebServer _instance = WebServer.init();
@@ -23,7 +30,8 @@ class WebServer {
   //#endregion
 
   ///접속 주소
-  final endpoint = "localhost:8080";
+  final endpoint = "220.86.224.184:12010";
+  final testEndpoint = "localhost:8080";
 
 
   //#region GET
@@ -73,9 +81,10 @@ class WebServer {
   }
 
 
-  ///위도 경도 기반으로 주변 정류장 값을 받아온다. <br>
-  ///params : double latitude, double longitude <br>
-  ///return : List<Station>
+  ///<h2>주변 정류장 정보 조회</h2>
+  ///<p>[Controller]의 latitude, longitude정보를 기반으로 주변 정류장 값을 받아온다.</p>
+  ///<p>params : double latitude, double longitude</p>
+  ///<p>return : List<Station></p>
   Future<List> getStationByLocation(double latitude, double longitude) async {
     final service = "getBusList";
     final params = {
@@ -91,9 +100,6 @@ class WebServer {
 
     return list;
   }
-
-
-
 
 
 

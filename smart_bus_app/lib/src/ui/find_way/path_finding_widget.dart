@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smart_bus_app/src/business_logic/data_define.dart';
 import 'package:smart_bus_app/src/business_logic/get_controller.dart';
 
 
 //경로 탐색
 class PathFindingPage extends StatelessWidget {
   final controller = Get.put(Controller());
+  List<Way> pathList = [];
 
   @override
   Widget build(BuildContext context) {
+    controller.pathfinding();
+    //pathList = controller.pathList.value;
+
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Spacer(),
 
-          //검색 타입 선택
+          //#region 검색 타입 선택
           Expanded(
             flex:2,
             child: Row(
@@ -57,15 +62,27 @@ class PathFindingPage extends StatelessWidget {
               ],
             ),
           ),
+          //#endregion
 
-          //정류장 정보 , 노선정보, 경로정보 출력
+          //#region 정류장 정보 , 노선정보, 경로정보 출력
           Expanded(
             flex:15,
-            child: Text("Bus Info"),
+            child: pathFindingComplete(controller),
           ),
+          //#endregion
+
 
           Spacer(flex:2),
         ],),
     );
+  }
+
+  Widget pathFindingComplete(Controller controller){
+    if(controller.isLoading.value){
+      return IntrinsicHeight(child: Center(child: CircularProgressIndicator()));
+    }
+    else{
+      return Text("BUS INFO");
+    }
   }
 }

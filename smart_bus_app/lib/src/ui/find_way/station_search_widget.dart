@@ -127,7 +127,11 @@ class StationSearchPage extends StatelessWidget {
                             flex:3,
                             child: TextField(
                               controller: textController,
-                              onSubmitted: (text) => textController.text = text,
+                              onSubmitted: (text) {
+                                textController.text = text;
+
+                                controller.getStationByKeyword(textController.text);
+                              },
                             )
                         ),
 
@@ -136,9 +140,7 @@ class StationSearchPage extends StatelessWidget {
                           flex:1,
                           child: ElevatedButton(
                             onPressed: (){
-                              print(textController.text);
-
-
+                              controller.getStationByKeyword(textController.text);
                             },
                             child: Text("입력", style: TextStyle(fontSize: 20)),
                           ),
@@ -152,8 +154,10 @@ class StationSearchPage extends StatelessWidget {
                 Expanded(
                   flex: 4,
                   child: IconButton(
-                    onPressed: (){
+                    onPressed: () async {
                       Logger().d("Icon Btn Pressed");
+                      controller.textToSpeech();
+                      controller.getStationByKeyword(controller.ttsText.value);
                     },
 
                     icon: Icon(Icons.mic_rounded),
@@ -170,7 +174,7 @@ class StationSearchPage extends StatelessWidget {
             flex:1,
             child: ElevatedButton(
               onPressed: (){
-                Get.to(BusSearchPage());
+                Get.to(() => BusSearchPage());
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
