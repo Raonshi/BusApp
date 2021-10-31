@@ -5,6 +5,7 @@ import com.example.demo.datacenter.DataCenter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.scheduling.annotation.Async;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -31,6 +32,7 @@ public class DustAPIReceiver extends Thread{
     }
 
     @Override
+    @Async
     public void run() {
         super.run();
 
@@ -101,7 +103,7 @@ public class DustAPIReceiver extends Thread{
                     }
 
                 }
-
+                System.out.println(DataCenter.Singleton().dustList.size());
                 if(DataCenter.Singleton().dustList.size() <= 0) {
                     getDustInfo(latitude, longitude);
                 }

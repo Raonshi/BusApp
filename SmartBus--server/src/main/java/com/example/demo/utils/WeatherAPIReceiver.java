@@ -67,7 +67,7 @@ public class WeatherAPIReceiver extends Thread{
                 JSONArray weatherList = (JSONArray) json.get("weather");
                 JSONObject weatherObject = (JSONObject) weatherList.get(0);
 
-                resultObj.put("temparature", mainObject.get("temp"));
+                resultObj.put("temparature", mainObject.get("temp").toString());
                 resultObj.put("weather", weatherObject.get("main"));
                 resultObj.put("datetime", json.get("dt_txt"));
 

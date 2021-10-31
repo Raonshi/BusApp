@@ -7,6 +7,7 @@ import com.example.demo.utils.TrafficAPIReceiver;
 import com.example.demo.utils.WeatherAPIReceiver;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -56,6 +57,7 @@ public class RegionInfo {
 
 
     //클라이언트에서 위치(위도, 경도)를 입력받아 기상 정보를 조회
+
     @RequestMapping(method = RequestMethod.GET, path = "/getWeatherInfo")
     public JSONArray getWeatherInfo(@RequestParam String latitude, @RequestParam String longitude) throws InterruptedException {
         this.latitude = latitude;
@@ -72,6 +74,7 @@ public class RegionInfo {
 
 
     //클라이언트에서 위치(위도, 경도)를 입력받아 미세먼지 정보 조회
+
     @RequestMapping(method = RequestMethod.GET, path = "/getDustInfo")
     public JSONArray getDustInfo(@RequestParam String latitude,  @RequestParam String longitude) throws InterruptedException {
         this.latitude = latitude;
@@ -82,7 +85,7 @@ public class RegionInfo {
 
 
 
-        Thread.sleep(1500);
+        Thread.sleep(2500);
 
         return DataCenter.Singleton().dustList;
     }
