@@ -66,7 +66,7 @@ public class RegionInfo {
         WeatherAPIReceiver receiver = new WeatherAPIReceiver(APIHandler.REGION_WEATHER_INFO);
         receiver.start();
 
-        Thread.sleep(1500);
+        Thread.sleep(2500);
 
 
         return DataCenter.Singleton().weatherList;
