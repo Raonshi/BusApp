@@ -9,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class WeatherAPIReceiver extends Thread{
 
@@ -60,6 +62,7 @@ public class WeatherAPIReceiver extends Thread{
             DataCenter.Singleton().weatherList.add(obj);
 
             for(int i = 0; i < weatherDays5.size(); i++) {
+
                 JSONObject resultObj = new JSONObject();
                 JSONObject json = (JSONObject) weatherDays5.get(i);
 
@@ -68,6 +71,13 @@ public class WeatherAPIReceiver extends Thread{
                 JSONObject weatherObject = (JSONObject) weatherList.get(0);
 
                 String dateCheck = json.get("dt_txt").toString();
+
+                Date date = new Date();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                if(!dateCheck.contains(dateFormat.format(date))){
+                    break;
+                }
+
 
                 if(dateCheck.contains("09:00") || dateCheck.contains("15:00") || dateCheck.contains("21:00")) {
                     resultObj.put("temparature", mainObject.get("temp").toString());
