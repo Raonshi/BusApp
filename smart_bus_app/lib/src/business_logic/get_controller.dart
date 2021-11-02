@@ -16,28 +16,18 @@ import 'data_define.dart';
 class Controller extends GetxController{
   static Controller _instance = Controller.init();
 
-  int sequence = 0;
-
-  factory Controller(){
-    return _instance;
-  }
-
-  Controller.init() {
-
-    Logger().d("Controller Created!");
-  }
-
-
-
-
+  factory Controller(){return _instance;}
+  Controller.init() {Logger().d("Controller Created!");}
 
   //출발지, 도착지 정류장
   Rx<Station> deptStation;
   Rx<Station> destStation;
 
   //가까운 정류장
-  Rx nearStation = Rx(Station).obs;
-  //RxList<Station> nearStationList = [].obs;
+  Rx<Station> nearStation = Station().obs;
+
+  //버스 리스트
+  RxList busList = [].obs;
 
   //검색 정류장 리스트
   //RxList<Station> searchStationList = [].obs;
@@ -69,16 +59,20 @@ class Controller extends GetxController{
   RxString ttsText = "Unknown".obs;
 
 
-
-  void infomationInit() async{
-     titleLoading.value = true;
+  void infomationInit({int type}) async{
+    if(type == 0){titleLoading.value = true;}
+    else if(type == 1){isLoading.value = true;}
 
     await getIdentifier();   // IMEI정보 얻기
     await getGPS();          // GPS 정보 얻기
     await getDustInfo();     // 현재 위치의 미세먼지 정보 얻기
     await getWeatherInfo();  // 현재 위치의 날씨 정보 얻기
+    await getNearStation();  // 가장 가가운 정류장 찾기
+    await getStationThroughBusList(nearStation.value.nodeId);
 
-    titleLoading.value = false;
+    if(type == 0){titleLoading.value = false;}
+    else if(type == 1){isLoading.value = false;}
+
   }
 
 
@@ -129,16 +123,12 @@ class Controller extends GetxController{
   }
 
 
-
   ///<h2>위치 정보 조회</h2>
   ///<p>클라이언트의 현재 위치를 위도, 경도 값으로 구한다.</p>
   ///<p>params : none</p>
   ///<p>return : void</p>
   Future<void> getGPS() async {
-    Logger().d("getGPS");
-
-
-    isLoading.value = true;
+    //isLoading.value = true;
 
     GPS gps = new GPS();
     Position pos = await gps.getLocation();
@@ -148,21 +138,43 @@ class Controller extends GetxController{
     longitude.value = pos.longitude;
     this.place.value = place;
 
-    isLoading.value = false;
+    //isLoading.value = false;
+    Logger().d("getGPS");
   }
+
 
   ///<h2>주변 정류장 조회</h2>
   ///<p>클라이언트의 위치 좌표를 기반으로 가장 가까운 정류장 리스트를 구한다.</p>
   ///<p>params : none</p>
   ///<p>return : void</p>
-  void getNearStation() async{
-    dynamic list = await WebServer().getStationByLocation(latitude.value, longitude.value);
+  Future<void> getNearStation() async{
+    nearStation.value = null;
+    Station station = await WebServer().getStationByLocation(latitude.value, longitude.value);
 
-    if(list.length <= 0 || list == null){
+    if(station == null){
       return;
     }
 
-    nearStation.value = list[0];
+    Logger().d("Station : ${station.nodeId}");
+    nearStation.value = station;
+  }
+
+
+  ///<h2>정류장 경유 버스 노선 정보 조회</h2>
+  ///<p>매개변수로 주어진 nodeId를 통해 해당하는 정류장을 경유하는 버스의 정보를 조회한다.</p>
+  ///<p>params : [String] nodeId</p>
+  ///<p>return : void </p>
+  Future<void> getStationThroughBusList(String nodeId) async {
+    List<dynamic> list = await WebServer().getStationThroughBusList(nodeId);
+
+    Logger().d(list);
+
+    if(list.length <= 0){
+      Logger().d("버스 리스트 길이가 0입니다.");
+      return;
+    }
+
+    busList.value = list;
   }
 
 
@@ -184,8 +196,6 @@ class Controller extends GetxController{
   ///<p>params : none</p>
   ///<p>return : void</p>
   Future<void> getWeatherInfo() async{
-    Logger().d("getWeather");
-
     List<dynamic> list = await WebServer().getWeatherInfo(latitude.value, longitude.value);
 
     if(list.length <= 0){
@@ -197,6 +207,7 @@ class Controller extends GetxController{
       list[i].setType();
     }
 
+    Logger().d("getWeather");
     weatherList.value = list;
   }
 
@@ -213,12 +224,9 @@ class Controller extends GetxController{
       return;
     }
 
-    Logger().d(list[0].pm10Value);
-
     //미세먼지 알림 타입 설정
     dust.value = list[0] as Dust;
     dust.value.setType();
-
 
     dustInfomation();
   }
@@ -238,7 +246,10 @@ class Controller extends GetxController{
   }
 
 
-  //미세먼지 상태에 빠른 화면 이벤트
+  ///<h2>미세먼지 상태 화면 이벤트</h2>
+  ///<p>현재 위치의 미세먼지 정보 값을 화면에 출력하는 형태의 텍스트로 변환한다.</p>
+  ///<p>params : none </p>
+  ///<p>return : void </p>
   void dustInfomation(){
     switch(dust.value.type){
       case DUST_TYPE.LOW:
@@ -257,5 +268,4 @@ class Controller extends GetxController{
         dustStr.value = "불명";
     }
   }
-
 }

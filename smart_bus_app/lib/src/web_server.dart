@@ -30,7 +30,7 @@ class WebServer {
   //#endregion
 
   ///접속 주소
-  //final endpoint = "220.86.224.184:12010";
+  //final endpoint = "20.86.224.184:12010";
   final endpoint = "10.0.2.2:8080";
 
 
@@ -40,7 +40,6 @@ class WebServer {
   ///params : String latitude, String logitude <br>
   ///return : List<Dust>
   Future<List> getDustInfo(double latitude, double longitude) async {
-
     Logger().d("Latitude : $latitude || Longitude : $longitude");
 
     final service = "getDustInfo";
@@ -51,6 +50,10 @@ class WebServer {
 
     Uri uri = Uri.http(endpoint, service, params);
     dynamic jsonString = await get(uri);
+
+    if(jsonString == null){
+      jsonString = await get(uri);
+    }
 
     var jsonArray = jsonDecode(jsonString) as List;
     List list = jsonArray.map((e) => Dust.fromJson(e)).toList();
@@ -86,11 +89,11 @@ class WebServer {
 
 
   ///<h2>주변 정류장 정보 조회</h2>
-  ///<p>[Controller]의 latitude, longitude정보를 기반으로 주변 정류장 값을 받아온다.</p>
+  ///<p>[Controller]의 latitude, longitude 정보를 기반으로 주변 정류장 값을 받아온다.</p>
   ///<p>params : double latitude, double longitude</p>
   ///<p>return : List<Station></p>
-  Future<List> getStationByLocation(double latitude, double longitude) async {
-    final service = "getBusList";
+  Future<Station> getStationByLocation(double latitude, double longitude) async {
+    final service = "getDeptStation";
     final params = {
       "latitude": latitude.toString(),
       "longitude": longitude.toString()
@@ -99,35 +102,54 @@ class WebServer {
     Uri uri = Uri.http(endpoint, service, params);
     dynamic jsonString = await get(uri);
 
-    var jsonArray = jsonDecode(jsonString) as List;
-    List list = jsonArray.map((e) => Station.fromJson(e)).toList();
+    if(jsonString == null){
+      jsonString = await get(uri);
+    }
 
-    return list;
+    var json = jsonDecode(jsonString) as Map<String, dynamic>;
+    Station station = Station.fromJson(json);
+
+    return station;
   }
 
 
-
-
-
-
-
-
-  ///지정된 도시의 버스 노선 정보 중 [busNum]이 포함되는 모든 버스번호를 불러온다.
-  Future<List> getBusList(String busNum) async {
-    final service = "getBusList";
+  ///<h2>정류장 경유 버스 노선 조회</h2>
+  ///<p>지정된 도시의 정류장번호를 통해 해당 정류장을 경유하는 모든 버스정보를 조회한다.</p>
+  ///<p>params : [String]nodeId</p>
+  ///<p>return : List</p>
+  Future<List> getStationThroughBusList(String nodeId) async {
+    final service = "preArrivalStation";
     final params = {
       "cityName": "청주",
-      "routeNo": busNum
+      "nodeId": nodeId,
     };
 
     Uri uri = Uri.http(endpoint, service, params);
     dynamic jsonString = await get(uri);
 
+    Logger().d("JSON STRING : $jsonString");
+
     var jsonArray = jsonDecode(jsonString) as List;
-    List list = jsonArray.map((e) => Bus.fromJson(e)).toList();
+
+    List<Bus> list = [];
+    for(int i = 0; i < jsonArray.length; i++){
+      Bus bus = Bus.fromJson(jsonArray[i] as Map<String, dynamic>);
+      list.add(bus);
+    }
+
+    //List list = jsonArray.map((e) => Bus.fromJson(e)).toList();
 
     return list;
   }
+
+
+
+
+
+
+
+
+
 
 
   ///지정된 도시의 버스정류장 정보 중 [station]이 포함되는 모든 정류장을 불러온다.

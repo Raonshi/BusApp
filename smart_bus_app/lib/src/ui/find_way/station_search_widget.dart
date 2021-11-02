@@ -11,9 +11,6 @@ class StationSearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //controller.getNearStation();
-    //Station start = controller.nearStation.value;
-
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,

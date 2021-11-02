@@ -8,6 +8,7 @@ import 'package:logger/logger.dart';
 import 'package:smart_bus_app/src/business_logic/data_define.dart';
 import 'package:smart_bus_app/src/business_logic/get_controller.dart';
 import 'package:get/get.dart';
+import 'package:smart_bus_app/src/ui/widgets/bus_item.dart';
 import 'package:smart_bus_app/src/web_server.dart';
 import 'src/ui/find_way/station_search_widget.dart';
 
@@ -38,7 +39,7 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    controller.infomationInit();
+    controller.infomationInit(type: 0);
 
     return Scaffold(
       body: Container(
@@ -67,7 +68,8 @@ class MainPage extends StatelessWidget {
             actions: [
               ElevatedButton(
                   onPressed: () async {
-                    controller.getGPS();
+                    controller.infomationInit(type: 1);
+                    //controller.getGPS();
                   },
                   child: Text("설정")
               ),
@@ -84,15 +86,9 @@ class MainPage extends StatelessWidget {
   }
 
 
-  //버스 검색 버튼 이벤트
-  void onClickBusSearch(){
-    Get.to(StationSearchPage());
-  }
-
-
   Widget weatherInfomation(List weatherList, int index){
     if(weatherList == null){
-      return Icon(Icons.wb_cloudy_rounded, size: 50,);
+      return Icon(Icons.warning_rounded, size: 50,);
     }
 
     Weather weather = weatherList[index];
@@ -101,12 +97,39 @@ class MainPage extends StatelessWidget {
     else if(weather.type == WEATHER_TYPE.CLOUD) { return Icon(Icons.wb_cloudy_rounded, size: 50,);}
     else if(weather.type == WEATHER_TYPE.RAIN) { return Icon(Icons.beach_access_rounded, size: 50,);}
     else if(weather.type == WEATHER_TYPE.SNOW) { return Icon(Icons.ac_unit_rounded, size: 50,);}
-    else { return Icon(Icons.wb_cloudy_rounded, size: 50,);}
+    else { return Icon(Icons.warning_amber_rounded, size: 50,);}
+  }
+
+
+  Color dustWidgetColor(String str){
+    Color color;
+    if(str == "청정"){color = new Color.fromARGB(255, 100, 180, 255);}
+    else if(str == "보통"){color = new Color.fromARGB(255, 100, 255, 180);}
+    else if(str == "높음"){color = new Color.fromARGB(255, 255, 180, 100);}
+    else if(str == "위험"){color = new Color.fromARGB(255, 255, 75, 75);}
+    else{color = new Color.fromARGB(255, 150, 150, 150);}
+    return color;
   }
 
 
   Widget titleLoading(){
-    return Center(child: CircularProgressIndicator());
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("로 딩 중 . . .", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+          ],
+        ),
+      ],
+    );
   }
 
   Widget mainScreen(BuildContext context){
@@ -197,19 +220,18 @@ class MainPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
-                  flex:1,
-                  child: Card(
-                    color: Color.fromARGB(0, 0, 0, 0),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5.0),
-                      child: Obx(() => Text(
-                        controller.dustStr.value,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      ),
+                flex:1,
+                child: Obx(() => Card(
+                  color: dustWidgetColor(controller.dustStr.value),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5.0),
+                    child: Text(
+                      controller.dustStr.value,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                  )
+                  ),),
+                ),
               ),
             ],
           ),
@@ -264,9 +286,10 @@ class MainPage extends StatelessWidget {
         Expanded(
           flex: 10,
           child: ListView.builder(
-            itemCount: list.length,
-            itemBuilder: (context, p) {
-              return ListTile(title: Text('item ${list[p]}'),);
+            itemCount: controller.busList.length,
+            itemBuilder: (context, index) {
+              Bus bus = controller.busList.value[index];
+              return BusItem(bus: bus);
             },
           ),
         ),
@@ -275,7 +298,7 @@ class MainPage extends StatelessWidget {
         Expanded(
           flex:1,
           child: ElevatedButton(
-            onPressed: onClickBusSearch,
+            onPressed: () => Get.to(StationSearchPage()),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(

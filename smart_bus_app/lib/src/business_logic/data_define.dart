@@ -76,24 +76,21 @@ class Dust{
 
 //#region 정거장
 class Station{
-  String _nodeName, _nodeId, _nodeNum;
-  String _xPos, _yPos;
+  String nodeName = "Unknown";
+  String gpsLong = "Unknown";
+  String gpsLati = "Unknown";
+  String cityCode = "Unknown";
+  String nodeId = "Unknown";
 
-  String get nodeName => _nodeName;
-  String get nodeId => _nodeId;
-  String get nodeNum => _nodeNum;
-  String get xPos => _xPos;
-  String get yPos => _yPos;
-
-  Station(this._nodeName, this._nodeId, this._nodeNum, this._xPos, this._yPos);
+  Station({this.nodeName, this.nodeId, this.gpsLati, this.gpsLong, this.cityCode});
 
   factory Station.fromJson(dynamic json){
     return Station(
-        json['nodenm'] as String,
-        json['nodeid'] as String,
-        json['nodeno'] as String,
-        json['gpslong'] as String,
-        json['gpslati'] as String
+        nodeName: json['nodenm'] as String,
+        nodeId: json['nodeid'] as String,
+        cityCode: json['citycode'] as String,
+        gpsLong: json['gpslong'] as String,
+        gpsLati: json['gpslati'] as String
     );
   }
 }
@@ -101,6 +98,33 @@ class Station{
 
 
 //#region 버스노선
+class Bus{
+  String nodeName = "";
+  String routeTp = "";
+  String routeId ="";
+  String arrPrevStationCnt = "";
+  String vehicleTp = "";
+  String nodeId = "";
+  String routeNo = "";
+  String arrTime = "";
+
+  Bus({this.nodeName, this.nodeId, this.routeTp, this.routeId,
+    this.routeNo, this.vehicleTp, this.arrPrevStationCnt, this.arrTime});
+
+  factory Bus.fromJson(dynamic json){
+    return Bus(
+      nodeName: json['nodenm'] as String,
+      nodeId: json['nodeid'] as String,
+      routeTp: json['routetp'] as String,
+      routeId: json['routeid'] as String,
+      routeNo: json['routeno'] as String,
+      vehicleTp: json['vehicletp'] as String,
+      arrPrevStationCnt: json['arrprevstationcnt'] as String,
+      arrTime: json['arrtime'] as String,
+    );
+  }
+}
+/*
 class Bus{
   String _routeType, _routeId, _routeNum;
   String _startTime, _endTime;
@@ -128,6 +152,7 @@ class Bus{
     );
   }
 }
+ */
 //#endregion
 
 
