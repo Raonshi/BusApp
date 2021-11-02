@@ -95,13 +95,15 @@ public class DustAPIReceiver extends Thread{
                     Node node = list.item(j);
                     if (node.getNodeType() == Node.ELEMENT_NODE) {
                         Element element = (Element) node;
-                        json.put("stationName", stationName);
-                        json.put("pm10Value", getValue("pm10Value", element));
-                        json.put("dataTime", getValue("dataTime", element));
 
-                        DataCenter.Singleton().dustList.add(json);
+                        if(!getValue("pm10Value", element).toString().contains("-")) {
+                            json.put("stationName", stationName);
+                            json.put("pm10Value", getValue("pm10Value", element));
+                            json.put("dataTime", getValue("dataTime", element));
+
+                            DataCenter.Singleton().dustList.add(json);
+                        }
                     }
-
                 }
                 System.out.println(DataCenter.Singleton().dustList.size());
                 if(DataCenter.Singleton().dustList.size() <= 0) {
