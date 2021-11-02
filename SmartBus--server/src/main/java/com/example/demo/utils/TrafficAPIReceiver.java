@@ -443,7 +443,7 @@ public class TrafficAPIReceiver extends Thread {
             urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
             urlBuilder.append("&" + URLEncoder.encode("gpsLati","UTF-8") + "=" + URLEncoder.encode(yPos, "UTF-8"));
             urlBuilder.append("&" + URLEncoder.encode("gpsLong","UTF-8") + "=" + URLEncoder.encode(xPos, "UTF-8"));
-            System.out.println(urlBuilder.toString());
+
             NodeList list = getData(urlBuilder.toString());
             DataCenter.Singleton().gpsStationList.clear();
 

@@ -80,16 +80,21 @@ public class StationInfo {
         JSONObject result = new JSONObject();
         result = (JSONObject) DataCenter.Singleton().gpsStationList.get(0);
 
+        DataCenter.Singleton().nearStation = result;
+
         return result;
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/preArrivalStation")
-    JSONArray getPreArrivalStation(@RequestParam String cityName, @RequestParam String nodeNm) throws InterruptedException {
+    JSONArray getPreArrivalStation(@RequestParam String latitude, @RequestParam String longitude) throws InterruptedException {
 
-        PublicOperation pub = new PublicOperation();
+        JSONObject object = getDeptStation(latitude, longitude);
 
-        this.cityCode = pub.getCityCode(cityName, APIHandler.STATION_CITY_LIST);
-        this.nodeId = pub.getNodeId(cityName, nodeNm).get(0);
+        String cityCode = (String) object.get("citycode");
+        String nodeId = (String) object.get("nodeid");
+
+        this.cityCode = cityCode;
+        this.nodeId = nodeId;
 
         TrafficAPIReceiver receiver = new TrafficAPIReceiver(APIHandler.ARRIVE_BUS_LIST);
         receiver.start();
@@ -97,6 +102,11 @@ public class StationInfo {
         Thread.sleep(1500);
 
         return DataCenter.Singleton().arrivalList;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path ="/calltest")
+    JSONObject getObject () {
+        return DataCenter.Singleton().nearStation;
     }
 
 }

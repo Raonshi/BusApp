@@ -1,6 +1,7 @@
 package com.example.demo.datacenter;
 
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 
@@ -56,6 +57,9 @@ public class DataCenter {
     //도시이름, 정류장이름으로 getStationList 요청시 API를 통해 얻어온 데이터들을 가공한 버스 정류장들의 상세 정보 리스트
     public JSONArray finalRouteAceessList = new JSONArray();
 
+
+    public JSONObject nearStation = new JSONObject();
+    //위치 근접 기반 정류장 정보
 
     public JSONArray wayList = new JSONArray();
     //출발지 -> 도착지 중복 경로 노선 리스트
