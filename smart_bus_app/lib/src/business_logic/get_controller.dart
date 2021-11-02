@@ -29,6 +29,8 @@ class Controller extends GetxController{
 
 
 
+
+
   //출발지, 도착지 정류장
   Rx<Station> deptStation;
   Rx<Station> destStation;
@@ -49,6 +51,7 @@ class Controller extends GetxController{
   RxDouble longitude = 0.0.obs;
 
   //로딩 여부
+  RxBool titleLoading = false.obs;
   RxBool isLoading = false.obs;
 
   //IMEI정보
@@ -60,11 +63,23 @@ class Controller extends GetxController{
   RxString dustStr = "불명".obs;
 
   //날씨 정보
-  RxList<dynamic> weatherList = [].obs;
+  RxList weatherList = [].obs;
 
   //음성 인식 텍스트
   RxString ttsText = "Unknown".obs;
 
+
+
+  void infomationInit() async{
+     titleLoading.value = true;
+
+    await getIdentifier();   // IMEI정보 얻기
+    await getGPS();          // GPS 정보 얻기
+    await getDustInfo();     // 현재 위치의 미세먼지 정보 얻기
+    await getWeatherInfo();  // 현재 위치의 날씨 정보 얻기
+
+    titleLoading.value = false;
+  }
 
 
   ///<h2>길찾기</h2>
@@ -158,6 +173,7 @@ class Controller extends GetxController{
   Future<void> getIdentifier() async {
     imei.value = await ImeiPlugin.getImei();
     uuid.value = await ImeiPlugin.getId();
+    await Future.delayed(new Duration(milliseconds: 500));
 
     Logger().d("IMEI : ${imei.value}");
   }
@@ -170,7 +186,7 @@ class Controller extends GetxController{
   Future<void> getWeatherInfo() async{
     Logger().d("getWeather");
 
-    List<Weather> list = await WebServer().getWeatherInfo(latitude.value, longitude.value);
+    List<dynamic> list = await WebServer().getWeatherInfo(latitude.value, longitude.value);
 
     if(list.length <= 0){
       Logger().d("날씨 정보 수신 실패!");
@@ -181,31 +197,6 @@ class Controller extends GetxController{
       list[i].setType();
     }
 
-    /*
-    List<Weather> todayList = [];
-    DateTime today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-
-    for(int i = 0; i < list.length; i++){
-      String str = today.toString();
-      Weather item = list[i];
-      Logger().d("DATE TIME : ${item.dateTime} || Index : $i");
-
-      DateTime date = DateTime.tryParse(item.dateTime);
-      //오늘 날짜일 경우
-      if(date.year == today.year && date.month == today.month && date.day == today.day){
-        //6시 = 오전, 12시 = 점심, 18시 = 저녁
-        if(date.hour == 6 || date.hour == 12 || date.hour == 18){
-          item.setType();
-          todayList.add(item);
-        }
-      }
-    }
-
-    Logger().d("SIZE : ${todayList.length}");
-
-    weatherList.value = todayList;
-
-     */
     weatherList.value = list;
   }
 
