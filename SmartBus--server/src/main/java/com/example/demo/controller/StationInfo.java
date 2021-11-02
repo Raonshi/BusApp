@@ -66,7 +66,7 @@ public class StationInfo {
 
     //클라이언트에서 위치(위도, 경도)를 입력받아 출발할 정류소를 조회
     @RequestMapping(method = RequestMethod.GET, path = "/getDeptStation")
-    JSONArray getDeptStation(@RequestParam String latitude, @RequestParam String longitude) throws InterruptedException{
+    JSONObject getDeptStation(@RequestParam String latitude, @RequestParam String longitude) throws InterruptedException{
         this.yPos = latitude;
         this.xPos = longitude;
 
@@ -74,10 +74,12 @@ public class StationInfo {
         TrafficAPIReceiver receiver = new TrafficAPIReceiver(APIHandler.STATION_SPECIFY_LOCATION_LIST);
         receiver.start();
 
-        Thread.sleep(1000);
+        Thread.sleep(1500);
 
+        JSONObject result = new JSONObject();
+        result = (JSONObject) DataCenter.Singleton().gpsStationList.get(0);
 
-        return DataCenter.Singleton().gpsStationList;
+        return result;
     }
 
 }
