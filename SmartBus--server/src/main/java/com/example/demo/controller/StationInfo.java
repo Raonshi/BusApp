@@ -86,12 +86,7 @@ public class StationInfo {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/preArrivalStation")
-    JSONArray getPreArrivalStation(@RequestParam String latitude, @RequestParam String longitude) throws InterruptedException {
-
-        JSONObject object = getDeptStation(latitude, longitude);
-
-        String cityCode = (String) object.get("citycode");
-        String nodeId = (String) object.get("nodeid");
+    JSONArray getPreArrivalStation(@RequestParam String cityCode, @RequestParam String nodeId) throws InterruptedException {
 
         this.cityCode = cityCode;
         this.nodeId = nodeId;
