@@ -86,9 +86,11 @@ public class StationInfo {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/preArrivalStation")
-    JSONArray getPreArrivalStation(@RequestParam String cityCode, @RequestParam String nodeId) throws InterruptedException {
+    JSONArray getPreArrivalStation(@RequestParam String cityName, @RequestParam String nodeId) throws InterruptedException {
 
-        this.cityCode = cityCode;
+        PublicOperation pub = new PublicOperation();
+
+        this.cityCode = pub.getCityCode(cityName, APIHandler.ARRIVE_CITY_LIST);
         this.nodeId = nodeId;
 
         TrafficAPIReceiver receiver = new TrafficAPIReceiver(APIHandler.ARRIVE_BUS_LIST);
