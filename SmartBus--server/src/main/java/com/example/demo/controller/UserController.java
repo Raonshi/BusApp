@@ -12,6 +12,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
+    //클라이언트에서 IMEI를 받아 유저로 등록
     @RequestMapping(method = RequestMethod.GET, path ="/createUser")
     public String createUser(@RequestParam String imei) {
         UserDto userDto = new UserDto();

@@ -145,18 +145,23 @@ public class DustAPIReceiver extends Thread{
             } else {  // 에러
                 br = new BufferedReader( new InputStreamReader(conn.getErrorStream(), "UTF-8"));
             }
+            //API 요청
+
 
             String jsonString = "";
             String stringLine;
             while ((stringLine= br.readLine()) != null ) {
                 jsonString += stringLine;
             }
+            //JSON 파일 문자열 변환
 
             JSONParser jsonParser = new JSONParser();
 
             JSONObject parsejson = (JSONObject) jsonParser.parse(jsonString);
+            //문자열 JSON 으로 다시 파싱
 
             JSONArray regionArray = (JSONArray) parsejson.get("documents");
+            //얻어온 결과에서 documents에 해당하는 리스트를 얻어옴
 
             for(int i = 0; i < regionArray.size(); i++) {
                 JSONObject json = (JSONObject) regionArray.get(i);
@@ -166,6 +171,7 @@ public class DustAPIReceiver extends Thread{
 
                 DataCenter.Singleton().tmX.add(String.valueOf(doubleTmx));
                 DataCenter.Singleton().tmY.add(String.valueOf(doubleTmy));
+                //tmx, tmy 좌표 추가
 
 
             }
@@ -175,6 +181,7 @@ public class DustAPIReceiver extends Thread{
         }
     }
 
+    //얻어온 tmX, tmY 좌표로 미세먼지 측정소 탐색
     void getStationName(String tmX, String tmY) {
 
         try {

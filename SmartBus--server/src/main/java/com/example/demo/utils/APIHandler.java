@@ -23,7 +23,7 @@ public enum APIHandler {
     LOCATION_BUS_LIST,                          //(버스 위치 정보조회 서비스)노선별 위치 정보 조회
     LOCATION_SPECIFY_STATION_ACCESS_BUS_LIST,   //(버스 위치 정보조회 서비스)특정 정류소에 근접한 버스 정보 조회
 
-    GET_COORDINATE,
+    GET_COORDINATE,                             //도착지의 위도 경도 조회
 
     //경로 연산
     FIND_WAY,                                   //출발지와 도착지 간의 경로 조회

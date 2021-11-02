@@ -31,7 +31,6 @@ public class RegionInfo {
 
     public static String latitude;
     public static String longitude;
-    //public static String sido;
 
     //본 애플리케이션의 서비스를 지원하는 도시 인지 확인
     @RequestMapping(method = RequestMethod.GET, path = "/getRegionInfo")

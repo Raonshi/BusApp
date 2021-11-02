@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 /* 기능
  * 1. 매개변수로 입력받은 정류장의 세부 정보 조회 (list)
- * 2. 클라이언트에서 위치(위도, 경도)를 입력받아 출발할 정류소를 조회  (List)
+ * 2. 클라이언트에서 위치(위도, 경도)를 입력받아 정류소를 조회  (List)
  * 3. 클라이언트에서 도착할 정류장 이름를 입력받아 도착지 정류장 정보 조회  (List)
- *
+ * 4. 클라이언트에서 도시 이름 과 정류장 ID를 받아 해당 정류장의 도착 예정 버스의 정보를 출력 (List)
+ * 5. 도시이름과 도착 장소를 받아 해당 위치의 근접 좌표(위도, 경도) 출력 (Object : 리스트중 매칭되는 첫번째 오브젝트를 반환)
  * (1, 3 오퍼레이션 동일)
  */
 
@@ -87,6 +88,8 @@ public class StationInfo {
         return result;
     }
 
+
+    //클라이언트에서 도시 이름 과 정류장 ID를 받아 해당 정류장의 도착 예정 버스의 정보를 출력
     @RequestMapping(method = RequestMethod.GET, path = "/preArrivalStation")
     JSONArray getPreArrivalStation(@RequestParam String cityName, @RequestParam String nodeId) throws InterruptedException {
 
@@ -103,6 +106,8 @@ public class StationInfo {
         return DataCenter.Singleton().arrivalList;
     }
 
+
+    //도시이름과 도착 장소를 받아 해당 위치의 근접 좌표(위도, 경도) 출력 (Object : 리스트중 매칭되는 첫번째 오브젝트를 반환)
     @RequestMapping(method = RequestMethod.GET, path = "/getDestCoordinate")
     JSONObject getDestStation(@RequestParam String cityName, @RequestParam String place) throws InterruptedException{
 
@@ -115,8 +120,6 @@ public class StationInfo {
         Thread.sleep(1500);
 
         JSONObject object = DataCenter.Singleton().placeCoordinate;
-
-
 
         return object;
     }

@@ -754,6 +754,8 @@ public class TrafficAPIReceiver extends Thread {
             } else {  // 에러
                 br = new BufferedReader( new InputStreamReader(conn.getErrorStream(), "UTF-8"));
             }
+            //API 요청
+
 
             DataCenter.Singleton().placeCoordinate.clear();
 
@@ -763,15 +765,17 @@ public class TrafficAPIReceiver extends Thread {
             while ((stringLine= br.readLine()) != null ) {
                 jsonString += stringLine;
             }
+            //요청받은 JSON 파일 문자열 변환
 
 
             JSONParser jsonParser = new JSONParser();
+            //다시 JSON으로 파싱
 
             JSONObject parsejson = (JSONObject) jsonParser.parse(jsonString);
 
             JSONArray regionArray = (JSONArray) parsejson.get("documents");
+            //documents에 해당하는 리스트 요소들을 얻어옴
 
-            JSONObject resultArray = new JSONObject();
 
             for(int i = 0; i < regionArray.size(); i++) {
                 JSONObject object = (JSONObject) regionArray.get(i);
@@ -779,6 +783,7 @@ public class TrafficAPIReceiver extends Thread {
                 if(object.get("road_address_name").toString().contains(cityName)) {
                     DataCenter.Singleton().placeCoordinate.put("longitude", object.get("x"));
                     DataCenter.Singleton().placeCoordinate.put("latitude", object.get("y"));
+                    //결과 데이터에 좌표값 추가
                 }
             }
 
