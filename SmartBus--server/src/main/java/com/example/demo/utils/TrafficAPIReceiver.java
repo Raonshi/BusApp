@@ -61,7 +61,7 @@ public class TrafficAPIReceiver extends Thread {
                 getCityList(1);
                 break;
             case ARRIVE_BUS_LIST:
-                //getSttnAcctoArvlPrearngeInfoList(sba.cityCode, sba.nodeId);
+                getSttnAcctoArvlPrearngeInfoList(stationInfo.cityCode, stationInfo.nodeId);
                 break;
             case ARRIVE_SPECIFY_STATION_ACCESS_BUS_LIST:
                 //getSttnAcctoSpcifyRouteBusArvlPrearngeInfoList(sba.cityCode, sba.nodeId, sba.routeId);

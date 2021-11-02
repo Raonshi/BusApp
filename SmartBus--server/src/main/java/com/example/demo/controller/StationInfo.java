@@ -26,6 +26,7 @@ public class StationInfo {
 
     public static String cityCode;
     public static String nodeNm;
+    public static String nodeId;
 
     public static String xPos;
     public static String yPos;
@@ -80,6 +81,22 @@ public class StationInfo {
         result = (JSONObject) DataCenter.Singleton().gpsStationList.get(0);
 
         return result;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/preArrivalStation")
+    JSONArray getPreArrivalStation(@RequestParam String cityName, @RequestParam String nodeNm) throws InterruptedException {
+
+        PublicOperation pub = new PublicOperation();
+
+        this.cityCode = pub.getCityCode(cityName, APIHandler.STATION_CITY_LIST);
+        this.nodeId = pub.getNodeId(cityName, nodeNm).get(0);
+
+        TrafficAPIReceiver receiver = new TrafficAPIReceiver(APIHandler.ARRIVE_BUS_LIST);
+        receiver.start();
+
+        Thread.sleep(1500);
+
+        return DataCenter.Singleton().arrivalList;
     }
 
 }
