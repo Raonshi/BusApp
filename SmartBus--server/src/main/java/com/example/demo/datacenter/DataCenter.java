@@ -61,6 +61,9 @@ public class DataCenter {
     public JSONObject nearStation = new JSONObject();
     //위치 근접 기반 정류장 정보
 
+    public JSONObject placeCoordinate = new JSONObject();
+    //장소에 대한 X, Y 좌표
+
     public JSONArray wayList = new JSONArray();
     //출발지 -> 도착지 중복 경로 노선 리스트
 

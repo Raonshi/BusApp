@@ -25,12 +25,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class StationInfo {
 
     public static String cityCode;
+    public static String cityName;
     public static String nodeNm;
     public static String nodeId;
 
     public static String xPos;
     public static String yPos;
 
+    public static String place;
 
     //매개변수로 입력받은 정류장의 세부 정보 조회
     //클라이언트에서 도착할 정류장 이름를 입력받아 도착지 정류장 정보 조회
@@ -101,9 +103,22 @@ public class StationInfo {
         return DataCenter.Singleton().arrivalList;
     }
 
-    @RequestMapping(method = RequestMethod.GET, path ="/calltest")
-    JSONObject getObject () {
-        return DataCenter.Singleton().nearStation;
+    @RequestMapping(method = RequestMethod.GET, path = "/getDestCoordinate")
+    JSONObject getDestStation(@RequestParam String cityName, @RequestParam String place) throws InterruptedException{
+
+        this.cityName = cityName;
+        this.place = place;
+
+        TrafficAPIReceiver receiver = new TrafficAPIReceiver(APIHandler.GET_COORDINATE);
+        receiver.start();
+
+        Thread.sleep(1500);
+
+        JSONObject object = DataCenter.Singleton().placeCoordinate;
+
+
+
+        return object;
     }
 
 }

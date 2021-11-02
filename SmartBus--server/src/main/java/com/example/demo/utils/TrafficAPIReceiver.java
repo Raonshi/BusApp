@@ -6,6 +6,7 @@ import com.example.demo.controller.PublicOperation;
 import com.example.demo.controller.StationInfo;
 import com.example.demo.datacenter.DataCenter;
 import com.example.demo.dto.*;
+import org.json.simple.parser.JSONParser;
 import org.springframework.cache.annotation.Cacheable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -15,9 +16,13 @@ import org.xml.sax.SAXException;
 import org.json.simple.*;
 
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.net.URLEncoder;
 
 
@@ -93,6 +98,8 @@ public class TrafficAPIReceiver extends Thread {
             case FIND_WAY:
                 getWayList(pathInfo.cityCode, pathInfo.deptId, pathInfo.destId);
                 break;
+            case GET_COORDINATE:
+                getCoordinate(stationInfo.cityName, stationInfo.place);
         }
     }
     //#region 공통 메서드
@@ -724,6 +731,60 @@ public class TrafficAPIReceiver extends Thread {
             }
         }
         return result;
+    }
+
+
+    void getCoordinate(String cityName, String place) {
+
+        try {
+            StringBuilder url = new StringBuilder("https://dapi.kakao.com/v2/local/search/keyword.json");
+            url.append("?" + URLEncoder.encode("query","UTF-8") + "=" + URLEncoder.encode(place,"UTF-8"));
+            String auth = "KakaoAK " + "2c6d565839233668c5eda759b5ecdc4d";
+
+            URL Url = new URL( url.toString());
+            HttpsURLConnection conn = (HttpsURLConnection) Url.openConnection();
+            conn.setRequestMethod( "GET" );
+            conn.setRequestProperty( "Authorization", auth );
+
+            BufferedReader br;
+
+            int responseCode = conn.getResponseCode();
+            if( responseCode == 200 ) {  // 호출 OK
+                br = new BufferedReader( new InputStreamReader(conn.getInputStream(), "UTF-8"));
+            } else {  // 에러
+                br = new BufferedReader( new InputStreamReader(conn.getErrorStream(), "UTF-8"));
+            }
+
+            DataCenter.Singleton().placeCoordinate.clear();
+
+
+            String jsonString = "";
+            String stringLine;
+            while ((stringLine= br.readLine()) != null ) {
+                jsonString += stringLine;
+            }
+
+
+            JSONParser jsonParser = new JSONParser();
+
+            JSONObject parsejson = (JSONObject) jsonParser.parse(jsonString);
+
+            JSONArray regionArray = (JSONArray) parsejson.get("documents");
+
+            JSONObject resultArray = new JSONObject();
+
+            for(int i = 0; i < regionArray.size(); i++) {
+                JSONObject object = (JSONObject) regionArray.get(i);
+
+                if(object.get("road_address_name").toString().contains(cityName)) {
+                    DataCenter.Singleton().placeCoordinate.put("longitude", object.get("x"));
+                    DataCenter.Singleton().placeCoordinate.put("latitude", object.get("y"));
+                }
+            }
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //#endregion
