@@ -24,7 +24,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
-
+import java.util.Collections;
+import java.util.Comparator;
 
 
 public class TrafficAPIReceiver extends Thread {
@@ -315,18 +316,26 @@ public class TrafficAPIReceiver extends Thread {
 
     //#region 국토교통부-버스도착정보 API
 
+    /**
+     * 정류소별 도착예정 정보목록 조회
+     * @param cityCode 도시 코드
+     * @param nodeId 정류소 ID
+     */
     void getSttnAcctoArvlPrearngeInfoList(String cityCode, String nodeId){
         try {
             System.out.println("cityCode : " + cityCode + " Node Id : " + nodeId);
 
+            //요청 URL 정의
             StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList");
             urlBuilder.append("?" + URLEncoder.encode("ServiceKey", "UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
             urlBuilder.append("&" + URLEncoder.encode("cityCode", "UTF-8") + "=" + cityCode);
             urlBuilder.append("&" + URLEncoder.encode("nodeId", "UTF-8") + "=" + nodeId);
 
+            //데이터 파싱
             NodeList list = getData(urlBuilder.toString());
             DataCenter.Singleton().arrivalList.clear();
 
+            //리스트에 삽입
             for (int i = 0; i < list.getLength(); i++) {
                 Node node = list.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -344,6 +353,26 @@ public class TrafficAPIReceiver extends Thread {
                     DataCenter.Singleton().arrivalList.add(json);
                 }
             }
+
+            //arrivalList 정렬(arrtime기준)
+            Collections.sort(DataCenter.Singleton().arrivalList, new Comparator<JSONObject>() {
+                private final String key = "arrtime";
+                @Override
+                public int compare(JSONObject o1, JSONObject o2) {
+                    String valA = "";
+                    String valB = "";
+
+                    try{
+                        valA = o1.get(key).toString();
+                        valB = o2.get(key).toString();
+                    }
+                    catch(Exception e){
+                        e.getStackTrace();
+                    }
+
+                    return valA.compareTo(valB);
+                }
+            });
         }
         catch (ParserConfigurationException | IOException | SAXException e){
             e.getMessage();
@@ -591,11 +620,9 @@ public class TrafficAPIReceiver extends Thread {
      * @param deptArrivalList 출발지 버스 리스트
      * @param destArrivalList 도착지 버스 리스트
      */
-
     void directWayList(JSONArray deptArrivalList,JSONArray destArrivalList){
         //3. 두 버스 목록에서 겹치는 버스가 있을 경우 직통버스로 간주한다.
         //-> 그 외의 경우에는 환승으로 간주한다 -> 환승은 최대 1회를 넘기지 않는다.
-
         for (Object o : deptArrivalList) {
             for (Object value : destArrivalList) {
                 JSONObject deptJson = (JSONObject) o;
