@@ -354,25 +354,6 @@ public class TrafficAPIReceiver extends Thread {
                 }
             }
 
-            //arrivalList 정렬(arrtime기준)
-            Collections.sort(DataCenter.Singleton().arrivalList, new Comparator<JSONObject>() {
-                private final String key = "arrtime";
-                @Override
-                public int compare(JSONObject o1, JSONObject o2) {
-                    String valA = "";
-                    String valB = "";
-
-                    try{
-                        valA = o1.get(key).toString();
-                        valB = o2.get(key).toString();
-                    }
-                    catch(Exception e){
-                        e.getStackTrace();
-                    }
-
-                    return valA.compareTo(valB);
-                }
-            });
         }
         catch (ParserConfigurationException | IOException | SAXException e){
             e.getMessage();
@@ -628,21 +609,27 @@ public class TrafficAPIReceiver extends Thread {
                 JSONObject deptJson = (JSONObject) o;
                 JSONObject destJson = (JSONObject) value;
 
+                int time = Integer.parseInt(destJson.get("arrtime").toString()) - Integer.parseInt(deptJson.get("arrtime").toString());
+
+
                 //출발지와 도착지에 동일한 버스노선 번호가 존재할 경우
-                if (deptJson.get("routeno").toString().equals(destJson.get("routeno").toString())) {
+                if (deptJson.get("routeno").toString().equals(destJson.get("routeno").toString()) && time > 0) {
+
+                    //현재 출발지 - 정류장1 - 정류장2 - ... - 도착 정류장
+                    //현재 버스 노선의 위치가 정류장에 표시되어야함
+
                     //새로운 JSONObject를 만든다.
                     JSONObject way = new JSONObject();
                     way.put("deptnodenm", deptJson.get("nodenm"));
-                    way.put("deptarrtime", deptJson.get("arrtime"));
                     way.put("deptarrprevstationcnt", deptJson.get("arrprevstationcnt"));
 
                     way.put("destnodenm", destJson.get("nodenm"));
-                    way.put("destarrtime", destJson.get("arrtime"));
                     way.put("destarrprevstationcnt", destJson.get("arrprevstationcnt"));
 
                     way.put("routeno", deptJson.get("routeno"));
                     way.put("routetp", deptJson.get("routetp"));
                     way.put("vehicletp", deptJson.get("vehicletp"));
+                    way.put("time", time);
 
                     //way를 wayList에 담는다.
                     DataCenter.Singleton().wayList.add(way);
@@ -672,6 +659,28 @@ public class TrafficAPIReceiver extends Thread {
         else{
             DataCenter.Singleton().wayList = tmpArray;
         }
+
+
+        //arrivalList 정렬(arrtime기준)
+        Collections.sort(DataCenter.Singleton().wayList, new Comparator<JSONObject>() {
+            private final String key = "time";
+            @Override
+            public int compare(JSONObject a, JSONObject b) {
+                String valA = "";
+                String valB = "";
+
+                try{
+                    valA = a.get(key).toString();
+                    valB = b.get(key).toString();
+                }
+                catch(Exception e){
+                    e.getStackTrace();
+                }
+
+                return valA.compareTo(valB);
+            }
+        });
+
     }
 
 
