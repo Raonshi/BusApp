@@ -8,6 +8,7 @@ import com.example.demo.datacenter.DataCenter;
 import com.example.demo.dto.*;
 import org.json.simple.parser.JSONParser;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.lang.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -250,6 +251,41 @@ public class TrafficAPIReceiver extends Thread {
                     Element element = (Element) node;
                     JSONObject json = new JSONObject();
                     json.put("routeId", getValue("routeid", element));
+                    json.put("nodeid", getValue("nodeid", element));
+                    json.put("nodenm", getValue("nodenm", element));
+                    json.put("nodeno", getValue("nodeno", element));
+                    json.put("nodeord", getValue("nodeord", element));
+                    json.put("gpslong", getValue("gpslong", element));
+                    json.put("gpslati", getValue("gpslati", element));
+                    json.put("updowncd", getValue("updowncd", element));
+
+                    DataCenter.Singleton().accessStationList.add(json);
+                }
+            }
+        }
+        catch (ParserConfigurationException | IOException | SAXException e){
+            e.getMessage();
+        }
+    }
+
+    //Overloading
+    void getRouteAcctoThrghSttnList(String cityCode, String routeId, String routeNo){
+        try{
+            StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusRouteInfoInqireService/getRouteAcctoThrghSttnList");
+            urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
+            urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + "100");
+            urlBuilder.append("&" + URLEncoder.encode("cityCode","UTF-8") + "=" + cityCode);
+            urlBuilder.append("&" + URLEncoder.encode("routeId","UTF-8") + "=" + routeId);
+
+            NodeList list = getData(urlBuilder.toString());
+            DataCenter.Singleton().accessStationList.clear();
+
+            for(int i = 0; i < list.getLength(); i++){
+                Node node = list.item(i);
+                if(node.getNodeType() == Node.ELEMENT_NODE){
+                    Element element = (Element) node;
+                    JSONObject json = new JSONObject();
+                    json.put("routeNo", routeNo);
                     json.put("nodeid", getValue("nodeid", element));
                     json.put("nodenm", getValue("nodenm", element));
                     json.put("nodeno", getValue("nodeno", element));
@@ -708,7 +744,7 @@ public class TrafficAPIReceiver extends Thread {
                 continue;
             }
 
-            getRouteAcctoThrghSttnList(pathInfo.cityCode, deptBus.get("routeid").toString());
+            getRouteAcctoThrghSttnList(pathInfo.cityCode, deptBus.get("routeid").toString(), deptBus.get("routeno").toString());
             deptStationList.addAll(DataCenter.Singleton().accessStationList);
 
         }
@@ -723,7 +759,7 @@ public class TrafficAPIReceiver extends Thread {
                 continue;
             }
 
-            getRouteAcctoThrghSttnList(pathInfo.cityCode, destBus.get("routeid").toString());
+            getRouteAcctoThrghSttnList(pathInfo.cityCode, destBus.get("routeid").toString(), destBus.get("routeno").toString());
             JSONArray destBusStationList = new JSONArray();
             destBusStationList.addAll(DataCenter.Singleton().accessStationList);
 
