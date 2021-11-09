@@ -81,7 +81,7 @@ public class TrafficAPIReceiver extends Thread {
                 getStationNumList(publicOperation.cityCode, publicOperation.nodeNm);
                 break;
             case STATION_SPECIFY_LOCATION_LIST:
-                getCrdntPrxmtSttnList(stationInfo.xPos, stationInfo.yPos);
+                getCrdntPrxmtSttnList(stationInfo.cityCode, stationInfo.xPos, stationInfo.yPos);
                 break;
 
             //버스 위치 정보 API
@@ -453,7 +453,7 @@ public class TrafficAPIReceiver extends Thread {
      * @param xPos 경도 좌표
      * @param yPos 위도 좌표
      */
-    void getCrdntPrxmtSttnList(String xPos, String yPos) {
+    void getCrdntPrxmtSttnList(String cityCode, String xPos, String yPos) {
         System.out.println(xPos + " " + yPos);
         try{
             StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusSttnInfoInqireService/getCrdntPrxmtSttnList");
@@ -470,13 +470,16 @@ public class TrafficAPIReceiver extends Thread {
                     Element element = (Element) node;
                     JSONObject json = new JSONObject();
 
-                    json.put("gpslati", getValue("gpslati", element));
-                    json.put("gpslong", getValue("gpslong", element));
-                    json.put("nodeid", getValue("nodeid", element));
-                    json.put("nodenm", getValue("nodenm", element));
-                    json.put("citycode", getValue("citycode", element));
+                    if(cityCode.equals(getValue("citycode", element).toString())) {
 
-                    DataCenter.Singleton().gpsStationList.add(json);
+                        json.put("gpslati", getValue("gpslati", element));
+                        json.put("gpslong", getValue("gpslong", element));
+                        json.put("nodeid", getValue("nodeid", element));
+                        json.put("nodenm", getValue("nodenm", element));
+                        json.put("citycode", getValue("citycode", element));
+
+                        DataCenter.Singleton().gpsStationList.add(json);
+                    }
                 }
             }
 
