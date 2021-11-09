@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -57,7 +58,7 @@ public class TrafficAPIReceiver extends Thread {
                 getRouteNoList(publicOperation.cityCode, publicOperation.routeNo);
                 break;
             case ROUTE_THROUGH_STATION_LIST:
-                getRouteAcctoThrghSttnList(busInfo.cityCode, busInfo.routeId);
+                getRouteAcctoThrghSttnList(busInfo.cityCode, busInfo.routeId, busInfo.routeNo);
                 break;
             case ROUTE_INFO:
                 getRouteInfoItem(busInfo.cityCode, busInfo.routeId);
@@ -751,6 +752,20 @@ public class TrafficAPIReceiver extends Thread {
 
         //2. 도착지 버스 리스트에서는 도착지부터 경유 정거장을 역순으로 탐색
         DataCenter.Singleton().accessStationList.clear();
+        for(Object o : destArrivalList){
+            JSONObject destBus = (JSONObject) o;
+
+            int arrTime = Integer.parseInt(destBus.get("arrtime").toString());
+            if(arrTime > 600){
+                continue;
+            }
+
+            getRouteAcctoThrghSttnList(pathInfo.cityCode, destBus.get("routeid").toString(), destBus.get("routeno").toString());
+
+            destStationList.addAll(DataCenter.Singleton().accessStationList);
+        }
+        Collections.reverse(destStationList);
+        /*
         for(int i = destArrivalList.size()-1; i >= 0; i--){
             JSONObject destBus = (JSONObject)destArrivalList.get(i);
 
@@ -763,12 +778,15 @@ public class TrafficAPIReceiver extends Thread {
             JSONArray destBusStationList = new JSONArray();
             destBusStationList.addAll(DataCenter.Singleton().accessStationList);
 
+            Collections.reverse(destBusStationList);
+
 
             for(int j = destBusStationList.size()-1; j >= 0; j--){
                 destStationList.add(destBusStationList.get(j));
             }
 
         }
+         */
 
         //3. 만나지 않으면 fail
         if(deptStationList.isEmpty() || destStationList.isEmpty()){

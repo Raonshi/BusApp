@@ -26,6 +26,7 @@ public class BusInfo {
 
     public static String cityCode;
     public static String routeId;
+    public static String routeNo;
 
 
     //매개변수로 입력받은 버스노선에 대한 상세 정보
@@ -77,6 +78,7 @@ public class BusInfo {
 
         for(Object obj : DataCenter.Singleton().routeIdList) {
             this.routeId = (String) obj;
+            this.routeNo = routeNo;
             String routeId = this.routeId;
             TrafficAPIReceiver trafficAPIReceiver = new TrafficAPIReceiver(APIHandler.ROUTE_THROUGH_STATION_LIST);
             trafficAPIReceiver.start();
