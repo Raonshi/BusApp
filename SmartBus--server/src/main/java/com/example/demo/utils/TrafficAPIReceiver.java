@@ -58,7 +58,7 @@ public class TrafficAPIReceiver extends Thread {
                 getRouteNoList(publicOperation.cityCode, publicOperation.routeNo);
                 break;
             case ROUTE_THROUGH_STATION_LIST:
-                getRouteAcctoThrghSttnList(busInfo.cityCode, busInfo.routeId, busInfo.routeNo);
+                getRouteAcctoThrghSttnList(busInfo.cityCode, busInfo.routeId);
                 break;
             case ROUTE_INFO:
                 getRouteInfoItem(busInfo.cityCode, busInfo.routeId);
@@ -276,7 +276,7 @@ public class TrafficAPIReceiver extends Thread {
      * @param routeId 버스 아이디
      * @param routeNo 버스 번호
      */
-    void getRouteAcctoThrghSttnList(String cityCode, String routeId, String routeNo){
+    void getRouteAcctoThrghSttnList(String cityCode, String routeId, String routeNo, String deptName, String destName){
         try{
             StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusRouteInfoInqireService/getRouteAcctoThrghSttnList");
             urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
@@ -287,10 +287,29 @@ public class TrafficAPIReceiver extends Thread {
             NodeList list = getData(urlBuilder.toString());
             DataCenter.Singleton().accessStationList.clear();
 
+            int start = 0;
+            int end = list.getLength() - 1;
+
             for(int i = 0; i < list.getLength(); i++){
                 Node node = list.item(i);
                 if(node.getNodeType() == Node.ELEMENT_NODE){
                     Element element = (Element) node;
+
+                    if(start == 0){
+                        start = getValue("nodenm", element).equals(deptName) ? i : 0;
+                    }
+
+                    if(end == list.getLength() - 1){
+                        end = getValue("nodenm", element).equals(destName) ? i : list.getLength() - 1;
+                    }
+                }
+            }
+
+            for(int i = start; i <= end; i++){
+                Node node = list.item(i);
+                if(node.getNodeType() == Node.ELEMENT_NODE){
+                    Element element = (Element) node;
+
                     JSONObject json = new JSONObject();
                     json.put("routeNo", routeNo);
                     json.put("nodeid", getValue("nodeid", element));
@@ -666,7 +685,7 @@ public class TrafficAPIReceiver extends Thread {
         System.out.println("==============DEST ARRIVAL LIST==============");
         System.out.println(destArrivalList);
 
-        //directWayList(deptArrivalList, destArrivalList);
+        directWayList(deptArrivalList, destArrivalList);
         //transportWayList(deptArrivalList, destArrivalList,);
     }
 
@@ -728,13 +747,16 @@ public class TrafficAPIReceiver extends Thread {
             }
         }
 
+        DataCenter.Singleton().wayList = transportWayList(deptArrivalList, destArrivalList, deptStr, destStr);
+
+        /*
         if(tmpArray.isEmpty()){
             DataCenter.Singleton().wayList = transportWayList(deptArrivalList, destArrivalList, deptStr, destStr);
         }
         else{
             DataCenter.Singleton().wayList = tmpArray;
         }
-
+         */
 
         //arrivalList 정렬(arrtime기준)
         Collections.sort(DataCenter.Singleton().wayList, new Comparator<JSONObject>() {
@@ -778,9 +800,8 @@ public class TrafficAPIReceiver extends Thread {
             DataCenter.Singleton().accessStationList.clear();
             JSONObject deptBus = (JSONObject) obj;
 
-            getRouteAcctoThrghSttnList(pathInfo.cityCode, deptBus.get("routeid").toString(), deptBus.get("routeno").toString());
+            getRouteAcctoThrghSttnList(pathInfo.cityCode, deptBus.get("routeid").toString(), deptBus.get("routeno").toString(), deptNodeName, destNodeName);
             deptStationList.addAll(DataCenter.Singleton().accessStationList);
-
         }
 
         //2. 도착지 버스 리스트에서는 도착지부터 경유 정거장을 역순으로 탐색
@@ -788,12 +809,11 @@ public class TrafficAPIReceiver extends Thread {
             DataCenter.Singleton().accessStationList.clear();
             JSONObject destBus = (JSONObject) obj;
 
-            getRouteAcctoThrghSttnList(pathInfo.cityCode, destBus.get("routeid").toString(), destBus.get("routeno").toString());
+            getRouteAcctoThrghSttnList(pathInfo.cityCode, destBus.get("routeid").toString(), destBus.get("routeno").toString(), deptNodeName, destNodeName);
             destStationList.addAll(DataCenter.Singleton().accessStationList);
         }
         //도착지는 반전 -> 목적지부터 역순으로 조회해야하기 때문
         Collections.reverse(destStationList);
-
 
         System.out.println("DEPT STATION LIST");
         System.out.println(deptStationList);
