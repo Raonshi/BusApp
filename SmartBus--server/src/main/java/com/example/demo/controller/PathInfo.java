@@ -37,7 +37,7 @@ public class PathInfo {
         TrafficAPIReceiver TrafficAPIReceiver = new TrafficAPIReceiver(APIHandler.FIND_WAY);
         TrafficAPIReceiver.start();
 
-        Thread.sleep(3000);
+        Thread.sleep(2000);
 
 
         return DataCenter.Singleton().wayList;

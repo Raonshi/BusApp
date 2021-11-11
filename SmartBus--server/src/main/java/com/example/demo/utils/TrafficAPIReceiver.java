@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,7 +48,7 @@ public class TrafficAPIReceiver extends Thread {
     public void run() {
         super.run();
         System.out.println("==========Receiver Thread Generated!!==========");
-        
+
         switch(APIHandler){
             //버스 노선 정보 API
             //사용중이 아닌 API는 주석처리
@@ -276,7 +277,7 @@ public class TrafficAPIReceiver extends Thread {
      * @param routeId 버스 아이디
      * @param routeNo 버스 번호
      */
-    void getRouteAcctoThrghSttnList(String cityCode, String routeId, String routeNo, String deptName, String destName){
+    void getRouteAcctoThrghSttnList(String cityCode, String routeId, String routeNo, String deptId, String destId){
         try{
             StringBuilder urlBuilder = new StringBuilder("http://openapi.tago.go.kr/openapi/service/BusRouteInfoInqireService/getRouteAcctoThrghSttnList");
             urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=jQtEtCvhFPgTRrmSxikfgvg1fMV%2FH19VWwaxeLb3X%2BfiVfNhWybyEsq%2FTnv1uQtBMITUQNlWlBPaV3lqr3pTHQ%3D%3D");
@@ -296,11 +297,11 @@ public class TrafficAPIReceiver extends Thread {
                     Element element = (Element) node;
 
                     if(start == 0){
-                        start = getValue("nodenm", element).equals(deptName) ? i : 0;
+                        start = getValue("nodeid", element).equals(deptId) ? i : 0;
                     }
 
                     if(end == list.getLength() - 1){
-                        end = getValue("nodenm", element).equals(destName) ? i : list.getLength() - 1;
+                        end = getValue("nodeid", element).equals(destId) ? i : list.getLength() - 1;
                     }
                 }
             }
@@ -309,8 +310,12 @@ public class TrafficAPIReceiver extends Thread {
                 Node node = list.item(i);
                 if(node.getNodeType() == Node.ELEMENT_NODE){
                     Element element = (Element) node;
-
                     JSONObject json = new JSONObject();
+
+                    if((i - start) == 0 && !getValue("nodeid", element).equals(deptId)){
+                        break;
+                    }
+
                     json.put("routeNo", routeNo);
                     json.put("nodeid", getValue("nodeid", element));
                     json.put("nodenm", getValue("nodenm", element));
@@ -323,6 +328,7 @@ public class TrafficAPIReceiver extends Thread {
                     DataCenter.Singleton().accessStationList.add(json);
                 }
             }
+
         }
         catch (ParserConfigurationException | IOException | SAXException e){
             e.getMessage();
@@ -659,203 +665,83 @@ public class TrafficAPIReceiver extends Thread {
 
     /**
      * 출발지 정류장과 도착지 정류장 간의 경로 탐색을 수행한 뒤 결과를 {@link DataCenter}의 {@link JSONArray}에 저장한다.
-     * @param deptId 출발지의 id값
-     * @param destId 도착지의 id값
+     * @param cityCode 도시 코드
+     * @param startStationId 출발지의 id값
+     * @param endStationId 도착지의 id값
      */
-    void getWayList(String cityCode, String deptId, String destId){
-        //1. 출발지 정류장에 도착할 버스 목록을 구한다.
+    void getWayList(String cityCode, String startStationId, String endStationId) {
+        //출발지 정거장 도착 예정 버스 구하기
         DataCenter.Singleton().arrivalList.clear();
-        getSttnAcctoArvlPrearngeInfoList(cityCode, deptId);
+        JSONArray startArrivalList = new JSONArray();
+        getSttnAcctoArvlPrearngeInfoList(cityCode, startStationId);
+        startArrivalList.addAll(DataCenter.Singleton().arrivalList);
 
-        JSONArray deptArrivalList = new JSONArray();
-        deptArrivalList.addAll(DataCenter.Singleton().arrivalList);
-
-        //2. 도착지 정류장에 도착할 버스 목록을 구한다.
+        //도착지 정거장 도착 예정 버스 구하기
         DataCenter.Singleton().arrivalList.clear();
-        getSttnAcctoArvlPrearngeInfoList(cityCode, destId);
+        JSONArray endArrivalList = new JSONArray();
+        getSttnAcctoArvlPrearngeInfoList(cityCode, endStationId);
+        endArrivalList.addAll(DataCenter.Singleton().arrivalList);
 
-        JSONArray destArrivalList = new JSONArray();
-        destArrivalList.addAll(DataCenter.Singleton().arrivalList);
-
-        //3. 직통 버스 경로 구하기
-        System.out.println("=================CALL!!!!====================");
-
-        System.out.println("==============DEPT ARRIVAL LIST==============");
-        System.out.println(deptArrivalList);
-        System.out.println("==============DEST ARRIVAL LIST==============");
-        System.out.println(destArrivalList);
-
-        directWayList(deptArrivalList, destArrivalList);
-        //transportWayList(deptArrivalList, destArrivalList,);
-    }
-
-    /**
-     * 직통버스 구하기
-     * @param deptArrivalList 출발지 버스 리스트
-     * @param destArrivalList 도착지 버스 리스트
-     */
-    void directWayList(JSONArray deptArrivalList,JSONArray destArrivalList){
-        //3. 두 버스 목록에서 겹치는 버스가 있을 경우 직통버스로 간주한다.
-        //-> 그 외의 경우에는 환승으로 간주한다 -> 환승은 최대 1회를 넘기지 않는다.
-        for (Object o : deptArrivalList) {
-            for (Object value : destArrivalList) {
-                JSONObject deptJson = (JSONObject) o;
-                JSONObject destJson = (JSONObject) value;
-
-                int time = Integer.parseInt(destJson.get("arrtime").toString()) - Integer.parseInt(deptJson.get("arrtime").toString());
-
-                //출발지와 도착지에 동일한 버스노선 번호가 존재할 경우
-                if (deptJson.get("routeno").toString().equals(destJson.get("routeno").toString()) && time > 0) {
-
-                    //현재 출발지 - 정류장1 - 정류장2 - ... - 도착 정류장
-                    //현재 버스 노선의 위치가 정류장에 표시되어야함
-
-                    //새로운 JSONObject를 만든다.
-                    JSONObject way = new JSONObject();
-                    way.put("deptnodenm", deptJson.get("nodenm"));
-                    way.put("deptarrprevstationcnt", deptJson.get("arrprevstationcnt"));
-
-                    way.put("destnodenm", destJson.get("nodenm"));
-                    way.put("destarrprevstationcnt", destJson.get("arrprevstationcnt"));
-
-                    way.put("routeno", deptJson.get("routeno"));
-                    way.put("routetp", deptJson.get("routetp"));
-                    way.put("vehicletp", deptJson.get("vehicletp"));
-                    way.put("time", time);
-
-                    //way를 wayList에 담는다.
-                    DataCenter.Singleton().wayList.add(way);
-                }
-            }
-        }
-
-        //임시 리스트 생성
-        JSONArray tmpArray = new JSONArray();
-        String deptStr = "";
-        String destStr = "";
-
-        //경로 목록 탐색
-        for(int i = 0; i < DataCenter.Singleton().wayList.size(); i++){
-            JSONObject json = (JSONObject) DataCenter.Singleton().wayList.get(i);
-
-            deptStr = json.get("deptnodenm").toString();
-            destStr = json.get("destnodenm").toString();
-
-            //출발지와 목적지 이름이 같은경우 필터링
-            if (!deptStr.equals(destStr)) {
-                tmpArray.add(json);
-            }
-        }
-
-        DataCenter.Singleton().wayList = transportWayList(deptArrivalList, destArrivalList, deptStr, destStr);
-
-        /*
-        if(tmpArray.isEmpty()){
-            DataCenter.Singleton().wayList = transportWayList(deptArrivalList, destArrivalList, deptStr, destStr);
-        }
-        else{
-            DataCenter.Singleton().wayList = tmpArray;
-        }
-         */
-
-        //arrivalList 정렬(arrtime기준)
-        Collections.sort(DataCenter.Singleton().wayList, new Comparator<JSONObject>() {
-            private final String key = "time";
-            @Override
-            public int compare(JSONObject a, JSONObject b) {
-                Integer valA = new Integer(0);
-                Integer valB = new Integer(0);
-
-                try{
-                    valA = Integer.parseInt(a.get(key).toString());
-                    valB = Integer.parseInt(b.get(key).toString());
-                }
-                catch(Exception e){
-                    e.getStackTrace();
-                }
-
-                return valA.compareTo(valB);
-            }
-        });
-
-    }
-
-
-    /**
-     * 환승버스 경로 구하기
-     * @param deptArrivalList 출발지 버스 리스트
-     * @param destArrivalList 도착지 버스 리스트
-     * @param deptNodeName 출발지 정거장 이름
-     * @param destNodeName 도착지 정거장 이름
-     */
-    JSONArray transportWayList(JSONArray deptArrivalList, JSONArray destArrivalList, String deptNodeName, String destNodeName) {
-        JSONArray result = new JSONArray();
-
-        JSONArray deptStationList = new JSONArray();
-        JSONArray destStationList = new JSONArray();
-
-        //1. 출발지 버스 리스트에서는 출발지부터 경유 정거장을 순차적으로 탐색
-        //arrtime기준으로 정렬되어 있으므로 앞에서 10개만 가져옴
-        for(Object obj : deptArrivalList){
+        //출발지 버스마다 경유하는 정류장 구하기
+        JSONArray startArray = new JSONArray();
+        for(int i = 0; i < startArrivalList.size(); i++){
             DataCenter.Singleton().accessStationList.clear();
-            JSONObject deptBus = (JSONObject) obj;
+            JSONObject startBus = (JSONObject) startArrivalList.get(i);
+            getRouteAcctoThrghSttnList(cityCode, startBus.get("routeid").toString(), startBus.get("routeno").toString(), startStationId, endStationId);
 
-            getRouteAcctoThrghSttnList(pathInfo.cityCode, deptBus.get("routeid").toString(), deptBus.get("routeno").toString(), deptNodeName, destNodeName);
-            deptStationList.addAll(DataCenter.Singleton().accessStationList);
+            startArray.addAll(DataCenter.Singleton().accessStationList);
         }
 
-        //2. 도착지 버스 리스트에서는 도착지부터 경유 정거장을 역순으로 탐색
-        for(Object obj: destArrivalList){
+        //도착지 버스마다 경유하는 정류장 구하기
+        JSONArray endArray = new JSONArray();
+        for(int i = 0; i < endArrivalList.size(); i++){
             DataCenter.Singleton().accessStationList.clear();
-            JSONObject destBus = (JSONObject) obj;
-
-            getRouteAcctoThrghSttnList(pathInfo.cityCode, destBus.get("routeid").toString(), destBus.get("routeno").toString(), deptNodeName, destNodeName);
-            destStationList.addAll(DataCenter.Singleton().accessStationList);
+            JSONObject endBus = (JSONObject) endArrivalList.get(i);
+            getRouteAcctoThrghSttnList(cityCode, endBus.get("routeid").toString(), endBus.get("routeno").toString(), startStationId, endStationId);
+            endArray.addAll(DataCenter.Singleton().accessStationList);
         }
-        //도착지는 반전 -> 목적지부터 역순으로 조회해야하기 때문
-        Collections.reverse(destStationList);
-
-        System.out.println("DEPT STATION LIST");
-        System.out.println(deptStationList);
-
-        //3. 둘 중 하나라도 비어있을 경우
-        if(deptStationList.isEmpty() || destStationList.isEmpty()){
-            System.out.println("가는 버스 찾을 수 없음");
-            return result;
-        }
+        Collections.reverse(endArray);
 
         //4. 두 버스가 만나는 지점이 환승 지점
-        for(int i = 0; i < deptStationList.size(); i++){
-            for(int j = 0; j < destStationList.size(); j++){
-                JSONObject dept = (JSONObject)deptStationList.get(i);
-                JSONObject dest = (JSONObject)destStationList.get(j);
+        int count = 0;
+        JSONArray result = new JSONArray();
+        for(int i = 0; i < startArray.size(); i++){
+            for(int j = 0; j < endArray.size(); j++){
+                JSONObject dept = (JSONObject)startArray.get(i);
+                JSONObject dest = (JSONObject)endArray.get(j);
 
                 //두 정거장 이름이 같은 경우 : 환승지점인 경우
                 if(dept.get("nodenm").toString().equals(dest.get("nodenm").toString())){
+                    JSONObject way = new JSONObject();
+
                     //출발지~환승지역까지 노선 리스트 생성
                     JSONArray deptToTransList = new JSONArray();
                     for(int k = 0; k <= i; k++){
-                        deptToTransList.add(deptStationList.get(k));
+                        if(i == 0){break;}
+                        deptToTransList.add(startArray.get(k));
                     }
+                    if(i > 0){way.put("subPath1", deptToTransList);}
 
                     //환승지역~도착지까지 노선 리스트 생성
                     JSONArray transToDestList = new JSONArray();
                     for(int k = j; k >= 0; k--) {
-                        transToDestList.add(destStationList.get(k));
+                        if(j == 0){break;}
+                        transToDestList.add(endArray.get(k));
                     }
-
-                    //두 리스트를 JSON으로 묶어서 객체로 만들고 JSONArray로 감싸기
-                    JSONObject way = new JSONObject();
-                    way.put("first", deptToTransList);
-                    way.put("second", transToDestList);
+                    if(j > 0){way.put("subPath2", transToDestList);}
 
                     result.add(way);
+                    count++;
+                }
+                if(count > 5){
+                    break;
                 }
             }
+            if(count > 5){
+                break;
+            }
         }
-
-        //System.out.println(result);
-        return result;
+        DataCenter.Singleton().wayList = result;
     }
 
 
