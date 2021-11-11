@@ -65,7 +65,11 @@ public class RegionInfo {
         WeatherAPIReceiver receiver = new WeatherAPIReceiver(APIHandler.REGION_WEATHER_INFO);
         receiver.start();
 
-        Thread.sleep(2500);
+        while(!receiver.isDone){
+            Thread.sleep(100);
+        }
+
+        //Thread.sleep(2500);
 
 
         return DataCenter.Singleton().weatherList;
@@ -81,7 +85,6 @@ public class RegionInfo {
 
         DustAPIReceiver receiver = new DustAPIReceiver(APIHandler.REGION_DUST_INFO);
         receiver.start();
-
 
 
         Thread.sleep(2500);

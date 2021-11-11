@@ -29,6 +29,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 
 public class TrafficAPIReceiver extends Thread {
@@ -38,6 +42,8 @@ public class TrafficAPIReceiver extends Thread {
     StationInfo stationInfo;
     PathInfo pathInfo;
     PublicOperation publicOperation;
+
+    public boolean isDone = false;
 
     public TrafficAPIReceiver(APIHandler APIHandler){
         this.APIHandler = APIHandler;
@@ -670,6 +676,7 @@ public class TrafficAPIReceiver extends Thread {
      * @param endStationId 도착지의 id값
      */
     void getWayList(String cityCode, String startStationId, String endStationId) {
+
         //출발지 정거장 도착 예정 버스 구하기
         DataCenter.Singleton().arrivalList.clear();
         JSONArray startArrivalList = new JSONArray();
@@ -742,6 +749,8 @@ public class TrafficAPIReceiver extends Thread {
             }
         }
         DataCenter.Singleton().wayList = result;
+
+        isDone = true;
     }
 
 

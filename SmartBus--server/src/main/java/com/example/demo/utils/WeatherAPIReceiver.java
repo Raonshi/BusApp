@@ -17,6 +17,8 @@ public class WeatherAPIReceiver extends Thread{
     private APIHandler APIHandler;
     RegionInfo regionInfo;
 
+    public boolean isDone = false;
+
     public WeatherAPIReceiver(APIHandler APIHandler) {
         this.APIHandler = APIHandler;
     }
@@ -93,6 +95,8 @@ public class WeatherAPIReceiver extends Thread{
             e.printStackTrace();
         }
 
+
+        isDone = true;
     }
 
 }
