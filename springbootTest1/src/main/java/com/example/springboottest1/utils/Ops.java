@@ -70,16 +70,18 @@ public class Ops {
             System.out.println(DataCenter.Singleton().endNodeArrivalBusList.get(i));
         }
 
-        System.out.println("====new ops====");
+        System.out.println();
 
 
-
+        //출발지 도착 예정 버스가 존재하면 실행
         if(DataCenter.Singleton().startNodeArrivalBusList.size() == 0) {
             System.out.println("운행중인 버스 없음");
         }
         else {
             DataCenter.Singleton().directBusList.clear();
 
+
+            //출발지 도착 예정 버스들과 도착지 도착 예정 버스들의 routeid 비교
             for(int i = 0; i < DataCenter.Singleton().startNodeArrivalBusList.size(); i++) {
 
                 JSONObject obj = (JSONObject) DataCenter.Singleton().startNodeArrivalBusList.get(i);
@@ -93,8 +95,10 @@ public class Ops {
                     int startArrTime =  Integer.parseInt(obj.get("arrtime").toString());
                     int endArrTime = Integer.parseInt(obj2.get("arrtime").toString());
 
+                    //두 routeid가 같고 도착지 도착 예정 시간이 더 크면 수행
                     if(startRouteId.equals(endRouteId) &&  endArrTime > startArrTime) {
 
+                        //총 소요시간 계산
                         int totalTime = endArrTime - startArrTime;
 
                         obj.put("totaltime", String.valueOf(totalTime));
@@ -107,7 +111,8 @@ public class Ops {
             }
 
         }
-        System.out.println("}++++++++++++++++++++++++++++++++++++++++++{");
+        //직통으로 가는 버스리스트 출력
+        System.out.println("++++++++++++++++++++++++++++++++++++++++++");
         for(int i = 0; i < DataCenter.Singleton().directBusList.size(); i++) {
             System.out.println(DataCenter.Singleton().directBusList.get(i));
         }
@@ -115,6 +120,7 @@ public class Ops {
         System.out.println();
         System.out.println("++++++++operation result++++++++");
 
+        //직통으로 가는 버스리스트가 비어있지 않으면 수행
         if(DataCenter.Singleton().directBusList.size() == 0) {
             System.out.println("직통으로 가는 버스 없음");
         }
@@ -122,19 +128,26 @@ public class Ops {
             DataCenter.Singleton().busPathList.clear();
 
 
+
             for(int i = 0; i < DataCenter.Singleton().directBusList.size(); i++) {
 
+
                 JSONObject obj = (JSONObject) DataCenter.Singleton().directBusList.get(i);
+
+                //직통 버스들의 routeno, arrtime, totaltime을 최종 결과 리스트에 삽입하기 위해 추출
                 String directRouteId = obj.get("routeid").toString();
                 String directRouteno = obj.get("routeno").toString();
                 String directArrivalTime = obj.get("arrtime").toString();
                 String directTotalTime = obj.get("totaltime").toString();
 
+
                 request2(directRouteId);
 
                 int startNodeOrd = 0;
-                int endNoderOrd = 0;
+                int endNodeOrd = 0;
 
+
+                //버스 노선이 경유하는 모든 정류장 리스트에서 출발지 정류장과 매칭되는 정류장 순서를 integer 형으로 추출
                 for(int j = 0; j < DataCenter.Singleton().busPathList.size(); j++) {
                     JSONObject pathObj = (JSONObject) DataCenter.Singleton().busPathList.get(j);
                     String pathNodeId = pathObj.get("nodeid").toString();
@@ -145,36 +158,42 @@ public class Ops {
                     }
                 }
 
+                //버스 노선이 경유하는 모든 정류장 리스트에서 도착지 정류장과 매칭되는 정류장 순서를 integer 형으로 추출
                 for(int j = 0; j < DataCenter.Singleton().busPathList.size(); j++) {
                     JSONObject pathObj = (JSONObject) DataCenter.Singleton().busPathList.get(j);
                     String pathNodeId = pathObj.get("nodeid").toString();
 
                     if(pathNodeId.equals(endNodeid)) {
-                        endNoderOrd = (Integer) pathObj.get("nodeord");
+                        endNodeOrd = (Integer) pathObj.get("nodeord");
                         break;
                     }
                 }
+
 
                 JSONObject routeNumObj = new JSONObject();
                 routeNumObj.put("routeno", directRouteno);
                 routeNumObj.put("arrtime", directArrivalTime);
                 routeNumObj.put("totaltime", directTotalTime);
 
+                //위에서 추출한 직통 버스들의 routeno, arrtime, totaltime을 최종 결과 리스트에 삽입
                 DataCenter.Singleton().finaldirectPathList.add(routeNumObj);
 
                 DataCenter.Singleton().directPathList.clear();
 
+
+                //출발지 정류장 순서부터 도착지 정류장 순서 안에있는 정류장들을 경로로 지정 후 리스트에 삽입
                 for(int j = 0; j < DataCenter.Singleton().busPathList.size(); j++) {
                     JSONObject pathObj = (JSONObject) DataCenter.Singleton().busPathList.get(j);
 
                     int pathOrd = (Integer) pathObj.get("nodeord");
 
-                    if(startNodeOrd <= pathOrd && pathOrd <= endNoderOrd) {
+                    if(startNodeOrd <= pathOrd && pathOrd <= endNodeOrd) {
                         DataCenter.Singleton().directPathList.add(pathObj);
                     }
 
                 }
 
+                //위에서 지정한 경로 리스트를 최종 결과 리스트에 추가
                 DataCenter.Singleton().finaldirectPathList.addAll(DataCenter.Singleton().directPathList);
             }
         }
@@ -191,6 +210,7 @@ public class Ops {
     }
 
 
+    //정류장 도착 예정 버스 리스트
     public void request(String nodeId) {
         String cityCode = "33010";
 
@@ -235,6 +255,8 @@ public class Ops {
         }
     }
 
+
+    //버스 노선이 경유하는 모든 정류장 리스트
     public void request2(String routeId) {
         String cityCode = "33010";
 
