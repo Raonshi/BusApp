@@ -27,6 +27,8 @@ public class DustAPIReceiver extends Thread{
     private APIHandler APIHandler;
     RegionInfo regionInfo;
 
+    public boolean isDone = false;
+
     public DustAPIReceiver(APIHandler APIHandler) {
         this.APIHandler = APIHandler;
     }
@@ -116,6 +118,8 @@ public class DustAPIReceiver extends Thread{
             }
 
         }
+
+        isDone = true;
 
     }
 

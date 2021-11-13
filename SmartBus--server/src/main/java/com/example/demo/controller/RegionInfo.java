@@ -39,7 +39,9 @@ public class RegionInfo {
         TrafficAPIReceiver receiver = new TrafficAPIReceiver(APIHandler.ROUTE_CITY_LIST);
         receiver.start();
 
-        Thread.sleep(1000);
+        while(!receiver.isDone){
+            Thread.sleep(100);
+        }
 
         JSONArray cityList = DataCenter.Singleton().cityList;
         JSONArray result = new JSONArray();
@@ -50,6 +52,8 @@ public class RegionInfo {
                 result.add(json);
             }
         }
+
+
 
         return result;
     }
@@ -86,8 +90,12 @@ public class RegionInfo {
         DustAPIReceiver receiver = new DustAPIReceiver(APIHandler.REGION_DUST_INFO);
         receiver.start();
 
+        while(!receiver.isDone){
+            Thread.sleep(100);
+        }
 
-        Thread.sleep(2500);
+
+        //Thread.sleep(2500);
 
         return DataCenter.Singleton().dustList;
     }

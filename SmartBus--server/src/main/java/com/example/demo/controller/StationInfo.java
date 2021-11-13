@@ -54,7 +54,11 @@ public class StationInfo {
         TrafficAPIReceiver TrafficAPIReceiver = new TrafficAPIReceiver(APIHandler.STATION_NUMBER_LIST);
         TrafficAPIReceiver.start();
 
-        Thread.sleep(1000);
+        while(!TrafficAPIReceiver.isDone) {
+            Thread.sleep(100);
+        }
+
+        //Thread.sleep(1000);
 
         JSONArray stationList = DataCenter.Singleton().stationNumList;
         for(Object obj : stationList) {
@@ -82,7 +86,11 @@ public class StationInfo {
         TrafficAPIReceiver receiver = new TrafficAPIReceiver(APIHandler.STATION_SPECIFY_LOCATION_LIST);
         receiver.start();
 
-        Thread.sleep(1500);
+        while(!receiver.isDone) {
+            Thread.sleep(100);
+        }
+
+        //Thread.sleep(1500);
 
         JSONArray result = new JSONArray();
         result = DataCenter.Singleton().gpsStationList;
@@ -103,7 +111,11 @@ public class StationInfo {
         TrafficAPIReceiver receiver = new TrafficAPIReceiver(APIHandler.ARRIVE_BUS_LIST);
         receiver.start();
 
-        Thread.sleep(1500);
+        while(!receiver.isDone) {
+            Thread.sleep(100);
+        }
+
+        //Thread.sleep(1500);
 
         return DataCenter.Singleton().arrivalList;
     }
@@ -119,7 +131,11 @@ public class StationInfo {
         TrafficAPIReceiver receiver = new TrafficAPIReceiver(APIHandler.GET_COORDINATE);
         receiver.start();
 
-        Thread.sleep(1500);
+        while(!receiver.isDone) {
+            Thread.sleep(100);
+        }
+
+        //Thread.sleep(1500);
 
         JSONObject object = DataCenter.Singleton().placeCoordinate;
 

@@ -161,6 +161,8 @@ public class TrafficAPIReceiver extends Thread {
         catch (ParserConfigurationException | IOException | SAXException e){
             e.getMessage();
         }
+
+        isDone = true;
     }
 
 
@@ -233,6 +235,8 @@ public class TrafficAPIReceiver extends Thread {
         catch (ParserConfigurationException | IOException | SAXException e){
             e.getMessage();
         }
+
+        isDone = true;
     }
 
     /**
@@ -274,6 +278,8 @@ public class TrafficAPIReceiver extends Thread {
         catch (ParserConfigurationException | IOException | SAXException e){
             e.getMessage();
         }
+
+        isDone = true;
     }
 
     /**
@@ -384,6 +390,8 @@ public class TrafficAPIReceiver extends Thread {
         catch (ParserConfigurationException | IOException | SAXException e){
             e.getMessage();
         }
+
+        isDone = true;
     }
     //#endregion
 
@@ -455,6 +463,8 @@ public class TrafficAPIReceiver extends Thread {
         catch (ParserConfigurationException | IOException | SAXException e){
             e.getMessage();
         }
+
+        isDone = true;
     }
 
     /**
@@ -542,6 +552,8 @@ public class TrafficAPIReceiver extends Thread {
         catch (ParserConfigurationException | IOException | SAXException e){
             e.getMessage();
         }
+
+        isDone = true;
     }
 
 
@@ -584,6 +596,8 @@ public class TrafficAPIReceiver extends Thread {
         catch (ParserConfigurationException | IOException | SAXException e){
             e.getMessage();
         }
+
+        isDone = true;
     }
 
     //#endregion
@@ -800,16 +814,22 @@ public class TrafficAPIReceiver extends Thread {
             for(int i = 0; i < regionArray.size(); i++) {
                 JSONObject object = (JSONObject) regionArray.get(i);
 
-                if(object.get("road_address_name").toString().contains(cityName)) {
+                if(object.get("address_name").toString().contains(cityName)) {
+                    DataCenter.Singleton().placeCoordinate.put("place_name", object.get("place_name"));
+                    DataCenter.Singleton().placeCoordinate.put("address_name", object.get("address_name"));
                     DataCenter.Singleton().placeCoordinate.put("longitude", object.get("x"));
                     DataCenter.Singleton().placeCoordinate.put("latitude", object.get("y"));
                     //결과 데이터에 좌표값 추가
+
+                    break;
                 }
             }
 
         }catch (Exception e) {
             e.printStackTrace();
         }
+
+        isDone = true;
     }
 
     //#endregion

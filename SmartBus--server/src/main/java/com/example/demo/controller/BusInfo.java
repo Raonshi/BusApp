@@ -48,7 +48,11 @@ public class BusInfo {
             TrafficAPIReceiver trafficAPIReceiver = new TrafficAPIReceiver(APIHandler.ROUTE_INFO);
             trafficAPIReceiver.start();
 
-            Thread.sleep(1000);
+            while(!trafficAPIReceiver.isDone){
+                Thread.sleep(100);
+            }
+
+            //Thread.sleep(1000);
 
             JSONArray routeList = DataCenter.Singleton().routeInfoList;
             JSONArray subResult = new JSONArray();
@@ -83,7 +87,11 @@ public class BusInfo {
             TrafficAPIReceiver trafficAPIReceiver = new TrafficAPIReceiver(APIHandler.ROUTE_THROUGH_STATION_LIST);
             trafficAPIReceiver.start();
 
-            Thread.sleep(1000);
+            while(!trafficAPIReceiver.isDone) {
+                Thread.sleep(100);
+            }
+
+            //Thread.sleep(1000);
 
             JSONArray accessStationList = DataCenter.Singleton().accessStationList;
             JSONArray subResult = new JSONArray();

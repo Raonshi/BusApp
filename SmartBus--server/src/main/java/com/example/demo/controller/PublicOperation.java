@@ -37,7 +37,9 @@ public class PublicOperation {
         TrafficAPIReceiver TrafficAPIReceiver = new TrafficAPIReceiver(type);
         TrafficAPIReceiver.start();
 
-        Thread.sleep(500);
+        while(!TrafficAPIReceiver.isDone) {
+            Thread.sleep(100);
+        }
 
         JSONArray list = DataCenter.Singleton().cityList;
 
@@ -60,7 +62,9 @@ public class PublicOperation {
         TrafficAPIReceiver TrafficAPIReceiver = new TrafficAPIReceiver(APIHandler.STATION_NUMBER_LIST);
         TrafficAPIReceiver.start();
 
-        Thread.sleep(500);
+        while(!TrafficAPIReceiver.isDone) {
+            Thread.sleep(100);
+        }
 
         JSONArray list = DataCenter.Singleton().stationNumList;
 
@@ -88,7 +92,9 @@ public class PublicOperation {
         TrafficAPIReceiver trafficAPIReceiver = new TrafficAPIReceiver(APIHandler.ROUTE_NUMBER_LIST);
         trafficAPIReceiver.start();
 
-        Thread.sleep(500);
+        while(!trafficAPIReceiver.isDone) {
+            Thread.sleep(100);
+        }
 
         JSONArray list = DataCenter.Singleton().routeNumList;
 
