@@ -65,6 +65,14 @@ public class DataCenter {
     //출발지 -> 도착지 중복 경로 노선 리스트
 
 
+    public JSONArray startNodeArrivalBusList = new JSONArray();
+    public JSONArray endNodeArrivalBusList = new JSONArray();
+    public JSONArray directBusList = new JSONArray();
+    public JSONArray directPathList = new JSONArray();
+    public JSONArray finaldirectPathList = new JSONArray();
+
+
+
     /*
     * OpenWeatherAPI 현재 날씨 정보 API를 통해 얻은 데이터를 저장하는 List
     */

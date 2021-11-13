@@ -44,8 +44,6 @@ public class Ops {
 
     public void testCall(String startNodeid, String endNodeid) {
 
-        int count = 0;
-
         //출발 지 정류장에서 도착 예정인 버스들 리스트 뽑기
         request(startNodeid);
         DataCenter.Singleton().startNodeArrivalBusList.clear();

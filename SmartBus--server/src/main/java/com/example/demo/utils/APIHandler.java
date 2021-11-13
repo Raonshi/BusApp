@@ -27,6 +27,7 @@ public enum APIHandler {
 
     //경로 연산
     FIND_WAY,                                   //출발지와 도착지 간의 경로 조회
+    TEST_FIND_WAY,
 
     //지역 기상 정보
     REGION_DUST_INFO,
