@@ -95,6 +95,7 @@ class WebServer {
   Future<Station> getStationByLocation(double latitude, double longitude) async {
     final service = "getDeptStation";
     final params = {
+      "cityName": "청주",
       "latitude": latitude.toString(),
       "longitude": longitude.toString()
     };
@@ -106,8 +107,12 @@ class WebServer {
       jsonString = await get(uri);
     }
 
-    var json = jsonDecode(jsonString) as Map<String, dynamic>;
-    Station station = Station.fromJson(json);
+    Logger().d(jsonString);
+
+    List jsonArray = jsonDecode(jsonString) as List;
+
+
+    Station station = Station.fromJson(jsonArray[0] as Map<String, dynamic>);
 
     return station;
   }

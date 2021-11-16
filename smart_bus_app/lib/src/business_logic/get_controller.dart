@@ -63,10 +63,19 @@ class Controller extends GetxController{
     if(type == 0){titleLoading.value = true;}
     else if(type == 1){isLoading.value = true;}
 
+    Logger().d("IMEI START");
     await getIdentifier();   // IMEI정보 얻기
+
+    Logger().d("GPS START");
     await getGPS();          // GPS 정보 얻기
+
+    Logger().d("DUST START");
     await getDustInfo();     // 현재 위치의 미세먼지 정보 얻기
+
+    Logger().d("WEATHER START");
     await getWeatherInfo();  // 현재 위치의 날씨 정보 얻기
+
+    Logger().d("STATION START");
     await getNearStation();  // 가장 가가운 정류장 찾기
     await getStationThroughBusList(nearStation.value.nodeId);
 
