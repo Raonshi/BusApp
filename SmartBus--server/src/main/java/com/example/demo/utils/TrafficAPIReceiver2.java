@@ -2,6 +2,7 @@ package com.example.demo.utils;
 
 import com.example.demo.controller.PathInfo;
 import com.example.demo.datacenter.DataCenter;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -282,6 +283,8 @@ public class TrafficAPIReceiver2 extends Thread{
         }
 
         else {
+
+            JSONArray pathDetail = new JSONArray();
             DataCenter.Singleton().accessStationList.clear();
 
             for(int i = 0; i < DataCenter.Singleton().directBusList.size(); i++) {
@@ -330,7 +333,7 @@ public class TrafficAPIReceiver2 extends Thread{
 
 
                 //위에서 추출한 직통 버스들의 routeno, arrtime, totaltime을 최종 결과 리스트에 삽입
-                DataCenter.Singleton().finaldirectPathList.add(routeNumObj);
+
 
                 DataCenter.Singleton().directPathList.clear();
 
@@ -345,8 +348,18 @@ public class TrafficAPIReceiver2 extends Thread{
                         DataCenter.Singleton().directPathList.add(pathObj);
                     }
                 }
+                routeNumObj.put("pathStationList", DataCenter.Singleton().directPathList);
 
-                DataCenter.Singleton().finaldirectPathList.addAll(DataCenter.Singleton().directPathList);
+
+                pathDetail.add(routeNumObj);
+
+                JSONObject subPath = new JSONObject();
+
+                subPath.put("subpath", pathDetail);
+
+
+
+                DataCenter.Singleton().finaldirectPathList.add(subPath);
 
             }
 

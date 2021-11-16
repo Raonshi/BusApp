@@ -83,7 +83,7 @@ public class RegionInfo {
     //클라이언트에서 위치(위도, 경도)를 입력받아 미세먼지 정보 조회
 
     @RequestMapping(method = RequestMethod.GET, path = "/getDustInfo")
-    public JSONArray getDustInfo(@RequestParam String latitude,  @RequestParam String longitude) throws InterruptedException {
+    public JSONObject getDustInfo(@RequestParam String latitude,  @RequestParam String longitude) throws InterruptedException {
         this.latitude = latitude;
         this.longitude = longitude;
 
@@ -97,7 +97,7 @@ public class RegionInfo {
 
         //Thread.sleep(2500);
 
-        return DataCenter.Singleton().dustList;
+        return (JSONObject) DataCenter.Singleton().dustList.get(0);
     }
 
 }

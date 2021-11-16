@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 
 public class Ops {
 
@@ -220,8 +222,7 @@ public class Ops {
     public void transportation(String startNodeid, String endNodeid, JSONArray startNodeArrivalBusList, JSONArray endNodeArrivalBusList) {
 
 
-
-        DataCenter.Singleton().startToTransPathList.clear();
+        DataCenter.Singleton().startToLastPathList.clear();
 
         for(int i = 0; i < startNodeArrivalBusList.size(); i++) {
             //System.out.println(startNodeArrivalBusList.get(i));
@@ -269,12 +270,12 @@ public class Ops {
 
             tmpObj2.put("startbuspath", tmpArr);
 
-            DataCenter.Singleton().startToTransPathList.add(tmpObj1);
-            DataCenter.Singleton().startToTransPathList.add(tmpObj2);
+            DataCenter.Singleton().startToLastPathList.add(tmpObj1);
+            DataCenter.Singleton().startToLastPathList.add(tmpObj2);
 
         }
 
-        DataCenter.Singleton().transToEndPathList.clear();
+        DataCenter.Singleton().firstToEndPathList.clear();
 
         for(int i = 0; i < endNodeArrivalBusList.size(); i++) {
             //System.out.println(endNodeArrivalBusList.get(i));
@@ -323,16 +324,68 @@ public class Ops {
 
             tmpObj2.put("transbuspath", tmpArr);
 
-            DataCenter.Singleton().transToEndPathList.add(tmpObj1);
-            DataCenter.Singleton().transToEndPathList.add(tmpObj2);
+            DataCenter.Singleton().firstToEndPathList.add(tmpObj1);
+            DataCenter.Singleton().firstToEndPathList.add(tmpObj2);
 
         }
         System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
 
-        for(int i = 0; i < startNodeArrivalBusList.size(); i++) {
+        HashSet<String> transNodenmList = new HashSet<>();
 
+        for(int i = 0; i < DataCenter.Singleton().startToLastPathList.size(); i++) {
+            //System.out.println(DataCenter.Singleton().startToTransPathList.get(i));
+            //System.out.println();
+            JSONObject obj = (JSONObject) DataCenter.Singleton().startToLastPathList.get(i);
+
+            JSONArray tmp1 = new JSONArray();
+
+            if(obj.containsKey("startbuspath")) {
+                //System.out.println(obj);
+                tmp1 = (JSONArray) obj.get("startbuspath");
+            }
+            for(int j = 0; j < tmp1.size(); j++) {
+                JSONObject nodeObj = (JSONObject) tmp1.get(j);
+                String nodenm = nodeObj.get("nodenm").toString();
+                //System.out.println(nodenm);
+                //System.out.println();
+                for(int k = 0; k < DataCenter.Singleton().firstToEndPathList.size(); k++) {
+
+                    JSONObject obj2 = (JSONObject) DataCenter.Singleton().firstToEndPathList.get(k);
+                    JSONArray tmp2 = new JSONArray();
+
+                    if(obj2.containsKey("transbuspath")) {
+                        tmp2 = (JSONArray) obj2.get("transbuspath");
+                    }
+
+                    for(int l = 0; l < tmp2.size(); l++) {
+                        JSONObject nodeObj2 = (JSONObject) tmp2.get(l);
+                        String nodenm2 = nodeObj2.get("nodenm").toString();
+
+                        //System.out.println(nodenm2);
+
+                        if(nodenm.equals(nodenm2)) {
+                            transNodenmList.add(nodenm);
+                            break;
+                        }
+                    }
+                }
+                //System.out.println();
+
+            }
         }
+        //환승 가능한 정류장 리스트
+        System.out.println("trans node name list");
+        Iterator<String> iterator = transNodenmList.iterator();
+        ArrayList<String> getTransNodeNameList = new ArrayList<>();
+
+        for(int i = 0; i < transNodenmList.size(); i++) {
+            while(iterator.hasNext()) {
+                getTransNodeNameList.add(iterator.next());
+            }
+        }
+
+
 
 
     }

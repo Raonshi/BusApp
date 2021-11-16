@@ -37,6 +37,12 @@ public class DataCenter {
     //출발지 정류장에 오는 버스가 경유하는 모든 정거장 리스트
     public JSONArray startBusPathList = new JSONArray();
 
+    //출발지 - 종점 가는 경로 리스트
+    public JSONArray startToLastPathList = new JSONArray();
+
+    //기점 - 도착지 가는 경로 리스트
+    public JSONArray firstToEndPathList = new JSONArray();
+
     //출발지 버스정보 및 출발지 - 환승지점 으로 가는 경로
     public JSONArray startToTransPathList = new JSONArray();
 
