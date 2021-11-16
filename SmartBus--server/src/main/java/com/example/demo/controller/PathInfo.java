@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.datacenter.DataCenter;
 import com.example.demo.utils.APIHandler;
 import com.example.demo.utils.TrafficAPIReceiver;
+import com.example.demo.utils.TrafficAPIReceiver2;
 import org.json.simple.JSONArray;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -60,14 +61,15 @@ public class PathInfo {
 
 
 
-        TrafficAPIReceiver receiver = new TrafficAPIReceiver(APIHandler.TEST_FIND_WAY);
+        TrafficAPIReceiver2 receiver = new TrafficAPIReceiver2(APIHandler.TEST_FIND_WAY);
 
         //DataCenter.Singleton().finaldirectPathList.clear();
         receiver.start();
 
         while(!receiver.isDone) {
-            Thread.sleep(100);
+            Thread.sleep(200);
         }
+
 
         /* 테스트 값 분류
 

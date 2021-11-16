@@ -13,6 +13,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Collections;
 
 public class Ops {
@@ -74,6 +75,8 @@ public class Ops {
         //출발지 도착 예정 버스가 존재하면 실행
         if(DataCenter.Singleton().startNodeArrivalBusList.size() == 0) {
             System.out.println("운행중인 버스 없음");
+
+            return;
         }
         else {
             DataCenter.Singleton().directBusList.clear();
@@ -94,12 +97,18 @@ public class Ops {
                     int endArrTime = Integer.parseInt(obj2.get("arrtime").toString());
 
                     //두 routeid가 같고 도착지 도착 예정 시간이 더 크면 수행
-                    if(startRouteId.equals(endRouteId) &&  endArrTime > startArrTime) {
+                    if(startRouteId.equals(endRouteId)) {
 
                         //총 소요시간 계산
                         int totalTime = endArrTime - startArrTime;
 
-                        obj.put("totaltime", String.valueOf(totalTime));
+                        if(totalTime < 0) {
+                            obj.put("totaltime", "소요시간 알 수 없음");
+                        }
+                        else {
+                            obj.put("totaltime", String.valueOf(totalTime));
+                        }
+
 
                         DataCenter.Singleton().directBusList.add(obj);
                         break;
@@ -118,9 +127,14 @@ public class Ops {
         System.out.println();
         System.out.println("++++++++operation result++++++++");
 
+        DataCenter.Singleton().finaldirectPathList.clear();
+
         //직통으로 가는 버스리스트가 비어있지 않으면 수행
         if(DataCenter.Singleton().directBusList.size() == 0) {
             System.out.println("직통으로 가는 버스 없음");
+
+            transportation(startNodeid, endNodeid, DataCenter.Singleton().startNodeArrivalBusList, DataCenter.Singleton().endNodeArrivalBusList);
+
         }
         else {
             DataCenter.Singleton().busPathList.clear();
@@ -201,8 +215,124 @@ public class Ops {
 
             System.out.println(DataCenter.Singleton().finaldirectPathList.get(i));
         }
+    }
+
+    public void transportation(String startNodeid, String endNodeid, JSONArray startNodeArrivalBusList, JSONArray endNodeArrivalBusList) {
 
 
+
+        DataCenter.Singleton().startToTransPathList.clear();
+
+        for(int i = 0; i < startNodeArrivalBusList.size(); i++) {
+            //System.out.println(startNodeArrivalBusList.get(i));
+
+            JSONObject obj = (JSONObject) startNodeArrivalBusList.get(i);
+
+            JSONObject tmpObj1 = new JSONObject();
+            tmpObj1.put("startbusinfo", obj);
+
+
+            String routeid = obj.get("routeid").toString();
+
+            request2(routeid);
+
+            int startNodeOrd = 0;
+
+            for(int j = 0; j < DataCenter.Singleton().busPathList.size(); j++) {
+                JSONObject obj2 = (JSONObject) DataCenter.Singleton().busPathList.get(j);
+                String nodeid = obj2.get("nodeid").toString();
+
+                if(startNodeid.equals(nodeid)) {
+                    startNodeOrd = (Integer) obj2.get("nodeord");
+                    break;
+                }
+            }
+
+            DataCenter.Singleton().startBusPathList.clear();
+
+            for(int j = 0; j < DataCenter.Singleton().busPathList.size(); j++) {
+
+                JSONObject obj2 = (JSONObject) DataCenter.Singleton().busPathList.get(j);
+                int currentNodeOrd = (Integer) obj2.get("nodeord");
+
+                if(currentNodeOrd >= startNodeOrd) {
+                    DataCenter.Singleton().startBusPathList.add(obj2);
+                }
+            }
+
+            JSONObject tmpObj2 = new JSONObject();
+            JSONArray tmpArr = new JSONArray();
+            for(int j = 0; j < DataCenter.Singleton().startBusPathList.size(); j++) {
+                //System.out.println(DataCenter.Singleton().startBusPathList.get(j));
+                tmpArr.add(DataCenter.Singleton().startBusPathList.get(j));
+            }
+
+            tmpObj2.put("startbuspath", tmpArr);
+
+            DataCenter.Singleton().startToTransPathList.add(tmpObj1);
+            DataCenter.Singleton().startToTransPathList.add(tmpObj2);
+
+        }
+
+        DataCenter.Singleton().transToEndPathList.clear();
+
+        for(int i = 0; i < endNodeArrivalBusList.size(); i++) {
+            //System.out.println(endNodeArrivalBusList.get(i));
+
+            JSONObject obj = (JSONObject) endNodeArrivalBusList.get(i);
+
+            JSONObject tmpObj1 = new JSONObject();
+            tmpObj1.put("transbusinfo", obj);
+
+
+            String routeid = obj.get("routeid").toString();
+
+            request2(routeid);
+
+            int endNodeOrd = 0;
+
+            for(int j = 0; j < DataCenter.Singleton().busPathList.size(); j++) {
+                JSONObject obj2 = (JSONObject) DataCenter.Singleton().busPathList.get(j);
+                String nodeid = obj2.get("nodeid").toString();
+
+                if(endNodeid.equals(nodeid)) {
+                    endNodeOrd = (Integer) obj2.get("nodeord");
+                    break;
+                }
+            }
+
+            DataCenter.Singleton().endBusPathList.clear();
+
+            for(int j = 0; j < DataCenter.Singleton().busPathList.size(); j++) {
+
+                JSONObject obj2 = (JSONObject) DataCenter.Singleton().busPathList.get(j);
+                int currentNodeOrd = (Integer) obj2.get("nodeord");
+
+                if(currentNodeOrd <= endNodeOrd) {
+                    DataCenter.Singleton().endBusPathList.add(obj2);
+                }
+            }
+
+            JSONObject tmpObj2 = new JSONObject();
+            JSONArray tmpArr = new JSONArray();
+            for(int j = 0; j < DataCenter.Singleton().endBusPathList.size(); j++) {
+                //System.out.println(DataCenter.Singleton().startBusPathList.get(j));
+                tmpArr.add(DataCenter.Singleton().endBusPathList.get(j));
+            }
+
+
+            tmpObj2.put("transbuspath", tmpArr);
+
+            DataCenter.Singleton().transToEndPathList.add(tmpObj1);
+            DataCenter.Singleton().transToEndPathList.add(tmpObj2);
+
+        }
+        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+
+        for(int i = 0; i < startNodeArrivalBusList.size(); i++) {
+
+        }
 
 
     }
