@@ -130,6 +130,7 @@ public class Ops {
         System.out.println("++++++++operation result++++++++");
 
         DataCenter.Singleton().finaldirectPathList.clear();
+        DataCenter.Singleton().finalpathList.clear();
 
         //직통으로 가는 버스리스트가 비어있지 않으면 수행
         if(DataCenter.Singleton().directBusList.size() == 0) {
@@ -137,8 +138,11 @@ public class Ops {
 
             transportation(startNodeid, endNodeid, DataCenter.Singleton().startNodeArrivalBusList, DataCenter.Singleton().endNodeArrivalBusList);
 
+            return;
+
         }
         else {
+
             DataCenter.Singleton().busPathList.clear();
 
 
@@ -160,6 +164,9 @@ public class Ops {
                 int startNodeOrd = 0;
                 int endNodeOrd = 0;
 
+                for(int j = 0; j < DataCenter.Singleton().busPathList.size(); j++) {
+                    System.out.println(DataCenter.Singleton().busPathList.get(j));
+                }
 
                 //버스 노선이 경유하는 모든 정류장 리스트에서 출발지 정류장과 매칭되는 정류장 순서를 integer 형으로 추출
                 for(int j = 0; j < DataCenter.Singleton().busPathList.size(); j++) {
@@ -210,13 +217,16 @@ public class Ops {
                 //위에서 지정한 경로 리스트를 최종 결과 리스트에 추가
                 DataCenter.Singleton().finaldirectPathList.addAll(DataCenter.Singleton().directPathList);
             }
+
+            DataCenter.Singleton().finalpathList = DataCenter.Singleton().finaldirectPathList;
+
         }
         System.out.println("===========================================");
 
-        for(int i = 0; i < DataCenter.Singleton().finaldirectPathList.size(); i++) {
+        /*for(int i = 0; i < DataCenter.Singleton().finaldirectPathList.size(); i++) {
 
             System.out.println(DataCenter.Singleton().finaldirectPathList.get(i));
-        }
+        }*/
     }
 
     public void transportation(String startNodeid, String endNodeid, JSONArray startNodeArrivalBusList, JSONArray endNodeArrivalBusList) {

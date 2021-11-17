@@ -5,6 +5,7 @@ import com.example.demo.utils.APIHandler;
 import com.example.demo.utils.TrafficAPIReceiver;
 import com.example.demo.utils.TrafficAPIReceiver2;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -89,6 +90,6 @@ public class PathInfo {
         //청주고등학교 - 서원 대학교 : 근접위치(꽃다리) 직통경로 존재
         */
 
-        return DataCenter.Singleton().finaldirectPathList;
+        return DataCenter.Singleton().finalPathList;
     }
 }

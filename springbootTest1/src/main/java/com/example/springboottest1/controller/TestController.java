@@ -36,7 +36,7 @@ public class TestController {
 
         ops.testCall(deptid, destid);
 
-        return DataCenter.Singleton().finaldirectPathList;
+        return DataCenter.Singleton().finalpathList;
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/testcall")

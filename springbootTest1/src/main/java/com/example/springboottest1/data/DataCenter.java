@@ -59,5 +59,6 @@ public class DataCenter {
     public JSONArray finalTransportPathList = new JSONArray();
 
 
+    public JSONArray finalpathList = new JSONArray();
 
 }

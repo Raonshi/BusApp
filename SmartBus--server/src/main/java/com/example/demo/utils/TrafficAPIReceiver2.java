@@ -285,7 +285,9 @@ public class TrafficAPIReceiver2 extends Thread{
         else {
 
             JSONArray pathDetail = new JSONArray();
+            JSONObject subPath = new JSONObject();
             DataCenter.Singleton().accessStationList.clear();
+
 
             for(int i = 0; i < DataCenter.Singleton().directBusList.size(); i++) {
 
@@ -325,6 +327,8 @@ public class TrafficAPIReceiver2 extends Thread{
                     }
                 }
 
+
+
                 JSONObject routeNumObj = new JSONObject();
                 routeNumObj.put("routeid", directRouteId);
                 routeNumObj.put("routeno", directRouteno);
@@ -350,19 +354,21 @@ public class TrafficAPIReceiver2 extends Thread{
                 }
                 routeNumObj.put("pathStationList", DataCenter.Singleton().directPathList);
 
+                if(startNodeOrd > endNodeOrd) {
+                    break;
+                }
+
 
                 pathDetail.add(routeNumObj);
-
-                JSONObject subPath = new JSONObject();
 
                 subPath.put("subpath", pathDetail);
 
 
 
-                DataCenter.Singleton().finaldirectPathList.add(subPath);
-
             }
+            DataCenter.Singleton().finaldirectPathList.add(subPath);
 
+            DataCenter.Singleton().finalPathList = DataCenter.Singleton().finaldirectPathList;
             isDone = true;
         }
     }
