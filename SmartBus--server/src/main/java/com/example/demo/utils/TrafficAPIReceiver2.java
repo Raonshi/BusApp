@@ -279,7 +279,7 @@ public class TrafficAPIReceiver2 extends Thread{
         if(DataCenter.Singleton().directBusList.size() == 0) {
             System.out.println("직통으로 가는 버스 없음");
 
-            transportation(deptId, destId, DataCenter.Singleton().startNodeArrivalBusList, DataCenter.Singleton().endNodeArrivalBusList);
+            transportation(cityCode, deptId, destId, DataCenter.Singleton().startNodeArrivalBusList, DataCenter.Singleton().endNodeArrivalBusList);
 
             isDone = true;
         }
@@ -318,7 +318,7 @@ public class TrafficAPIReceiver2 extends Thread{
                 }
 
                 //버스 노선이 경유하는 모든 정류장 리스트에서 도착지 정류장과 매칭되는 정류장 순서를 integer 형으로 추출
-                for(int j = 0; j < DataCenter.Singleton().accessStationList.size(); j++) {
+                for(int j = DataCenter.Singleton().accessStationList.size() - 1; j >= 0; j--) {
                     JSONObject pathObj = (JSONObject) DataCenter.Singleton().accessStationList.get(j);
                     String pathNodeId = pathObj.get("nodeid").toString();
 
@@ -327,10 +327,6 @@ public class TrafficAPIReceiver2 extends Thread{
                         break;
                     }
                 }
-
-
-
-
 
 
                 //위에서 추출한 직통 버스들의 routeno, arrtime, totaltime을 최종 결과 리스트에 삽입
@@ -379,7 +375,54 @@ public class TrafficAPIReceiver2 extends Thread{
         }
     }
 
-    public void transportation(String startNodeid, String endNodeid, JSONArray startNodeArrivalBusList, JSONArray endNodeArrivalBusList) {
+    public void transportation(String cityCode, String startNodeid, String endNodeid, JSONArray startNodeArrivalBusList, JSONArray endNodeArrivalBusList) {
+        JSONArray tmpStartNodeArrivalBusList = new JSONArray();
+        JSONArray tmpEndNodeArrivalBusList = new JSONArray();
+
+        if(startNodeArrivalBusList.size() < 3) {
+            tmpStartNodeArrivalBusList = startNodeArrivalBusList;
+        }
+        else {
+            for(int i = 0; i < 2; i++) {
+                JSONObject tmpObj = (JSONObject) startNodeArrivalBusList.get(i);
+                tmpStartNodeArrivalBusList.add(tmpObj);
+            }
+        }
+
+        if(endNodeArrivalBusList.size() < 3) {
+            tmpEndNodeArrivalBusList = endNodeArrivalBusList;
+        }
+        else {
+            for(int i = 0; i < 2; i++) {
+                JSONObject tmpObj = (JSONObject) endNodeArrivalBusList.get(i);
+                tmpEndNodeArrivalBusList.add(tmpObj);
+            }
+        }
+
+        DataCenter.Singleton().startBusThroughList.clear();
+        DataCenter.Singleton().endBusThroughList.clear();
+        JSONObject putTmp1 = new JSONObject();
+        JSONObject putTmp2 = new JSONObject();
+
+
+        for(int i = 0; i < tmpStartNodeArrivalBusList.size(); i++) {
+            JSONObject obj = (JSONObject) tmpStartNodeArrivalBusList.get(i);
+
+            String currentRouteId = obj.get("routeid").toString();
+
+            getRouteAcctoThrghSttnList(cityCode, currentRouteId);
+            putTmp1.put("through", DataCenter.Singleton().accessStationList);
+        }
+
+        DataCenter.Singleton().startBusThroughList.add(putTmp1);
+
+        for(int i = 0; i < tmpEndNodeArrivalBusList.size(); i++) {
+            JSONObject obj = (JSONObject) tmpEndNodeArrivalBusList.get(i);
+
+            String currentRouteId = obj.get("routeid").toString();
+        }
+
+
 
 
 

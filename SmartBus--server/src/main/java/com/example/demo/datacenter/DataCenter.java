@@ -71,6 +71,9 @@ public class DataCenter {
     public JSONArray directPathList = new JSONArray();
     public JSONArray finaldirectPathList = new JSONArray();
 
+
+    public JSONArray startBusThroughList = new JSONArray();
+    public JSONArray endBusThroughList = new JSONArray();
     public JSONArray finalPathList = new JSONArray();
 
 
