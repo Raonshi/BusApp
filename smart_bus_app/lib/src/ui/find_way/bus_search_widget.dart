@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 import 'package:smart_bus_app/src/business_logic/data_define.dart';
 import 'package:smart_bus_app/src/business_logic/get_controller.dart';
+import 'package:smart_bus_app/src/ui/find_way/path_finding_widget.dart';
 
 
 
@@ -115,10 +117,17 @@ class BusSearchPage extends StatelessWidget {
           Expanded(
             flex: 8,
             child: ListView.builder(
-              itemCount: controller.searchStationList.length,
-              itemBuilder: (context, p) {
-                Station station = controller.searchStationList.value[p] as Station;
-                return ListTile(title: Text(station.nodeName),);
+              itemCount: controller.subPathList.length,
+              itemBuilder: (context, index) {
+                SubPath path = controller.subPathList.value[index] as SubPath;
+                return ListTile(
+                  leading: Icon(Icons.directions_bus),
+                  title: Text("버스 번호"),
+                  trailing: Text("남은 시간"),
+                  onTap: (){
+                    Get.to(() => PathFindingPage());
+                  },
+                );
               },
             ),
           ),

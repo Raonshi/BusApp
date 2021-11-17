@@ -33,7 +33,10 @@ class Controller extends GetxController{
   RxList searchStationList = [].obs;
 
   //경로 리스트
-  RxList pathList = [].obs;
+  RxList subPathList = [].obs;
+
+  //경로
+  Rx<Path> path = Path().obs;
 
   //위치 정보
   RxString place = "Unknown".obs;
@@ -90,17 +93,24 @@ class Controller extends GetxController{
   ///<p>params : none</p>
   ///<p>return : void</p>
   Future<void> pathfinding() async {
+    Logger().d("PATH FINDING START");
     setDeptStation(nearStation.value);
 
     Logger().d("Dept : ${deptStation.value.nodeId}");
 
+    List pathList = [];
     for(int i = 0; i < searchStationList.length; i++){
       setDestStation(searchStationList.value[i]);
       List list = await WebServer().getWayList(deptStation.value.nodeId, destStation.value.nodeId);
+
+      Logger().d(list);
+
       pathList.addAll(list);
     }
+    path.value = pathList[0];
+    subPathList.value = path.value.subPath;
 
-    Logger().d(pathList);
+    Logger().d( "PATH LIST : ${path.value.subPath}");
   }
 
 

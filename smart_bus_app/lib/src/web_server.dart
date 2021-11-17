@@ -183,17 +183,16 @@ class WebServer {
       "destId": destination
     };
 
-
     Uri uri = Uri.http(endpoint, service, params);
-    dynamic jsonString = await get(uri);
-    Logger().d(jsonString);
 
+    Logger().d("URI LINK : ${uri}");
+
+    dynamic jsonString = await get(uri);
+
+    Logger().d("JSON STRING : ${jsonString}");
 
     var jsonArray = jsonDecode(jsonString) as List;
     List list = jsonArray.map((item) => Path.fromJson(item as Map<String, dynamic>)).toList();
-
-    Logger().d(list);
-
     return list;
   }
 

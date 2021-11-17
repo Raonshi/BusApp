@@ -124,35 +124,6 @@ class Bus{
     );
   }
 }
-/*
-class Bus{
-  String _routeType, _routeId, _routeNum;
-  String _startTime, _endTime;
-  String _startStation, _endStation;
-
-  String get routeType => _routeType;
-  String get routeNum => _routeNum;
-  String get routeId => _routeId;
-  String get startTime => _startTime;
-  String get endTime => _endTime;
-  String get startStation => _startStation;
-  String get endStation => _endStation;
-
-  Bus(this._routeType, this._routeId, this._routeNum, this._startTime, this._endTime, this._startStation, this._endStation);
-
-  factory Bus.fromJson(dynamic json){
-    return Bus(
-        json['routetp'] as String,
-        json['routeid'] as String,
-        json['routeno'] as String,
-        json['startvehicletime'] as String,
-        json['endvehicletime'] as String,
-        json['startnodenm'] as String,
-        json['endnodenm'] as String
-    );
-  }
-}
- */
 //#endregion
 
 
@@ -164,7 +135,14 @@ class Path{
 
   factory Path.fromJson(dynamic json){
     var jsonList = json['subpath'] as List;
-    List<SubPath> list = jsonList.map((e) => SubPath.fromJson(e as Map<String, dynamic>));
+
+    List<SubPath> list = [];
+
+    for(int i = 0; i < jsonList.length; i++){
+      SubPath subPath = SubPath.fromJson(jsonList[i] as Map<String, dynamic>);
+      list.add(subPath);
+    }
+
     return Path(subPath: list);
   }
 
@@ -183,7 +161,12 @@ class SubPath{
 
   factory SubPath.fromJson(dynamic json){
     var jsonList = json['pathStationList'] as List;
-    List<PathStation> list = jsonList.map((item) => PathStation.fromJson(item as Map<String, dynamic>));
+    List<PathStation> list = [];
+
+    for(int i = 0; i <jsonList.length; i++){
+      PathStation pathStation = PathStation.fromJson(jsonList[i] as Map<String, dynamic>);
+      list.add(pathStation);
+    }
 
     return SubPath(
       routeid: json['routeid'] as String,
@@ -202,7 +185,7 @@ class PathStation{
   String nodeNo = "Unknown";
   String latitude = "Unknown";
   String upDownCode = "Unknown";
-  String nodeOrd = "Unknown";
+  int nodeOrd = 0;
   String nodeId = "Unknown";
 
   PathStation({this.nodeName, this.longitude, this.routeId, this.nodeNo, this.latitude, this.upDownCode, this.nodeOrd, this.nodeId});
@@ -212,7 +195,7 @@ class PathStation{
       nodeName: json['nodenm'] as String,
       nodeNo: json['nodeno'] as String,
       nodeId: json['nodeid'] as String,
-      nodeOrd: json['nodeord'] as String,
+      nodeOrd: int.parse(json['nodeord'].toString()),
       routeId: json['routeId'] as String,
       longitude: json['gpslong'] as String,
       latitude: json['gpslati'] as String,
