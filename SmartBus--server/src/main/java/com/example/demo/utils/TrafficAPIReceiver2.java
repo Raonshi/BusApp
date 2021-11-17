@@ -14,8 +14,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 
 public class TrafficAPIReceiver2 extends Thread{
     private APIHandler APIHandler;
@@ -274,18 +273,20 @@ public class TrafficAPIReceiver2 extends Thread{
 
 
         DataCenter.Singleton().finaldirectPathList.clear();
+        DataCenter.Singleton().finalPathList.clear();
 
         //직통으로 가는 버스리스트가 비어있지 않으면 수행
         if(DataCenter.Singleton().directBusList.size() == 0) {
             System.out.println("직통으로 가는 버스 없음");
 
-            //isDone = true;
+            transportation(deptId, destId, DataCenter.Singleton().startNodeArrivalBusList, DataCenter.Singleton().endNodeArrivalBusList);
+
+            isDone = true;
         }
 
         else {
 
-            JSONArray pathDetail = new JSONArray();
-            JSONObject subPath = new JSONObject();
+
             DataCenter.Singleton().accessStationList.clear();
 
 
@@ -329,11 +330,7 @@ public class TrafficAPIReceiver2 extends Thread{
 
 
 
-                JSONObject routeNumObj = new JSONObject();
-                routeNumObj.put("routeid", directRouteId);
-                routeNumObj.put("routeno", directRouteno);
-                routeNumObj.put("arrtime", directArrivalTime);
-                routeNumObj.put("totaltime", directTotalTime);
+
 
 
                 //위에서 추출한 직통 버스들의 routeno, arrtime, totaltime을 최종 결과 리스트에 삽입
@@ -352,24 +349,40 @@ public class TrafficAPIReceiver2 extends Thread{
                         DataCenter.Singleton().directPathList.add(pathObj);
                     }
                 }
+
+                JSONObject routeNumObj = new JSONObject();
+                routeNumObj.put("routeid", directRouteId);
+                routeNumObj.put("routeno", directRouteno);
+                routeNumObj.put("arrtime", directArrivalTime);
+                routeNumObj.put("totaltime", directTotalTime);
                 routeNumObj.put("pathStationList", DataCenter.Singleton().directPathList);
 
                 if(startNodeOrd > endNodeOrd) {
                     break;
                 }
-
+                JSONArray pathDetail = new JSONArray();
+                JSONObject subPath = new JSONObject();
 
                 pathDetail.add(routeNumObj);
 
                 subPath.put("subpath", pathDetail);
 
 
+                DataCenter.Singleton().finaldirectPathList.add(subPath);
 
             }
-            DataCenter.Singleton().finaldirectPathList.add(subPath);
-
             DataCenter.Singleton().finalPathList = DataCenter.Singleton().finaldirectPathList;
+
+
+
             isDone = true;
         }
     }
+
+    public void transportation(String startNodeid, String endNodeid, JSONArray startNodeArrivalBusList, JSONArray endNodeArrivalBusList) {
+
+
+
+    }
+
 }
