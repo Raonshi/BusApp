@@ -135,7 +135,6 @@ class Path{
 
   factory Path.fromJson(dynamic json){
     var jsonList = json['subpath'] as List;
-
     List<SubPath> list = [];
 
     for(int i = 0; i < jsonList.length; i++){

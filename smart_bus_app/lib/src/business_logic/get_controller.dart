@@ -33,10 +33,10 @@ class Controller extends GetxController{
   RxList searchStationList = [].obs;
 
   //경로 리스트
-  RxList subPathList = [].obs;
+  RxList pathList = [].obs;
 
   //경로
-  Rx<Path> path = Path().obs;
+  //Rx<Path> path = Path().obs;
 
   //위치 정보
   RxString place = "Unknown".obs;
@@ -45,6 +45,7 @@ class Controller extends GetxController{
 
   //로딩 여부
   RxBool titleLoading = false.obs;
+  RxBool pathFindingLoading = false.obs;
   RxBool isLoading = false.obs;
 
   //IMEI정보
@@ -98,19 +99,24 @@ class Controller extends GetxController{
 
     Logger().d("Dept : ${deptStation.value.nodeId}");
 
-    List pathList = [];
+    List list = [];
     for(int i = 0; i < searchStationList.length; i++){
       setDestStation(searchStationList.value[i]);
-      List list = await WebServer().getWayList(deptStation.value.nodeId, destStation.value.nodeId);
+      List jsonList = await WebServer().getWayList(deptStation.value.nodeId, destStation.value.nodeId);
 
-      Logger().d(list);
-
-      pathList.addAll(list);
+      list.addAll(jsonList);
     }
-    path.value = pathList[0];
-    subPathList.value = path.value.subPath;
 
-    Logger().d( "PATH LIST : ${path.value.subPath}");
+    pathList.value = list;
+
+    Logger().d( "PATH LIST : ${pathList}");
+  }
+
+
+  void search() async {
+    pathFindingLoading.value = true;
+    await pathfinding();
+    pathFindingLoading.value = false;
   }
 
 
