@@ -101,13 +101,13 @@ class BusSearchPage extends StatelessWidget {
           //정류장 이름
           Expanded(
             flex:1,
-            child: Text("출발지 : ", style: TextStyle(fontSize: 20), maxLines: 2,),
+            child: Text("출발지 : ${controller.deptStation.value.nodeName}", style: TextStyle(fontSize: 20), maxLines: 2,),
           ),
 
           //목적지 입력
           Expanded(
             flex:1,
-            child: Text("목적지 : ", style: TextStyle(fontSize: 20), maxLines: 2,),
+            child: Text("목적지 : ${controller.destStation.value.nodeName}", style: TextStyle(fontSize: 20), maxLines: 2,),
           ),
 
 

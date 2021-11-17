@@ -20,8 +20,8 @@ class Controller extends GetxController{
   Controller.init() {Logger().d("Controller Created!");}
 
   //출발지, 도착지 정류장
-  Rx<Station> deptStation;
-  Rx<Station> destStation;
+  Rx<Station> deptStation = Station().obs;
+  Rx<Station> destStation = Station().obs;
 
   //가까운 정류장
   Rx<Station> nearStation = Station().obs;
@@ -90,9 +90,13 @@ class Controller extends GetxController{
   ///<p>params : none</p>
   ///<p>return : void</p>
   Future<void> pathfinding() async {
+    setDeptStation(nearStation.value);
+
+    Logger().d("Dept : ${deptStation.value.nodeId}");
+
     for(int i = 0; i < searchStationList.length; i++){
-      Station destStation = searchStationList.value[i];
-      List list = await WebServer().getWayList(deptStation.value.nodeId, destStation.nodeId);
+      setDestStation(searchStationList.value[i]);
+      List list = await WebServer().getWayList(deptStation.value.nodeId, destStation.value.nodeId);
       pathList.addAll(list);
     }
 
@@ -222,17 +226,16 @@ class Controller extends GetxController{
   ///<p>params : none</p>
   ///<p>return : void</p>
   Future<void> getDustInfo() async {
-    List<Dust> list = await WebServer().getDustInfo(latitude.value, longitude.value);
+    dust.value = await WebServer().getDustInfo(latitude.value, longitude.value);
 
-    if(list.length <= 0){
+    if(dust.value == null){
       Logger().d("미세먼지 정보 수신 실패!");
       return;
     }
 
     //미세먼지 알림 타입 설정
-    dust.value = list[0] as Dust;
+    //dust.value = list[0] as Dust;
     dust.value.setType();
-
     dustInfomation();
   }
 

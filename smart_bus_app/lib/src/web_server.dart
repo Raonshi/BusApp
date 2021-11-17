@@ -39,7 +39,7 @@ class WebServer {
   ///서버로부터 미세먼지 정보를 가져온다. <br>
   ///params : String latitude, String logitude <br>
   ///return : List<Dust>
-  Future<List> getDustInfo(double latitude, double longitude) async {
+  Future<Dust> getDustInfo(double latitude, double longitude) async {
     Logger().d("Latitude : $latitude || Longitude : $longitude");
 
     final service = "getDustInfo";
@@ -55,10 +55,15 @@ class WebServer {
       jsonString = await get(uri);
     }
 
-    var jsonArray = jsonDecode(jsonString) as List;
+    /*
+    var jsonArray = jsonDecode(jsonString) as Map<String, dynamic>;
     List list = jsonArray.map((e) => Dust.fromJson(e)).toList();
+     */
 
-    return list;
+    var json = jsonDecode(jsonString) as Map<String, dynamic>;
+
+
+    return Dust.fromJson(json);
   }
 
 

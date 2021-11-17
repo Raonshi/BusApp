@@ -208,7 +208,6 @@ class MainPage extends StatelessWidget {
                 Expanded(child: weatherInfomation(0)),
                 Expanded(child: weatherInfomation(1)),
                 Expanded(child: weatherInfomation(2)),
-                Text("test"),
               ],
             ),
           ),
