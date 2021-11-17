@@ -145,7 +145,7 @@ class BusSearchPage extends StatelessWidget {
                 title: Text(path.subPath[0].routeno),
                 trailing: Text(path.subPath[0].totaltime),
                 onTap: (){
-                  Get.to(() => PathFindingPage());
+                  Get.to(() => PathFindingPage(path: path.subPath[0]));
                 },
               );
             },
