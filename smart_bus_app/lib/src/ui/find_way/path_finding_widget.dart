@@ -7,7 +7,7 @@ import 'package:smart_bus_app/src/business_logic/get_controller.dart';
 //경로 탐색
 class PathFindingPage extends StatelessWidget {
   final controller = Get.put(Controller());
-  List<Way> pathList = [];
+  List<Path> pathList = [];
 
   @override
   Widget build(BuildContext context) {

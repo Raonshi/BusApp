@@ -86,12 +86,12 @@ class MainPage extends StatelessWidget {
   }
 
 
-  Widget weatherInfomation(List weatherList, int index){
-    if(weatherList == null){
+  Widget weatherInfomation(int index){
+    if(controller.weatherList.value == null){
       return Icon(Icons.warning_rounded, size: 50,);
     }
 
-    Weather weather = weatherList[index];
+    Weather weather = controller.weatherList.value[index];
 
     if(weather.type == WEATHER_TYPE.SUN) { return Icon(Icons.wb_sunny_rounded, size: 50,);}
     else if(weather.type == WEATHER_TYPE.CLOUD) { return Icon(Icons.wb_cloudy_rounded, size: 50,);}
@@ -205,9 +205,10 @@ class MainPage extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(child: weatherInfomation(controller.weatherList.value, 0)),
-                Expanded(child: weatherInfomation(controller.weatherList.value, 1)),
-                Expanded(child: weatherInfomation(controller.weatherList.value, 2)),
+                Expanded(child: weatherInfomation(0)),
+                Expanded(child: weatherInfomation(1)),
+                Expanded(child: weatherInfomation(2)),
+                Text("test"),
               ],
             ),
           ),

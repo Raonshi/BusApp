@@ -148,15 +148,6 @@ class WebServer {
   }
 
 
-
-
-
-
-
-
-
-
-
   ///지정된 도시의 버스정류장 정보 중 [station]이 포함되는 모든 정류장을 불러온다.
   Future<List> getStationList(String station) async {
     final service = "getStationList";
@@ -180,15 +171,12 @@ class WebServer {
 
   ///출발지와 도착지의 [nodeId]정보를 서버로 보낸 뒤 경로데이터 목록을 받는다.
   Future<List> getWayList(String departure, String destination) async {
-    final service = "getWayList";
+    final service = "test";
     final params = {
       "cityName":"청주",
       "deptId": departure,
       "destId": destination
     };
-
-    //Logger().d(departure);
-    //Logger().d(destination);
 
 
     Uri uri = Uri.http(endpoint, service, params);
@@ -197,7 +185,9 @@ class WebServer {
 
 
     var jsonArray = jsonDecode(jsonString) as List;
-    List list = jsonArray.map((e) => Way.fromJson(e)).toList();
+    List list = jsonArray.map((item) => Path.fromJson(item as Map<String, dynamic>)).toList();
+
+    Logger().d(list);
 
     return list;
   }
@@ -207,24 +197,7 @@ class WebServer {
 
   //#region POST
 
-  Future<List> postRecently(Station departure, Station destination) async {
-    final service = "postRecently";
-    final header = {
-      "operation":"postRecently"
-    };
-    final body = {
-      "departure": departure.nodeId,
-      "destination": destination.nodeId
-    };
 
-    Uri uri = Uri.http(endpoint, service);
-    dynamic jsonString = await post(uri, header, body);
-
-    var jsonArray = jsonDecode(jsonString) as List;
-    List list = jsonArray.map((e) => Way.fromJson(e)).toList();
-
-    return list;
-  }
 
 
   void postIMEI(String imei) async {

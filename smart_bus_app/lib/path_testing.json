@@ -1,0 +1,153 @@
+[
+  //경로 1
+  {"subPath": [
+    //첫 번째 탑승 버스의 경로
+    {
+      "routeid": value,
+      "totaltime": value,
+      "routeno": value,
+      "arrtime": value,
+      //탑승한 버스의 경유 정류장 정보
+      "pathStationList": [
+        {
+          "nodenm": value,
+          "gpslong": value,
+          "routeId": value,
+          "nodeno": value,
+          "gpslati": value,
+          "updowncd": value,
+          "nodeord": value,
+          "nodeid": value
+        },
+        {
+          "nodenm": value,
+          "gpslong": value,
+          "routeId": value,
+          "nodeno": value,
+          "gpslati": value,
+          "updowncd": value,
+          "nodeord": value,
+          "nodeid": value
+        },
+        {
+          "nodenm": value,
+          "gpslong": value,
+          "routeId": value,
+          "nodeno": value,
+          "gpslati": value,
+          "updowncd": value,
+          "nodeord": value,
+          "nodeid": value
+        },{
+          "nodenm": value,
+          "gpslong": value,
+          "routeId": value,
+          "nodeno": value,
+          "gpslati": value,
+          "updowncd": value,
+          "nodeord": value,
+          "nodeid": value
+        }
+      ]
+    },
+  ]},
+  //경로 2
+  {"subPath": [
+    //첫 번째 탑승 버스 정보
+    {
+      "routeid": value,
+      "totaltime": value,
+      "routeno": value,
+      "arrtime": value,
+      "pathStationList": [
+        {
+          "nodenm": value,
+          "gpslong": value,
+          "routeId": value,
+          "nodeno": value,
+          "gpslati": value,
+          "updowncd": value,
+          "nodeord": value,
+          "nodeid": value
+        },
+        {
+          "nodenm": value,
+          "gpslong": value,
+          "routeId": value,
+          "nodeno": value,
+          "gpslati": value,
+          "updowncd": value,
+          "nodeord": value,
+          "nodeid": value
+        },
+        {
+          "nodenm": value,
+          "gpslong": value,
+          "routeId": value,
+          "nodeno": value,
+          "gpslati": value,
+          "updowncd": value,
+          "nodeord": value,
+          "nodeid": value
+        },{
+          "nodenm": value,
+          "gpslong": value,
+          "routeId": value,
+          "nodeno": value,
+          "gpslati": value,
+          "updowncd": value,
+          "nodeord": value,
+          "nodeid": value
+        }
+      ]
+    },
+    //두 번째 탑승 버스 정보
+    {
+      "routeid": value,
+      "totaltime": value,
+      "routeno": value,
+      "arrtime": value,
+      "pathStationList": [
+        {
+          "nodenm": value,
+          "gpslong": value,
+          "routeId": value,
+          "nodeno": value,
+          "gpslati": value,
+          "updowncd": value,
+          "nodeord": value,
+          "nodeid": value
+        },
+        {
+          "nodenm": value,
+          "gpslong": value,
+          "routeId": value,
+          "nodeno": value,
+          "gpslati": value,
+          "updowncd": value,
+          "nodeord": value,
+          "nodeid": value
+        },
+        {
+          "nodenm": value,
+          "gpslong": value,
+          "routeId": value,
+          "nodeno": value,
+          "gpslati": value,
+          "updowncd": value,
+          "nodeord": value,
+          "nodeid": value
+        },{
+          "nodenm": value,
+          "gpslong": value,
+          "routeId": value,
+          "nodeno": value,
+          "gpslati": value,
+          "updowncd": value,
+          "nodeord": value,
+          "nodeid": value
+        }
+      ]
+    }
+  ]}
+]

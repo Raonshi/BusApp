@@ -136,8 +136,9 @@ class StationSearchPage extends StatelessWidget {
                         Expanded(
                           flex:1,
                           child: ElevatedButton(
-                            onPressed: (){
-                              controller.getStationByKeyword(textController.text);
+                            onPressed: () async {
+                              await controller.getStationByKeyword(textController.text);
+                              Get.to(() => BusSearchPage());
                             },
                             child: Text("입력", style: TextStyle(fontSize: 20)),
                           ),

@@ -30,10 +30,10 @@ class Controller extends GetxController{
   RxList busList = [].obs;
 
   //검색 정류장 리스트
-  //RxList<Station> searchStationList = [].obs;
+  RxList searchStationList = [].obs;
 
   //경로 리스트
-  //RxList<Way> pathList = [].obs;
+  RxList pathList = [].obs;
 
   //위치 정보
   RxString place = "Unknown".obs;
@@ -89,18 +89,14 @@ class Controller extends GetxController{
   ///<p>[Controller]의 deptStation, destStation 통해 최적의 경로를 찾는다.</p>
   ///<p>params : none</p>
   ///<p>return : void</p>
-  void pathfinding() async {
-    while(true){
-      if(isLoading.value == false){
-        isLoading.value = true;
-        break;
-      }
-      sleep(new Duration(milliseconds: 1000));
+  Future<void> pathfinding() async {
+    for(int i = 0; i < searchStationList.length; i++){
+      Station destStation = searchStationList.value[i];
+      List list = await WebServer().getWayList(deptStation.value.nodeId, destStation.nodeId);
+      pathList.addAll(list);
     }
 
-    //pathList = await WebServer().getWayList(deptStation.value.nodeName, destStation.value.nodeName);
-
-    isLoading.value = false;
+    Logger().d(pathList);
   }
 
 
@@ -126,9 +122,9 @@ class Controller extends GetxController{
   ///<p>사용자가 입력한 키워드를 통해 정류장을 조회한다.</p>
   ///<p>params : String keyword</p>
   ///<p>return : void </p>
-  void getStationByKeyword(String keyword) async {
+  Future<void> getStationByKeyword(String keyword) async {
     dynamic list = await WebServer().getStationList(keyword);
-    //searchStationList.value = list;
+    searchStationList.value = list;
   }
 
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smart_bus_app/src/business_logic/data_define.dart';
 import 'package:smart_bus_app/src/business_logic/get_controller.dart';
 
 
@@ -11,6 +12,8 @@ class BusSearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    search();
+
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -112,9 +115,10 @@ class BusSearchPage extends StatelessWidget {
           Expanded(
             flex: 8,
             child: ListView.builder(
-              itemCount: list.length,
+              itemCount: controller.searchStationList.length,
               itemBuilder: (context, p) {
-                return ListTile(title: Text('item ${list[p]}'),);
+                Station station = controller.searchStationList.value[p] as Station;
+                return ListTile(title: Text(station.nodeName),);
               },
             ),
           ),
@@ -124,5 +128,10 @@ class BusSearchPage extends StatelessWidget {
           Spacer(flex:2),
         ],),
     );
+  }
+
+
+  void search() async {
+    await controller.pathfinding();
   }
 }

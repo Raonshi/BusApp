@@ -157,38 +157,66 @@ class Bus{
 
 
 //#region 경로
-class Way{
-  String _deptName, _destName;
-  String _deptArrTime, _destArrTime;
-  String _deptArrStationCnt, _destArrStationCnt;
-  String _routeType, _routeNum, _vehicleType;
+class Path{
+  List<SubPath> subPath = [];
 
-  String get deptName => _deptName;
-  String get destName => _destName;
-  String get deptArrTime => _deptArrTime;
-  String get destArrTime => _destArrTime;
-  String get deptArrStationCnt => _deptArrStationCnt;
-  String get destArrStationCnt => _destArrStationCnt;
-  String get routeType => _routeType;
-  String get routeNum => _routeNum;
-  String get vehicleType => _vehicleType;
+  Path({this.subPath});
 
-  Way(this._deptName, this._destName,
-      this._deptArrTime, this._destArrTime,
-      this._deptArrStationCnt, this._destArrStationCnt,
-      this._routeType, this._routeNum, this._vehicleType);
+  factory Path.fromJson(dynamic json){
+    var jsonList = json['subpath'] as List;
+    List<SubPath> list = jsonList.map((e) => SubPath.fromJson(e as Map<String, dynamic>));
+    return Path(subPath: list);
+  }
 
-  factory Way.fromJson(dynamic json){
-    return Way(
-      json['deptnodenm'] as String,
-      json['destnodenm'] as String,
-      json['deptarrtime'] as String,
-      json['destarrtime'] as String,
-      json['deptarrprevstationcnt'] as String,
-      json['destarrprevstationcnt'] as String,
-      json['routetp'] as String,
-      json['routeno'] as String,
-      json['vehicletp'] as String,
+
+}
+
+class SubPath{
+  String routeid = "Unknown";
+  String totaltime = "Unknown";
+  String routeno = "Unknown";
+  String arrtime = "Unknown";
+
+  List<PathStation> pathStationList = [];
+
+  SubPath({this.routeid, this.totaltime, this.routeno, this.arrtime, this.pathStationList});
+
+  factory SubPath.fromJson(dynamic json){
+    var jsonList = json['pathStationList'] as List;
+    List<PathStation> list = jsonList.map((item) => PathStation.fromJson(item as Map<String, dynamic>));
+
+    return SubPath(
+      routeid: json['routeid'] as String,
+      routeno: json['routeno'] as String,
+      arrtime: json['arrtime'],
+      totaltime: json['totaltime'] as String,
+      pathStationList: list,
+    );
+  }
+}
+
+class PathStation{
+  String nodeName = "Unknown";
+  String longitude = "Unknown";
+  String routeId = "Unknown";
+  String nodeNo = "Unknown";
+  String latitude = "Unknown";
+  String upDownCode = "Unknown";
+  String nodeOrd = "Unknown";
+  String nodeId = "Unknown";
+
+  PathStation({this.nodeName, this.longitude, this.routeId, this.nodeNo, this.latitude, this.upDownCode, this.nodeOrd, this.nodeId});
+
+  factory PathStation.fromJson(dynamic json){
+    return PathStation(
+      nodeName: json['nodenm'] as String,
+      nodeNo: json['nodeno'] as String,
+      nodeId: json['nodeid'] as String,
+      nodeOrd: json['nodeord'] as String,
+      routeId: json['routeId'] as String,
+      longitude: json['gpslong'] as String,
+      latitude: json['gpslati'] as String,
+      upDownCode: json['updowncd'] as String
     );
   }
 }
