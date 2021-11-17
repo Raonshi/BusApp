@@ -85,6 +85,6 @@ public class DataCenter {
     public JSONArray dustList = new JSONArray();
     public ArrayList<String> tmX = new ArrayList<>();
     public ArrayList<String> tmY = new ArrayList<>();
-    public ArrayList<String> stationNameList = new ArrayList<>();
+    public String stationName = "";
 
 }

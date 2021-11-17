@@ -71,13 +71,13 @@ public class DustAPIReceiver extends Thread{
     void getDustInfo(String latitude, String longitude) {
         getlocationTransfer(latitude, longitude);
 
-        ArrayList<String> tmxlist = DataCenter.Singleton().tmX;
-        ArrayList<String> tmylist = DataCenter.Singleton().tmY;
+        String tmx = DataCenter.Singleton().tmX.get(0).toString();
+        String tmy = DataCenter.Singleton().tmY.get(0).toString();
         DataCenter.Singleton().dustList.clear();
-        for(int i = 0; i < tmxlist.size(); i++) {
-            getStationName(tmxlist.get(i), tmylist.get(i));
-            System.out.println(tmxlist.get(i) + " " +  tmylist.get(i));
-            String stationName = DataCenter.Singleton().stationNameList.get(i);
+
+            getStationName(tmx, tmy);
+
+            String stationName = DataCenter.Singleton().stationName;
             System.out.println(stationName);
 
             try {
@@ -117,7 +117,7 @@ public class DustAPIReceiver extends Thread{
                 e.printStackTrace();
             }
 
-        }
+
 
         isDone = true;
 
@@ -189,7 +189,7 @@ public class DustAPIReceiver extends Thread{
     void getStationName(String tmX, String tmY) {
 
         try {
-            DataCenter.Singleton().stationNameList.clear();
+            DataCenter.Singleton().stationName = "";
 
             StringBuilder url = new StringBuilder("http://apis.data.go.kr/B552584/MsrstnInfoInqireSvc/getNearbyMsrstnList");
             url.append("?" + URLEncoder.encode("ServiceKey", "UTF-8") + "=xKQb85gLMzaWSIlF7L%2BADI5652d752CRPIul%2FAlv5KLdQLJYl4eMRLZ25kSnDA0dvj2iYXfceDNWcPB7j4%2BdiA%3D%3D");
@@ -202,7 +202,7 @@ public class DustAPIReceiver extends Thread{
                 Node node = list.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
-                    DataCenter.Singleton().stationNameList.add(getValue("stationName", element));
+                    DataCenter.Singleton().stationName = getValue("stationName", element).toString();
                 }
             }
         }catch (Exception e) {
