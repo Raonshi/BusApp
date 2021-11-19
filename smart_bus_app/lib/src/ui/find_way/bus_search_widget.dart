@@ -4,6 +4,7 @@ import 'package:logger/logger.dart';
 import 'package:smart_bus_app/src/business_logic/data_define.dart';
 import 'package:smart_bus_app/src/business_logic/get_controller.dart';
 import 'package:smart_bus_app/src/ui/find_way/path_finding_widget.dart';
+import 'package:smart_bus_app/src/ui/widgets/path_item.dart';
 
 
 
@@ -136,6 +137,9 @@ class BusSearchPage extends StatelessWidget {
             itemCount: controller.pathList.length,
             itemBuilder: (context, index) {
               Path path = controller.pathList.value[index] as Path;
+              return PathItem(path: path);
+
+              /*
               return Card(
                 color: Colors.greenAccent,
                 child: ListTile(
@@ -147,6 +151,7 @@ class BusSearchPage extends StatelessWidget {
                   },
                 ),
               );
+               */
             },
           ),
         ),
