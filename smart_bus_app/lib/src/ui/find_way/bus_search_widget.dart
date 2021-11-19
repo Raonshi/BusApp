@@ -16,6 +16,7 @@ class BusSearchPage extends StatelessWidget {
   Widget build(BuildContext context) {
     controller.search();
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         child: Obx(() => controller.pathFindingLoading.value ? pathFindingLoading() : pathFindingDone(context)),
       ),
@@ -89,14 +90,15 @@ class BusSearchPage extends StatelessWidget {
 
         //버스 정류장 정보
         Expanded(
-            flex:1,
+            flex:2,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.max,
               children: [
                 Expanded(
+                  flex:1,
                   child: Card(
-                    color: Color.fromARGB(0, 0, 0, 0),
+                    color: Color.fromARGB(255, 102, 178, 255),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: Text(
@@ -112,12 +114,6 @@ class BusSearchPage extends StatelessWidget {
                 )
               ],
             )
-        ),
-
-        //정류장 번호
-        Expanded(
-          flex:1,
-          child: Text("정류장 번호 : ", style: TextStyle(fontSize: 20),),
         ),
 
         //정류장 이름
@@ -140,21 +136,22 @@ class BusSearchPage extends StatelessWidget {
             itemCount: controller.pathList.length,
             itemBuilder: (context, index) {
               Path path = controller.pathList.value[index] as Path;
-              return ListTile(
-                leading: Icon(Icons.directions_bus),
-                title: Text(path.subPath[0].routeno),
-                trailing: Text(path.subPath[0].totaltime),
-                onTap: (){
-                  Get.to(() => PathFindingPage(path: path.subPath[0]));
-                },
+              return Card(
+                color: Colors.greenAccent,
+                child: ListTile(
+                  leading: Icon(Icons.directions_bus, size: 30, color: Colors.blueAccent,),
+                  title: Text(path.subPath[0].routeno),
+                  trailing: Text(path.subPath[0].totaltime),
+                  onTap: (){
+                    Get.to(() => PathFindingPage(path: path.subPath[0]));
+                  },
+                ),
               );
             },
           ),
         ),
 
-
-
-        Spacer(flex:2),
+        Spacer(flex:1),
       ],);
   }
 }

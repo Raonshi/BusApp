@@ -12,6 +12,7 @@ class StationSearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -76,7 +77,7 @@ class StationSearchPage extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Card(
-                            color: Color.fromARGB(0, 0, 0, 0),
+                            color: Color.fromARGB(255, 102, 178, 255),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10.0),
                               child: Text(
@@ -94,16 +95,14 @@ class StationSearchPage extends StatelessWidget {
                     )
                 ),
 
-                //정류장 번호
-                Expanded(
-                  flex:1,
-                  child: Text("정류장 번호 : ", style: TextStyle(fontSize: 20),),
-                ),
-
                 //정류장 이름
                 Expanded(
                   flex:1,
-                  child: Text("출발지 : ", style: TextStyle(fontSize: 20), maxLines: 2,),
+                  child: Text(
+                    "출발지 : ${controller.nearStation.value.nodeName}",
+                    style: TextStyle(fontSize: 20),
+                    maxLines: 2,
+                  ),
                 ),
 
                 //목적지 입력
@@ -113,16 +112,21 @@ class StationSearchPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.max,
                       children: [
+                        Spacer(),
                         //목적지 텍스트
                         Expanded(
-                          flex:1,
+                          flex:2,
                           child: Text("목적지 : ", style: TextStyle(fontSize: 20),),
                         ),
 
                         //텍스트 입력
                         Expanded(
-                            flex:3,
+                            flex:4,
                             child: TextField(
+                              decoration: InputDecoration(
+                                focusedBorder: OutlineInputBorder(),
+                                enabledBorder: OutlineInputBorder(),
+                              ),
                               controller: textController,
                               onSubmitted: (text) {
                                 textController.text = text;
@@ -132,17 +136,7 @@ class StationSearchPage extends StatelessWidget {
                             )
                         ),
 
-                        //검색 버튼
-                        Expanded(
-                          flex:1,
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              await controller.getStationByKeyword(textController.text);
-                              Get.to(() => BusSearchPage());
-                            },
-                            child: Text("입력", style: TextStyle(fontSize: 20)),
-                          ),
-                        ),
+                        Spacer(),
                       ],
                     )
                 ),
@@ -171,7 +165,8 @@ class StationSearchPage extends StatelessWidget {
           Expanded(
             flex:1,
             child: ElevatedButton(
-              onPressed: (){
+              onPressed: () async {
+                await controller.getStationByKeyword(textController.text);
                 Get.to(() => BusSearchPage());
               },
               child: Padding(

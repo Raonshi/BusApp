@@ -104,8 +104,24 @@ class Controller extends GetxController{
       setDestStation(searchStationList.value[i]);
       List jsonList = await WebServer().getWayList(deptStation.value.nodeId, destStation.value.nodeId);
 
+      jsonList.removeWhere((element){
+        Path path = element as Path;
+        if(path.subPath[0].totaltime == '소요시간 알 수 없음'){return true;}
+        return false;
+      });
+
       list.addAll(jsonList);
     }
+
+    list.sort((a, b){
+      Path path_a = a as Path;
+      Path path_b = b as Path;
+
+      int time_a = int.parse(path_a.subPath[0].totaltime);
+      int time_b = int.parse(path_b.subPath[0].totaltime);
+
+      return time_a.compareTo(time_b);
+    });
 
     pathList.value = list;
 
@@ -290,6 +306,24 @@ class Controller extends GetxController{
         break;
       default:
         dustStr.value = "불명";
+    }
+  }
+
+
+  Future<void> busArrTimer(int index) {
+    int arrTime = int.parse(busList.value[index].arrTime);
+    Bus bus = busList.value[index];
+    Logger().d(arrTime);
+
+    while(true){
+      bus.setMinute(arrTime~/60);
+      bus.setSecond((arrTime % 60));
+
+      sleep(new Duration(seconds: 1));
+
+      if(--arrTime <= 0){
+        break;
+      }
     }
   }
 }

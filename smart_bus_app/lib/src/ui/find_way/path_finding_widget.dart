@@ -13,6 +13,7 @@ class PathFindingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -71,22 +72,24 @@ class PathFindingPage extends StatelessWidget {
                 PathStation station = path.pathStationList[index];
                 Icon icon;
                 if(index == 0 || index == path.pathStationList.length - 1){
-                  icon = Icon(Icons.directions_bus);
+                  icon = Icon(Icons.directions_bus, size: 30, color: Colors.blueAccent);
                 }
                 else{
-                  icon = Icon(Icons.arrow_drop_down_circle);
+                  icon = Icon(Icons.arrow_drop_down_circle, size: 30, color: Colors.blueAccent);
                 }
 
-                return ListTile(
-                  leading: Icon(Icons.location_on),
-                  title: Text(station.nodeName),
-                  trailing: icon,
+                return Card(
+                  color: Colors.greenAccent,
+                  child: ListTile(
+                    leading: Icon(Icons.location_on, size: 30, color: Colors.blueAccent),
+                    title: Text(station.nodeName),
+                    trailing: icon,
+                  ),
                 );
               },
             ),
           ),
           //#endregion
-
 
           Spacer(flex:2),
         ],),

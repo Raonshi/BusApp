@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
 class MainPage extends StatelessWidget {
   final controller = Get.put(Controller());
   bool titleLoad = false;
@@ -42,6 +43,7 @@ class MainPage extends StatelessWidget {
     controller.infomationInit(type: 0);
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         child: Obx(() => controller.titleLoading.value ? titleLoading() : mainScreen(context)),
       ),
@@ -148,7 +150,7 @@ class MainPage extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: Card(
-                  color: Color.fromARGB(0, 0, 0, 0),
+                  color: Color.fromARGB(255, 102, 178, 255),
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Text(
@@ -226,7 +228,7 @@ class MainPage extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5.0),
                     child: Text(
-                      controller.dustStr.value,
+                      "미세먼지: ${controller.dustStr.value}",
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
@@ -268,7 +270,7 @@ class MainPage extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: Card(
-                  color: Color.fromARGB(0, 0, 0, 0),
+                  color: Color.fromARGB(255, 102, 178, 255),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: Text("버스 정보", textAlign: TextAlign.center, style: TextStyle(
@@ -288,11 +290,12 @@ class MainPage extends StatelessWidget {
           child: ListView.builder(
             itemCount: controller.busList.length,
             itemBuilder: (context, index) {
-              Bus bus = controller.busList.value[index];
-              return BusItem(bus: bus);
+              return BusItem(index: index);
             },
           ),
         ),
+
+        Divider(),
 
         //버스 검색
         Expanded(

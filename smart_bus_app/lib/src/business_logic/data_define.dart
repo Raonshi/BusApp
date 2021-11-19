@@ -108,6 +108,14 @@ class Bus{
   String routeNo = "";
   String arrTime = "";
 
+  int _minute = 0;
+  get minute => _minute;
+  void setMinute(int value) => _minute = value;
+
+  int _second = 0;
+  get second => _second;
+  void setSecond(int value) => _second = value;
+
   Bus({this.nodeName, this.nodeId, this.routeTp, this.routeId,
     this.routeNo, this.vehicleTp, this.arrPrevStationCnt, this.arrTime});
 

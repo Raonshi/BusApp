@@ -9,7 +9,7 @@ class PathItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Color.fromARGB(0, 0, 0, 0),
+      color: Colors.greenAccent,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.max,
